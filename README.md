@@ -18,15 +18,19 @@ externa de rede em tempo de execução.
 ### Conteúdo replicado
 - Nav fixa com logo da Rockstar, botão **Reserve agora** e menu mobile
 - Banner de anúncio: *Um Olhar Estendido, em 27 de agosto*
-- Hero com data de lançamento (**19 de novembro de 2026**), logo VI e CTAs
-- Seção **Um Olhar Estendido** (parceria Netflix, com botão "Lembre-me")
+- Hero com a **cover art oficial do jogo** (colagem de personagens e veículos com o
+  logo GTA VI), data de lançamento (**19 de novembro de 2026**), botão **Reserve agora**,
+  logos oficiais PS5 e Xbox Series X|S (SVG) e selo "A melhor experiência é no PS5"
+- Seção **Um Olhar Estendido** (parceria Netflix) com wordmark GTA VI oficial em SVG,
+  data **27 de agosto** e **3PM ET**, botão "Lembre-me"
 - Seção de **Trailers** (1º e 2º trailer) com player simulado em modal
 - Promo **Ultimate Edition** com modal detalhado dos benefícios
 - Promo **Pacote Vintage Vice City** (bônus de reserva) com modal detalhado
 - Cards **Só em Leonida** e **Mídia e ilustrações**
 - Sinopse *"Vice City, EUA."* (back-of-box)
 - **Novidades em destaque** (boletim/newswire com links reais)
-- Rodapé completo: newsletter (simulada), redes sociais, links legais e selo OLA BR
+- Rodapé completo: badge oficial PS5, newsletter (simulada), redes sociais,
+  links legais e selo OLA BR
 
 ### Como rodar
 Basta servir a pasta raiz com qualquer servidor estático:

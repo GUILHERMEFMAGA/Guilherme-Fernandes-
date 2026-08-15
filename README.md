@@ -22,10 +22,12 @@ Para operar com catálogos completos de Amazon e Mercado Livre, utilize APIs e f
 
 ## Como visualizar
 
-Não há dependências para instalar. No diretório do projeto, execute:
+Não há dependências de terceiros para instalar. Para iniciar também a API de catálogo no mesmo domínio da interface, execute:
 
 ```bash
-python3 -m http.server 4173 --bind 0.0.0.0
+npm start
 ```
 
 Então abra `http://localhost:4173`.
+
+> Para uma prévia puramente estática, `python3 -m http.server 4173 --bind 0.0.0.0` continua funcionando, mas a rota `/api/catalog` — usada para produtos reais — requer `npm start`.

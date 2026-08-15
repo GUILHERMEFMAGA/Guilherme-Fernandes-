@@ -1,210 +1,5 @@
-const products = [
-  {
-    id: 1,
-    name: "Fone de ouvido Sony WH-1000XM5 com cancelamento de ruído",
-    category: "Tecnologia",
-    store: "Amazon",
-    price: 1899,
-    oldPrice: 2699,
-    discount: 29,
-    badge: "OFERTA RELÂMPAGO",
-    badgeClass: "",
-    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=700&q=85",
-    delivery: "Frete grátis",
-    tags: ["frete", "historico"],
-    timing: 1,
-  },
-  {
-    id: 2,
-    name: "Apple iPhone 15 128 GB — Tela Super Retina XDR",
-    category: "Tecnologia",
-    store: "Mercado Livre",
-    price: 3999,
-    oldPrice: 4999,
-    discount: 20,
-    badge: "MENOR PREÇO",
-    badgeClass: "price-low",
-    image: "https://images.unsplash.com/photo-1696446702183-cbd551c09534?auto=format&fit=crop&w=700&q=85",
-    delivery: "Frete grátis",
-    tags: ["frete", "historico"],
-    timing: 2,
-  },
-  {
-    id: 3,
-    name: "Air Fryer Philips Walita Essential XL 6,2L Preta",
-    category: "Casa",
-    store: "Magalu",
-    price: 499,
-    oldPrice: 699,
-    discount: 28,
-    badge: "CUPOM: BEMVINDO",
-    badgeClass: "coupon",
-    image: "https://images.unsplash.com/photo-1585515656790-3a86b5aac18b?auto=format&fit=crop&w=700&q=85",
-    delivery: "Frete grátis",
-    tags: ["frete", "cupom"],
-    timing: 3,
-  },
-  {
-    id: 4,
-    name: "Tênis New Balance 530 Unissex Casual",
-    category: "Moda",
-    store: "Amazon",
-    price: 549,
-    oldPrice: 799,
-    discount: 31,
-    badge: "OFERTA RELÂMPAGO",
-    badgeClass: "",
-    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=700&q=85",
-    delivery: "Frete grátis",
-    tags: ["frete"],
-    timing: 4,
-  },
-  {
-    id: 5,
-    name: "Nintendo Switch OLED 64GB com Joy-Con Branco",
-    category: "Games",
-    store: "KaBuM!",
-    price: 1749,
-    oldPrice: 2199,
-    discount: 20,
-    badge: "MENOR PREÇO",
-    badgeClass: "price-low",
-    image: "https://images.unsplash.com/photo-1578303512597-81e6cc155b3e?auto=format&fit=crop&w=700&q=85",
-    delivery: "Frete grátis",
-    tags: ["frete", "historico"],
-    timing: 5,
-  },
-  {
-    id: 6,
-    name: "Smartwatch Samsung Galaxy Watch6 40mm Bluetooth",
-    category: "Tecnologia",
-    store: "Amazon",
-    price: 999,
-    oldPrice: 1499,
-    discount: 33,
-    badge: "CUPOM: TECH10",
-    badgeClass: "coupon",
-    image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=700&q=85",
-    delivery: "Frete grátis",
-    tags: ["cupom", "frete"],
-    timing: 6,
-  },
-  {
-    id: 7,
-    name: "Monitor Gamer LG UltraGear 24'' 144Hz IPS Full HD",
-    category: "Tecnologia",
-    store: "KaBuM!",
-    price: 849,
-    oldPrice: 1199,
-    discount: 29,
-    badge: "OFERTA RELÂMPAGO",
-    badgeClass: "",
-    image: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=700&q=85",
-    delivery: "Frete grátis",
-    tags: ["frete", "historico"],
-    timing: 7,
-  },
-  {
-    id: 8,
-    name: "Cafeteira Nespresso Essenza Mini com Aeroccino",
-    category: "Casa",
-    store: "Mercado Livre",
-    price: 449,
-    oldPrice: 649,
-    discount: 30,
-    badge: "CUPOM: CAFÉ15",
-    badgeClass: "coupon",
-    image: "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6?auto=format&fit=crop&w=700&q=85",
-    delivery: "Frete grátis",
-    tags: ["cupom", "frete"],
-    timing: 8,
-  },
-  {
-    id: 9,
-    name: "Mochila Adidas Classic com bolso para notebook",
-    category: "Esporte",
-    store: "Magalu",
-    price: 139,
-    oldPrice: 219,
-    discount: 36,
-    badge: "OFERTA RELÂMPAGO",
-    badgeClass: "",
-    image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=700&q=85",
-    delivery: "Frete grátis",
-    tags: ["frete"],
-    timing: 9,
-  },
-  {
-    id: 10,
-    name: "Cadeira Gamer ThunderX3 Yama1 Reclinável",
-    category: "Games",
-    store: "KaBuM!",
-    price: 999,
-    oldPrice: 1599,
-    discount: 37,
-    badge: "MENOR PREÇO",
-    badgeClass: "price-low",
-    image: "https://images.unsplash.com/photo-1598550476439-6847785fcea6?auto=format&fit=crop&w=700&q=85",
-    delivery: "Frete grátis",
-    tags: ["frete", "historico"],
-    timing: 10,
-  },
-  {
-    id: 11,
-    name: "Kit skincare Creamy: vitamina C + ácido mandélico",
-    category: "Moda",
-    store: "Amazon",
-    price: 119,
-    oldPrice: 179,
-    discount: 33,
-    badge: "CUPOM: GLOW10",
-    badgeClass: "coupon",
-    image: "https://images.unsplash.com/photo-1556229010-6c3f2c9ca5f8?auto=format&fit=crop&w=700&q=85",
-    delivery: "Frete grátis",
-    tags: ["cupom", "frete"],
-    timing: 11,
-  },
-  {
-    id: 12,
-    name: "Azeite extravirgem Gallo 500ml — kit com 3 unidades",
-    category: "Mercado",
-    store: "Mercado Livre",
-    price: 69,
-    oldPrice: 99,
-    discount: 30,
-    badge: "CUPOM: ECONOMIA",
-    badgeClass: "coupon",
-    image: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=700&q=85",
-    delivery: "Frete grátis",
-    tags: ["cupom", "frete"],
-    timing: 12,
-  },
-];
-
-const marketplaceOverrides = {
-  3: "Mercado Livre", 5: "Amazon", 7: "Mercado Livre", 8: "Mercado Livre",
-  9: "Amazon", 10: "Amazon", 11: "Mercado Livre", 12: "Mercado Livre",
-};
-
-const productLinks = {
-  1: "https://www.amazon.com.br/Sony-Fones-ouvido-cancelamento-WH-1000XM5/dp/B0DGL6R3SX",
-  2: "https://lista.mercadolivre.com.br/apple-iphone-15-128gb",
-  3: "https://lista.mercadolivre.com.br/air-fryer-philips-walita-essential-xl",
-  4: "https://www.amazon.com.br/s?k=new+balance+530",
-  5: "https://www.amazon.com.br/Console-Nintendo-Switch-OLED-Branco/dp/B098RKWHHZ",
-  6: "https://www.amazon.com.br/s?k=galaxy+watch6+40mm",
-  7: "https://lista.mercadolivre.com.br/monitor-lg-ultragear-24-144hz",
-  8: "https://lista.mercadolivre.com.br/nespresso-essenza-mini-aeroccino",
-  9: "https://www.amazon.com.br/s?k=mochila+adidas+classic",
-  10: "https://www.amazon.com.br/s?k=cadeira+gamer+thunderx3+yama1",
-  11: "https://lista.mercadolivre.com.br/kit-skincare-creamy",
-  12: "https://lista.mercadolivre.com.br/azeite-gallo-500ml-kit-3",
-};
-
-products.forEach((product) => {
-  product.store = marketplaceOverrides[product.id] || product.store;
-  product.url = productLinks[product.id];
-});
+// Product data is supplied by authorized marketplace connectors through /api/catalog.
+const products = [];
 
 const state = {
   category: "Todos",
@@ -214,6 +9,7 @@ const state = {
   types: [],
   marketplace: "Todos",
   remoteProducts: [],
+  nextOffset: null,
   sort: "relevance",
   visible: 6,
   saved: new Set(),
@@ -233,7 +29,6 @@ const savedCount = document.querySelector(".saved-count");
 const mobileFilterCount = document.querySelector("#mobileFilterCount");
 const dashboardSavedCount = document.querySelector("#dashboardSavedCount");
 const catalogStatus = document.querySelector("#catalogStatus");
-const marketplaceCache = new Map();
 let toastTimer;
 
 function currency(value) {
@@ -313,12 +108,14 @@ function renderProducts() {
   resultFor.textContent = state.query ? `para “${state.query}”` : state.savedOnly ? "salvas por você" : "";
 
   if (!visibleProducts.length) {
-    grid.innerHTML = `<div class="empty-state"><div class="empty-icon">⌕</div><h3>Nenhuma oferta por aqui</h3><p>Tente remover algum filtro ou buscar outro produto.</p></div>`;
+    grid.innerHTML = `<div class="empty-state"><div class="empty-icon">⌕</div><h3>Nenhum produto disponível agora</h3><p>Experimente outra busca, remova um filtro ou troque a fonte do catálogo.</p></div>`;
   } else {
     grid.innerHTML = visibleProducts.map(cardTemplate).join("");
   }
 
-  loadMore.style.display = filtered.length > state.visible ? "block" : "none";
+  const hasMoreLiveResults = Number.isInteger(state.nextOffset) && state.nextOffset > 0;
+  loadMore.style.display = filtered.length > state.visible || hasMoreLiveResults ? "block" : "none";
+  loadMore.firstChild.textContent = hasMoreLiveResults && state.visible >= filtered.length ? "Buscar mais produtos reais " : "Quero ver mais achados ";
   updateSavedUI();
 }
 
@@ -353,55 +150,61 @@ function showToast(message) {
   toastTimer = setTimeout(() => toast.classList.remove("show"), 3200);
 }
 
-let activeSearchRequest = 0;
+let activeCatalogRequest = 0;
+const categoryQueries = {
+  Todos: "ofertas",
+  Tecnologia: "eletrônicos",
+  Casa: "casa cozinha",
+  Moda: "moda beleza",
+  Esporte: "esporte",
+  Games: "games",
+  Mercado: "mercado",
+};
 
-async function loadMercadoLivreResults(query, { background = false } = {}) {
-  if (query.length < 3 || state.marketplace === "Amazon") return;
-  const normalizedQuery = query.toLocaleLowerCase("pt-BR");
-  const requestId = ++activeSearchRequest;
-  catalogStatus.textContent = "Consultando ofertas do Mercado Livre…";
+function sourceKey(marketplace) {
+  if (marketplace === "Amazon") return "amazon";
+  if (marketplace === "Mercado Livre") return "mercadolivre";
+  return "all";
+}
+
+async function loadCatalogResults(query, { append = false, background = false } = {}) {
+  const normalizedQuery = query.trim() || "ofertas";
+  const source = sourceKey(state.marketplace);
+  const offset = append ? state.remoteProducts.length : 0;
+  const requestId = ++activeCatalogRequest;
+  catalogStatus.textContent = append ? "Buscando mais produtos reais…" : "Consultando catálogo ao vivo…";
 
   try {
-    let liveProducts = marketplaceCache.get(normalizedQuery);
-    if (!liveProducts) {
-      const response = await fetch(`https://api.mercadolibre.com/sites/MLB/search?q=${encodeURIComponent(query)}&limit=18`);
-      if (!response.ok) throw new Error(`Mercado Livre respondeu ${response.status}`);
-      const payload = await response.json();
-      liveProducts = (payload.results || []).map((item, index) => {
-        const price = Number(item.price) || 0;
-        const oldPrice = Number(item.original_price) || price;
-        const discount = oldPrice > price ? Math.round((1 - price / oldPrice) * 100) : 0;
-        return {
-          id: `meli-${item.id}`,
-          name: item.title,
-          category: "Busca ao vivo",
-          store: "Mercado Livre",
-          price,
-          oldPrice,
-          discount,
-          badge: item.shipping?.free_shipping ? "FRETE GRÁTIS" : "AO VIVO",
-          badgeClass: item.shipping?.free_shipping ? "price-low" : "coupon",
-          image: String(item.thumbnail || "").replace(/^http:/, "https:"),
-          delivery: item.shipping?.free_shipping ? "Frete grátis" : "Consulte o envio",
-          tags: item.shipping?.free_shipping ? ["frete"] : [],
-          timing: -index,
-          url: item.permalink,
-          live: true,
-        };
-      });
-      marketplaceCache.set(normalizedQuery, liveProducts);
-    }
+    const requestUrl = new URL("/api/catalog", window.location.origin);
+    requestUrl.searchParams.set("source", source);
+    requestUrl.searchParams.set("q", normalizedQuery);
+    requestUrl.searchParams.set("limit", "24");
+    requestUrl.searchParams.set("offset", String(offset));
+    const response = await fetch(requestUrl, { headers: { Accept: "application/json" } });
+    if (!response.ok) throw new Error(`Catálogo respondeu ${response.status}`);
+    const payload = await response.json();
+    if (requestId !== activeCatalogRequest) return;
 
-    if (requestId !== activeSearchRequest || (!background && state.query.toLocaleLowerCase("pt-BR") !== normalizedQuery)) return;
-    state.remoteProducts = liveProducts;
-    state.visible = 6;
-    catalogStatus.textContent = background
-      ? `${liveProducts.length} ofertas ao vivo do Mercado Livre`
-      : `${liveProducts.length} resultados ao vivo do Mercado Livre`;
+    const items = Array.isArray(payload.items) ? payload.items : [];
+    const existingIds = new Set(append ? state.remoteProducts.map((product) => String(product.id)) : []);
+    const mergedItems = append ? [...state.remoteProducts, ...items.filter((item) => !existingIds.has(String(item.id)))] : items;
+    state.remoteProducts = mergedItems;
+    state.visible = append ? mergedItems.length : 6;
+    state.nextOffset = payload.paging?.nextOffset ?? null;
+
+    const availableSources = payload.connectors?.filter((connector) => connector.available).map((connector) => connector.source) || [];
+    if (!items.length && source === "amazon") {
+      catalogStatus.textContent = "Conector Amazon aguardando ativação oficial";
+    } else if (payload.partial) {
+      catalogStatus.textContent = `${items.length} produtos reais carregados · uma fonte está indisponível`;
+    } else {
+      catalogStatus.textContent = `${mergedItems.length} produtos reais · ${availableSources.join(" + ") || "fonte atualizada"}`;
+    }
     renderProducts();
   } catch (error) {
-    if (requestId !== activeSearchRequest) return;
+    if (requestId !== activeCatalogRequest) return;
     state.remoteProducts = [];
+    state.nextOffset = null;
     catalogStatus.textContent = "Fonte ao vivo indisponível no momento";
     renderProducts();
   }
@@ -414,7 +217,7 @@ function runSearch(query) {
   document.querySelector("#searchInput").value = state.query;
   document.querySelector("#ofertas").scrollIntoView({ behavior: "smooth", block: "start" });
   renderProducts();
-  void loadMercadoLivreResults(state.query);
+  void loadCatalogResults(state.query || "ofertas");
 }
 
 document.querySelector("#heroSearch").addEventListener("submit", (event) => {
@@ -429,10 +232,13 @@ document.querySelectorAll("[data-search]").forEach((button) => {
 document.querySelectorAll(".category-card").forEach((button) => {
   button.addEventListener("click", () => {
     state.category = button.dataset.category;
+    state.query = "";
     state.visible = 6;
+    document.querySelector("#searchInput").value = "";
     document.querySelectorAll(".category-card").forEach((item) => item.classList.toggle("active", item === button));
     renderProducts();
     document.querySelector("#ofertas").scrollIntoView({ behavior: "smooth", block: "start" });
+    void loadCatalogResults(categoryQueries[state.category] || "ofertas", { background: true });
   });
 });
 
@@ -471,9 +277,9 @@ document.querySelectorAll(".marketplace-tab").forEach((button) => {
       item.classList.toggle("active", active);
       item.setAttribute("aria-selected", active);
     });
-    catalogStatus.textContent = state.marketplace === "Todos" ? "Links para a loja de origem" : `Exibindo ofertas da ${state.marketplace}`;
+    catalogStatus.textContent = `Consultando ${state.marketplace === "Todos" ? "fontes autorizadas" : state.marketplace}…`;
     renderProducts();
-    if (state.query && state.marketplace === "Mercado Livre") void loadMercadoLivreResults(state.query);
+    void loadCatalogResults(state.query || categoryQueries[state.category] || "ofertas");
   });
 });
 
@@ -541,7 +347,12 @@ document.querySelector("#savedButton").addEventListener("click", () => {
 });
 
 loadMore.addEventListener("click", () => {
-  state.visible += 3;
+  const filtered = getFilteredProducts();
+  if (state.nextOffset !== null && state.visible >= state.remoteProducts.length) {
+    void loadCatalogResults(state.query || categoryQueries[state.category] || "ofertas", { append: true });
+    return;
+  }
+  state.visible += 6;
   renderProducts();
 });
 
@@ -632,7 +443,7 @@ setupViewportMotion();
 updateRangeStyle();
 updateMobileFilterCount();
 renderProducts();
-void loadMercadoLivreResults("ofertas", { background: true });
+void loadCatalogResults("ofertas", { background: true });
 
 window.addEventListener("load", () => {
   window.setTimeout(() => siteLoader.classList.add("is-hidden"), 1450);

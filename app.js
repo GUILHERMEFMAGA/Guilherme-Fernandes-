@@ -612,7 +612,7 @@ updateMobileFilterCount();
 renderProducts();
 
 window.addEventListener("load", () => {
-  window.setTimeout(() => siteLoader.classList.add("is-hidden"), 720);
+  window.setTimeout(() => siteLoader.classList.add("is-hidden"), 1150);
 });
 
 window.setTimeout(() => siteLoader.classList.add("is-hidden"), 2600);

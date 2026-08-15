@@ -1,0 +1,75 @@
+/* High-contrast visual refresh: makes the Mavvri experience clearly distinct. */
+.site-header {
+  color: #f7f9ff;
+  background: #10162a;
+  border-bottom-color: rgba(227, 238, 255, .12);
+}
+.brand { color: #f7f9ff; }
+.brand > span:last-child > span { color: var(--lime); }
+.brand-mark i:nth-child(1) { background: #f7f9ff; }
+.brand-mark i:nth-child(2) { background: var(--lime); }
+.brand-mark i:nth-child(3) { background: var(--orange); }
+.desktop-nav a { color: #b8c3d7; }
+.desktop-nav a:hover { color: #fff; }
+.icon-button { color: #f0f4ff; border-color: rgba(226, 236, 255, .25); }
+.profile-button { color: #eef2ff; }
+.avatar { color: #1e2d29; background: var(--lime); }
+.chevron { color: #bdc7d9; }
+.menu-button span { background: #f5f7ff; }
+
+.hero {
+  position: relative;
+  background: #10162a;
+  isolation: isolate;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background:
+    radial-gradient(circle at 9% 87%, rgba(92, 109, 255, .33), transparent 29%),
+    radial-gradient(circle at 88% 17%, rgba(219, 251, 109, .14), transparent 20%),
+    linear-gradient(125deg, #10162a 0%, #182141 54%, #11162b 100%);
+}
+.hero .eyebrow { color: #d1e88a; }
+.hero .eyebrow span { color: var(--lime); }
+.hero h1 { color: #f8faff; }
+.hero h1 em { color: var(--lime); }
+.hero h1 em::after { background: rgba(148, 188, 49, .28); }
+.hero-description { color: #bdc8db; }
+.hero-search { border-color: rgba(220, 231, 207, .12); box-shadow: 0 18px 40px rgba(0, 0, 0, .24); }
+.hero-search button { color: #11172c; background: var(--lime); }
+.hero-search button:hover { color: #fff; background: #4a6671; }
+.hero-search button span { color: #354827; }
+.search-hints { color: #9fabc0; }
+.search-hints button { color: #e2e9f4; border-color: rgba(226, 235, 255, .2); background: rgba(255, 255, 255, .05); }
+.search-hints button:hover { color: #15203a; background: var(--lime); }
+.hero-proof p { color: #aebbd0; }
+.hero-proof strong { color: #f2f6ff; }
+.proof-avatars span { border-color: #182141; }
+.retailers-bar { color: #a7b2c8; border-top-color: rgba(226, 235, 255, .12); }
+.retailers-bar b { color: #eff4ff; }
+.retailers-bar b:nth-of-type(4) { color: var(--lime); }
+.retailers-bar b:nth-of-type(6) { color: #94a5c2; }
+
+.categories-section { color: #f0f3fb; background: #151d36; }
+.categories-section .eyebrow { color: #c6dc7c; }
+.categories-section .section-heading h2 { color: #f5f7fc; }
+.category-card { border-color: rgba(214, 225, 245, .14); color: #eef2fb; background: #1c2746; }
+.category-card.active { border-color: #c5ea65; background: #263852; }
+.category-card:hover { box-shadow: 0 12px 20px rgba(0, 0, 0, .24); }
+.category-card small { color: #9eaac0; }
+.round-control { color: #d6e1f5; border-color: rgba(214, 225, 245, .25); }
+.round-control.active { color: #142038; border-color: var(--lime); background: var(--lime); }
+
+.dashboard-section { background: #f3f5f9; }
+.dashboard-card { box-shadow: 0 25px 60px rgba(24, 32, 64, .12); }
+.deals-section { background: #f0f2f7; }
+.deals-heading h2 { color: #15203a; }
+
+@media (max-width: 720px) {
+  .site-header.menu-open .desktop-nav { border-color: rgba(222, 234, 255, .16); background: #151d36; box-shadow: 0 14px 32px rgba(0, 0, 0, .3); }
+  .site-header.menu-open .desktop-nav a { color: #dce5f5; }
+  .site-header.menu-open .desktop-nav a:hover { color: #141d35; background: var(--lime); }
+}

@@ -26,7 +26,13 @@ O projeto não possui dependências de terceiros. Requer Node.js 18 ou superior:
 npm start
 ```
 
-Acesse `http://localhost:4173`.
+Em outro terminal, execute a primeira sincronização das fontes configuradas:
+
+```bash
+npm run sync
+```
+
+Acesse `http://localhost:4173`. Em produção, substitua o comando manual por um job agendado.
 
 ### Variáveis de ambiente opcionais
 

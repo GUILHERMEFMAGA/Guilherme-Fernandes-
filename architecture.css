@@ -1,0 +1,14 @@
+/* Source coverage and deployment transparency for the connector-based catalog. */
+.source-tabs { overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+.source-tabs::-webkit-scrollbar { display: none; }
+.source-tab { white-space: nowrap; }
+.store-names { flex-wrap: wrap; column-gap: 21px; row-gap: 7px; }
+.store-names b:nth-child(2) { color: #386eb2; }
+.store-names b:nth-child(n+3) { color: #66748b; font: 700 11px "Plus Jakarta Sans", sans-serif; letter-spacing: -.35px; }
+@media (max-width: 650px) {
+  .store-strip-inner { padding: 13px 0; }
+  .store-names { gap: 8px 14px; }
+  .store-names b { font-size: 10px; }
+  .store-names b:nth-child(n+5) { display: none; }
+  .source-tabs { max-width: 100%; }
+}

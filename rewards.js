@@ -8,6 +8,8 @@ const state = {
   sort: "relevance",
   saved: new Set(),
   savedOnly: false,
+  catalogError: null,
+  sourceStatus: [],
 };
 
 const categoryQueries = {
@@ -41,9 +43,16 @@ function formatPrice(value) {
 }
 
 function sourceKey(source) {
-  if (source === "Mercado Livre") return "mercadolivre";
-  if (source === "Amazon") return "amazon";
-  return "all";
+  const keys = {
+    "Mercado Livre": "mercadolivre",
+    Amazon: "amazon",
+    Americanas: "americanas",
+    Shopee: "shopee",
+    "Magazine Luiza": "magalu",
+    Shein: "shein",
+    OLX: "olx",
+  };
+  return keys[source] || "all";
 }
 
 function filteredItems() {
@@ -57,7 +66,7 @@ function filteredItems() {
 
 function productCard(product, index) {
   const saved = state.saved.has(String(product.id));
-  const sourceClass = product.store === "Mercado Livre" ? "mercado-livre" : "amazon";
+  const sourceClass = String(product.store || "").toLocaleLowerCase("pt-BR").replace(/[^a-z0-9]+/g, "-");
   const name = escapeHtml(product.name);
   const store = escapeHtml(product.store);
   const link = escapeHtml(product.url || "#");
@@ -72,8 +81,9 @@ function renderProducts() {
   const items = filteredItems();
   const visible = items.slice(0, state.visible);
   if (!visible.length) {
-    const isAmazon = state.source === "Amazon";
-    grid.innerHTML = `<div class="empty-state"><span>${isAmazon ? "⌁" : "⌕"}</span><h3>${isAmazon ? "A fonte Amazon ainda não está conectada" : "Nenhum produto apareceu por aqui"}</h3><p>${isAmazon ? "A estrutura já está pronta para receber a integração oficial da Amazon no servidor." : "Tente outra busca ou volte para todas as fontes disponíveis."}</p></div>`;
+    const selectedSource = state.source === "Todos" ? "as fontes conectadas" : state.source;
+    const syncMessage = state.catalogError || `Ainda não há ofertas sincronizadas para ${selectedSource}.`;
+    grid.innerHTML = `<div class="empty-state"><span>⌁</span><h3>Catálogo aguardando sincronização</h3><p>${escapeHtml(syncMessage)} Configure os conectores autorizados e execute a rotina de ingestão para preencher esta área com produtos reais.</p></div>`;
   } else {
     grid.innerHTML = visible.map(productCard).join("");
   }
@@ -102,28 +112,34 @@ async function loadCatalog({ append = false } = {}) {
     url.searchParams.set("limit", "24");
     url.searchParams.set("offset", String(offset));
     const response = await fetch(url, { headers: { Accept: "application/json" } });
-    if (!response.ok) throw new Error(`Catálogo respondeu ${response.status}`);
     const payload = await response.json();
     if (thisRequest !== requestId) return;
+    state.sourceStatus = payload.sources || [];
+    if (!response.ok) {
+      state.items = [];
+      state.nextOffset = null;
+      state.catalogError = payload.error || "O catálogo ainda não foi sincronizado.";
+      status.textContent = "Aguardando a primeira sincronização do catálogo";
+      renderProducts();
+      return;
+    }
     const incoming = Array.isArray(payload.items) ? payload.items : [];
     const known = new Set(append ? state.items.map((item) => String(item.id)) : []);
     state.items = append ? [...state.items, ...incoming.filter((item) => !known.has(String(item.id)))] : incoming;
     state.nextOffset = payload.paging?.nextOffset ?? null;
     state.visible = append ? state.items.length : 6;
-    const available = payload.connectors?.filter((connector) => connector.available).map((connector) => connector.source) || [];
-    if (!state.items.length && state.source === "Amazon") {
-      status.textContent = "Amazon aguardando conexão oficial";
-    } else if (payload.partial) {
-      status.textContent = `${state.items.length} produtos reais carregados · uma fonte indisponível`;
-    } else {
-      status.textContent = `${state.items.length} produtos reais · ${available.join(" + ") || "fonte atualizada"}`;
-    }
+    state.catalogError = null;
+    const configured = state.sourceStatus.filter((connector) => connector.configured && !connector.error).map((connector) => connector.label);
+    status.textContent = state.items.length
+      ? `${state.items.length} produtos sincronizados · ${configured.join(" + ") || "fonte atualizada"}`
+      : "Nenhuma oferta encontrada na sincronização atual";
     renderProducts();
   } catch {
     if (thisRequest !== requestId) return;
     state.items = [];
     state.nextOffset = null;
-    status.textContent = "Não foi possível acessar a fonte ao vivo agora";
+    state.catalogError = "Não foi possível consultar o catálogo local agora.";
+    status.textContent = "Catálogo temporariamente indisponível";
     renderProducts();
   }
 }

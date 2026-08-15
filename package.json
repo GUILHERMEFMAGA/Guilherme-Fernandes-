@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
-    "dev": "node server.mjs"
+    "dev": "node server.mjs",
+    "sync": "node workers/sync-catalog.mjs",
+    "sync:mercadolivre": "node workers/sync-catalog.mjs --sources=mercadolivre"
   }
 }

@@ -5,7 +5,7 @@ A Mavvri não deve copiar nem espelhar integralmente o catálogo de marketplaces
 A experiência implementada no front-end segue dois princípios:
 
 1. Todo card possui um CTA que abre a origem em nova aba, com `noopener` e `sponsored`.
-2. Uma busca por termo tenta consultar o endpoint público de busca do Mercado Livre para exibir resultados ao vivo; quando a consulta não estiver disponível, o catálogo demonstrativo continua utilizável.
+2. Uma busca por termo consulta uma rota interna de catálogo. Quando uma fonte não responder, a interface mostra esse estado com clareza em vez de inventar preço, estoque ou disponibilidade.
 
 ## Caminho correto para produção
 

@@ -1,33 +1,40 @@
 # Mavvri
 
-Uma experiência responsiva de hub de ofertas, com um painel pessoal elegante, para pesquisar, comparar e salvar produtos de diferentes lojas em um só lugar.
+Uma plataforma brasileira de descoberta de ofertas inspirada na clareza de serviços de cupons e benefícios — construída com identidade própria. A Mavvri ajuda a pesquisar produtos, organizar alertas e abrir a oferta diretamente na loja de origem.
 
-## O que está incluído
+## Experiência incluída
 
-- Busca rápida por produtos e atalhos para termos em alta.
-- Navegação por categorias e catálogo de ofertas com ordenação.
-- Filtros por faixa de preço, loja e tipo de benefício (cupom, frete e mínima histórica).
-- Ofertas salvas durante a sessão e feedbacks de interação.
-- Fluxo de criação de alerta de preço e cadastro para alertas inteligentes.
-- CTA em cada produto para abrir a loja de origem em nova aba.
-- Busca com tentativa de resultados ao vivo do Mercado Livre e links de destino do anúncio quando o endpoint estiver disponível.
-- Tela de carregamento e estados de feedback para uma experiência mais fluida.
-- Layout responsivo para desktop e celular.
+- Página inicial responsiva com busca, categorias, lojas e alerta de preço.
+- Catálogo que consome produtos reais de fontes autorizadas por meio da rota interna `/api/catalog`.
+- Busca, categorias, ordenação, paginação e produtos salvos durante a sessão.
+- CTA em cada produto para abrir a página de origem em uma nova aba.
+- Estados honestos para fonte indisponível ou integração Amazon ainda não configurada.
+- Tela de carregamento, animações sutis e layout otimizado para celular.
 
-> Os produtos, preços e lojas estáticos são dados demonstrativos. A confirmação de preço, frete, disponibilidade e condições acontece na loja de origem.
+## Fontes de catálogo
 
-## Catálogo de parceiros
+- **Mercado Livre:** `server.mjs` consulta e normaliza resultados do endpoint de catálogo para o site `MLB`, com cache curto e links de anúncio retornados pela fonte.
+- **Amazon Brasil:** o front-end e a rota `/api/catalog?source=amazon` estão prontos, mas só exibem produtos depois que um conector oficial de Creators/Associates for configurado no servidor. Chaves, tags e tokens nunca devem ir para o navegador.
 
-Para operar com catálogos completos de Amazon e Mercado Livre, utilize APIs e feeds autorizados — não scraping ou cópia integral de conteúdo. Consulte [INTEGRATIONS.md](INTEGRATIONS.md) para a arquitetura de produção, links diretos e cuidados com credenciais.
+Leia [INTEGRATIONS.md](INTEGRATIONS.md) para os detalhes de integração, formato do conector Amazon e cuidados de produção.
 
-## Como visualizar
+## Executar localmente
 
-Não há dependências de terceiros para instalar. Para iniciar também a API de catálogo no mesmo domínio da interface, execute:
+O projeto não possui dependências de terceiros. Requer Node.js 18 ou superior:
 
 ```bash
 npm start
 ```
 
-Então abra `http://localhost:4173`.
+Acesse `http://localhost:4173`.
 
-> Para uma prévia puramente estática, `python3 -m http.server 4173 --bind 0.0.0.0` continua funcionando, mas a rota `/api/catalog` — usada para produtos reais — requer `npm start`.
+### Variáveis de ambiente opcionais
+
+Copie `.env.example` para `.env` no ambiente de deploy e configure apenas valores de servidor. O arquivo `.env` já está ignorado pelo Git.
+
+```bash
+PORT=4173
+CATALOG_CACHE_TTL_MS=300000
+AMAZON_CREATORS_PROXY_URL=
+AMAZON_CREATORS_PROXY_TOKEN=
+```

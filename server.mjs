@@ -1,9 +1,22 @@
 import { createServer } from "node:http";
+import { existsSync, readFileSync } from "node:fs";
 import { readFile, stat } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = fileURLToPath(new URL(".", import.meta.url));
+
+function loadLocalEnv() {
+  const envFile = join(root, ".env");
+  if (!existsSync(envFile)) return;
+  for (const line of readFileSync(envFile, "utf8").split(/\r?\n/)) {
+    const match = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*?)\s*$/i);
+    if (!match || match[1] in process.env) continue;
+    process.env[match[1]] = match[2].replace(/^['\"]|['\"]$/g, "");
+  }
+}
+
+loadLocalEnv();
 const port = Number(process.env.PORT || 4173);
 const ttl = Number(process.env.CATALOG_CACHE_TTL_MS || 300000);
 const cache = new Map();

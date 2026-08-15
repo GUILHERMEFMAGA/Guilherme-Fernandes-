@@ -355,7 +355,7 @@ function showToast(message) {
 
 let activeSearchRequest = 0;
 
-async function loadMercadoLivreResults(query) {
+async function loadMercadoLivreResults(query, { background = false } = {}) {
   if (query.length < 3 || state.marketplace === "Amazon") return;
   const normalizedQuery = query.toLocaleLowerCase("pt-BR");
   const requestId = ++activeSearchRequest;
@@ -392,15 +392,17 @@ async function loadMercadoLivreResults(query) {
       marketplaceCache.set(normalizedQuery, liveProducts);
     }
 
-    if (requestId !== activeSearchRequest || state.query.toLocaleLowerCase("pt-BR") !== normalizedQuery) return;
+    if (requestId !== activeSearchRequest || (!background && state.query.toLocaleLowerCase("pt-BR") !== normalizedQuery)) return;
     state.remoteProducts = liveProducts;
     state.visible = 6;
-    catalogStatus.textContent = `${liveProducts.length} resultados ao vivo do Mercado Livre`;
+    catalogStatus.textContent = background
+      ? `${liveProducts.length} ofertas ao vivo do Mercado Livre`
+      : `${liveProducts.length} resultados ao vivo do Mercado Livre`;
     renderProducts();
   } catch (error) {
     if (requestId !== activeSearchRequest) return;
     state.remoteProducts = [];
-    catalogStatus.textContent = "Links para a loja de origem";
+    catalogStatus.textContent = "Fonte ao vivo indisponível no momento";
     renderProducts();
   }
 }
@@ -630,6 +632,7 @@ setupViewportMotion();
 updateRangeStyle();
 updateMobileFilterCount();
 renderProducts();
+void loadMercadoLivreResults("ofertas", { background: true });
 
 window.addEventListener("load", () => {
   window.setTimeout(() => siteLoader.classList.add("is-hidden"), 1450);

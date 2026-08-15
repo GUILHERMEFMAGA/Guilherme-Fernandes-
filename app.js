@@ -9,11 +9,14 @@
 
   /* ---------- Reveal on scroll ---------- */
   var revealEls = Array.prototype.slice.call(document.querySelectorAll(".reveal"));
+  var stagger = 0;
   if ("IntersectionObserver" in window && !prefersReduced) {
     var io = new IntersectionObserver(
       function (entries) {
         entries.forEach(function (entry) {
           if (entry.isIntersecting) {
+            entry.target.style.transitionDelay = (stagger % 6) * 0.07 + "s";
+            stagger += 1;
             entry.target.classList.add("in");
             io.unobserve(entry.target);
           }
@@ -178,6 +181,112 @@
       }
       form.hidden = true;
       okMsg.hidden = false;
+    });
+  }
+
+  /* ---------- Intro loader ---------- */
+  var loader = document.getElementById("loader");
+  var loaderDone = false;
+  function hideLoader() {
+    if (loaderDone || !loader) return;
+    loaderDone = true;
+    loader.classList.add("done");
+    setTimeout(function () {
+      if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
+    }, 800);
+  }
+  if (document.readyState === "complete") {
+    setTimeout(hideLoader, 700);
+  } else {
+    window.addEventListener("load", function () { setTimeout(hideLoader, 700); });
+  }
+  setTimeout(hideLoader, 4200); // fallback
+
+  /* ---------- Nav scrolled + scroll progress + to-top + parallax ---------- */
+  var nav = document.querySelector(".site-nav");
+  var progressBar = document.querySelector(".scroll-progress span");
+  var toTop = document.getElementById("to-top");
+  var heroMedia = document.getElementById("hero-media");
+  var heroSection = document.querySelector(".hero");
+
+  function onScroll() {
+    var y = window.scrollY || window.pageYOffset || 0;
+    var doc = document.documentElement;
+    var max = doc.scrollHeight - doc.clientHeight;
+    if (progressBar) progressBar.style.width = (max > 0 ? (y / max) * 100 : 0) + "%";
+    if (nav) nav.classList.toggle("scrolled", y > 24);
+    if (toTop) toTop.classList.toggle("show", y > 640);
+    if (heroMedia && heroSection && !prefersReduced && y < heroSection.offsetHeight) {
+      heroMedia.style.transform = "translate3d(0," + Math.min(y * 0.18, 70) + "px,0)";
+    }
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+  if (toTop) {
+    toTop.addEventListener("click", function () {
+      window.scrollTo({ top: 0, behavior: prefersReduced ? "auto" : "smooth" });
+    });
+  }
+
+  /* ---------- Marquee ---------- */
+  var marqueeTrack = document.getElementById("marquee-track");
+  if (marqueeTrack) {
+    var words = ["Vice City", "Leonida", "19 de novembro de 2026", "Reserve agora"];
+    var half = "";
+    words.forEach(function (w) {
+      half += '<span class="marquee-item"><span class="star" aria-hidden="true">&#10022;</span>' + w + "</span>";
+    });
+    marqueeTrack.innerHTML = half + half;
+  }
+
+  /* ---------- Countdown (19 nov 2026) ---------- */
+  var countdown = document.getElementById("countdown");
+  if (countdown) {
+    var cdTarget = new Date("2026-11-19T00:00:00");
+    var cdD = document.getElementById("cd-days");
+    var cdH = document.getElementById("cd-hours");
+    var cdM = document.getElementById("cd-mins");
+    var cdS = document.getElementById("cd-secs");
+    function pad2(n) { return (n < 10 ? "0" : "") + n; }
+    function tickCountdown() {
+      var diff = cdTarget - new Date();
+      var d = 0, h = 0, m = 0, s = 0;
+      if (diff > 0) {
+        s = Math.floor(diff / 1000);
+        d = Math.floor(s / 86400); s -= d * 86400;
+        h = Math.floor(s / 3600); s -= h * 3600;
+        m = Math.floor(s / 60); s -= m * 60;
+      }
+      cdD.textContent = d;
+      cdH.textContent = pad2(h);
+      cdM.textContent = pad2(m);
+      cdS.textContent = pad2(s);
+    }
+    tickCountdown();
+    setInterval(tickCountdown, 1000);
+  }
+
+  /* ---------- 3D tilt (cards) ---------- */
+  var tiltEls = Array.prototype.slice.call(document.querySelectorAll(".tilt"));
+  if (window.matchMedia("(pointer: fine)").matches && !prefersReduced) {
+    tiltEls.forEach(function (el) {
+      el.addEventListener("mousemove", function (e) {
+        if (!el.classList.contains("in")) return;
+        if (!el.dataset.tiltOn) {
+          el.dataset.tiltOn = "1";
+          el.style.transition = "transform .16s ease-out";
+        }
+        var r = el.getBoundingClientRect();
+        var px = (e.clientX - r.left) / r.width - 0.5;
+        var py = (e.clientY - r.top) / r.height - 0.5;
+        el.style.transform =
+          "perspective(900px) rotateX(" + (-py * 5).toFixed(2) + "deg) rotateY(" + (px * 5).toFixed(2) + "deg)";
+      });
+      el.addEventListener("mouseleave", function () {
+        el.style.transition = "transform .3s ease-out";
+        el.style.transform = "";
+        setTimeout(function () { el.style.transition = ""; }, 350);
+      });
     });
   }
 

@@ -10,6 +10,19 @@
 </head>
 <body>
 
+  <!-- ======= INTRO LOADER ======= -->
+  <div class="loader" id="loader" role="status" aria-label="Carregando Grand Theft Auto VI">
+    <span class="loader-mark" aria-hidden="true">VI</span>
+    <span class="loader-sub">Grand Theft Auto</span>
+    <span class="loader-bar" aria-hidden="true"><span></span></span>
+  </div>
+
+  <!-- ======= FILM GRAIN ======= -->
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- ======= SCROLL PROGRESS ======= -->
+  <div class="scroll-progress" aria-hidden="true"><span></span></div>
+
   <a class="skip-link" href="#main">Ir para o conteúdo principal</a>
 
   <!-- ======= NAV ======= -->
@@ -59,7 +72,9 @@
 
     <!-- ======= HERO ======= -->
     <section class="hero" id="top">
-      <img class="hero-bg" src="assets/hero.jpg" alt="" aria-hidden="true" />
+      <div class="hero-media" id="hero-media">
+        <img class="hero-bg" src="assets/hero.jpg" alt="" aria-hidden="true" />
+      </div>
       <div class="hero-shade" aria-hidden="true"></div>
 
       <div class="hero-release">
@@ -109,6 +124,13 @@
             <path d="M91.3305 14.94H91.5105C91.6605 14.94 91.7505 14.88 91.7505 14.75C91.7505 14.59 91.6405 14.57 91.5305 14.57H91.3305V14.94ZM91.1205 14.42H91.5805C91.7905 14.42 91.9505 14.48 91.9505 14.72C91.9505 14.86 91.8805 14.96 91.7405 15C91.8205 15.02 91.8705 15.08 91.9105 15.21C91.9505 15.34 91.9905 15.46 92.0205 15.57H91.8105C91.7805 15.48 91.7405 15.34 91.7205 15.26C91.6905 15.13 91.6505 15.08 91.4705 15.08H91.3305V15.57H91.1205V14.41V14.42ZM91.5205 15.85C92.0205 15.85 92.3605 15.47 92.3605 15C92.3605 14.53 92.0205 14.15 91.5205 14.15C91.0205 14.15 90.6805 14.53 90.6805 15C90.6805 15.47 91.0105 15.85 91.5205 15.85ZM91.5205 14C92.1105 14 92.5205 14.44 92.5205 15C92.5205 15.56 92.1205 16 91.5205 16C90.9205 16 90.5205 15.56 90.5205 15C90.5205 14.44 90.9305 14 91.5205 14Z"/>
           </svg>
         </div>
+
+        <div class="countdown" id="countdown" role="timer" aria-label="Tempo restante até o lançamento">
+          <div class="countdown-item"><span class="countdown-num" id="cd-days">—</span><span class="countdown-label">Dias</span></div>
+          <div class="countdown-item"><span class="countdown-num" id="cd-hours">—</span><span class="countdown-label">Horas</span></div>
+          <div class="countdown-item"><span class="countdown-num" id="cd-mins">—</span><span class="countdown-label">Min</span></div>
+          <div class="countdown-item"><span class="countdown-num" id="cd-secs">—</span><span class="countdown-label">Seg</span></div>
+        </div>
       </div>
 
       <a class="scroll-hint" href="#extended" aria-label="Role para ver mais.">
@@ -118,6 +140,11 @@
         <span class="visually-hidden">Role para ver mais.</span>
       </a>
     </section>
+
+    <!-- ======= MARQUEE ======= -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track" id="marquee-track"></div>
+    </div>
 
     <!-- ======= UM OLHAR ESTENDIDO (NETFLIX) ======= -->
     <section class="extended" id="extended">
@@ -148,7 +175,7 @@
 
     <!-- ======= TRAILERS ======= -->
     <section class="trailers" id="trailers" aria-label="Trailers">
-      <button class="trailer-card reveal" type="button" data-trailer="2">
+      <button class="trailer-card reveal tilt" type="button" data-trailer="2">
         <img src="assets/trailer-2.jpg" alt="Arte oficial do 2º Trailer de Grand Theft Auto VI." loading="lazy" />
         <span class="trailer-play" aria-hidden="true"></span>
         <span class="trailer-label">
@@ -156,7 +183,7 @@
           <span class="trailer-name">2º Trailer</span>
         </span>
       </button>
-      <button class="trailer-card reveal" type="button" data-trailer="1">
+      <button class="trailer-card reveal tilt" type="button" data-trailer="1">
         <img src="assets/trailer-1.jpg" alt="Cena do 1º Trailer de Grand Theft Auto VI." loading="lazy" />
         <span class="trailer-play" aria-hidden="true"></span>
         <span class="trailer-label">
@@ -197,7 +224,7 @@
 
     <!-- ======= PROMO CARDS ======= -->
     <section class="promo-grid" id="media">
-      <a class="promo-card reveal" href="#only-in-leonida">
+      <a class="promo-card reveal tilt" href="#only-in-leonida">
         <img src="assets/leonida.jpg" alt="" aria-hidden="true" loading="lazy" />
         <div class="promo-card-copy">
           <p class="eyebrow">Pessoas e lugares</p>
@@ -209,7 +236,7 @@
         </div>
       </a>
 
-      <a class="promo-card reveal" href="#news">
+      <a class="promo-card reveal tilt" href="#news">
         <img src="assets/media.jpg" alt="" aria-hidden="true" loading="lazy" />
         <div class="promo-card-copy">
           <p class="eyebrow">Downloads</p>
@@ -238,21 +265,21 @@
         </a>
       </div>
       <div class="news-grid">
-        <a class="news-card reveal" href="https://www.rockstargames.com/newswire/article/9k2kaa1o3297k9/" target="_blank" rel="noopener">
+        <a class="news-card reveal tilt" href="https://www.rockstargames.com/newswire/article/9k2kaa1o3297k9/" target="_blank" rel="noopener">
           <img src="assets/news-1.jpg" alt="" aria-hidden="true" loading="lazy" />
           <div class="news-card-copy">
             <h3>Grand Theft Auto VI: Um Olhar Estendido</h3>
             <p>6 de agosto de 2026</p>
           </div>
         </a>
-        <a class="news-card reveal" href="https://www.rockstargames.com/newswire/article/5171972o3ak5oa/pre-order-grand-theft-auto-vi-on-june-25" target="_blank" rel="noopener">
+        <a class="news-card reveal tilt" href="https://www.rockstargames.com/newswire/article/5171972o3ak5oa/pre-order-grand-theft-auto-vi-on-june-25" target="_blank" rel="noopener">
           <img src="assets/news-2.jpg" alt="" aria-hidden="true" loading="lazy" />
           <div class="news-card-copy">
             <h3>Reserve Grand Theft Auto VI em 25 de junho</h3>
             <p>24 de junho de 2026</p>
           </div>
         </a>
-        <a class="news-card reveal" href="https://www.rockstargames.com/newswire/article/ak3ak31a49a221/grand-theft-auto-vi-is-now-set-to-launch-november-19-2026" target="_blank" rel="noopener">
+        <a class="news-card reveal tilt" href="https://www.rockstargames.com/newswire/article/ak3ak31a49a221/grand-theft-auto-vi-is-now-set-to-launch-november-19-2026" target="_blank" rel="noopener">
           <img src="assets/hero.jpg" alt="" aria-hidden="true" loading="lazy" />
           <div class="news-card-copy">
             <h3>Grand Theft Auto VI será lançado dia 19 de novembro de 2026</h3>
@@ -509,6 +536,11 @@
       <button class="btn btn-solid" type="button" data-close>Ok, entendi</button>
     </div>
   </div>
+
+  <!-- ======= VOLTAR AO TOPO ======= -->
+  <button class="to-top" id="to-top" type="button" aria-label="Voltar ao topo">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.2929 4.29289C11.6834 3.90237 12.3166 3.90237 12.7071 4.29289L19.7071 11.2929C20.0976 11.6834 20.0976 12.3166 19.7071 12.7071C18.3166 14.0976 16.6834 14.0976 15.2929 12.7071L13 10.4142V20C13 20.5523 12.5523 21 12 21C11.4477 21 11 20.5523 11 20V10.4142L8.70711 12.7071C7.31658 14.0976 5.68342 14.0976 4.29289 12.7071C3.90237 12.3166 3.90237 11.6834 4.29289 11.2929L11.2929 4.29289Z" fill="currentColor"/></svg>
+  </button>
 
   <script src="app.js"></script>
 </body>

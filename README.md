@@ -41,6 +41,17 @@ python3 -m http.server 8000 --bind 0.0.0.0
 
 ou abrir `index.html` diretamente no navegador.
 
+### Animações e efeitos
+- **Loader de entrada** com wordmark VI e barra de progresso animada
+- **Ken Burns** (zoom lento) + parallax no hero, com entrada escalonada dos elementos
+- **Marquee neon** ("Vice City ✦ Leonida ✦ 19 de novembro de 2026") entre seções
+- **Countdown ao vivo** para 19/11/2026 (dias/horas/min/seg)
+- **Tilt 3D** nos cards (trailers, promos e notícias) + zoom nas imagens
+- **Scroll progress bar** no topo, **nav sólida ao rolar**, **botão voltar ao topo**
+- Brilho pulsante nos CTAs, sweep de luz nos botões, anel pulsante no play dos trailers
+- **Film grain** sutil, gradientes animados, reveal com stagger e modais com entrada animada
+- Tudo respeita `prefers-reduced-motion` (animações desativadas p/ acessibilidade)
+
 ### Estrutura
 ```
 index.html      → página (pt-BR)

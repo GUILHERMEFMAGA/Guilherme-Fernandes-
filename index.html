@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="catalog-responsive.css" />
     <link rel="stylesheet" href="visual-refresh.css" />
     <link rel="stylesheet" href="motion-showcase.css" />
+    <link rel="stylesheet" href="lower-redesign.css" />
   </head>
   <body>
     <div class="site-loader" id="siteLoader" role="status" aria-live="polite">
@@ -108,134 +109,79 @@
         </div>
       </section>
 
-      <section class="dashboard-section" id="painel" aria-labelledby="dashboard-title">
+      <section class="signal-section" id="painel" aria-labelledby="signal-title">
         <div class="shell">
-          <div class="dashboard-heading">
-            <div><p class="eyebrow"><span>✦</span> SEU ESPAÇO MAVVRI</p><h2 id="dashboard-title">Seu painel de economia</h2></div>
-            <p>Clareza para acompanhar o que importa — sem ruído, sem exagero.</p>
+          <div class="signal-intro">
+            <div><p class="eyebrow"><span>✦</span> RADAR MAVVRI</p><h2 id="signal-title">Menos ruído.<br /><em>Mais acerto.</em></h2></div>
+            <p>Um espaço para acompanhar aquilo que você realmente quer comprar — sem planilha, sem caça ao desconto.</p>
           </div>
-          <div class="dashboard-card">
-            <aside class="dashboard-nav" aria-label="Menu do painel">
-              <span class="panel-overline">PAINEL PESSOAL</span>
-              <button class="panel-link active" data-panel-tab="overview"><i>◈</i> Visão geral</button>
-              <button class="panel-link" data-panel-tab="alerts"><i>♧</i> Meus alertas <b>04</b></button>
-              <button class="panel-link" data-panel-tab="saved"><i>♡</i> Ofertas salvas</button>
-              <div class="panel-profile"><span class="avatar">GF</span><div><strong>Guilherme</strong><small>Membro desde 2026</small></div><span>⌄</span></div>
-            </aside>
-            <div class="dashboard-content">
-              <div class="panel-topline"><div><span class="live-indicator"></span><span>Atualizado há 4 min</span></div><button class="panel-period">Este mês <span>⌄</span></button></div>
-              <div class="panel-welcome"><div><p>Bom dia, Guilherme</p><h3>Você está acompanhando bem<br />suas melhores oportunidades.</h3></div><button class="panel-add" id="dashboardAlertButton"><span>+</span> Novo alerta</button></div>
-              <div class="stats-grid">
-                <article><span class="stat-label">ECONOMIA POTENCIAL</span><strong>R$ 1.248</strong><small class="positive">↗ 18% <i>vs. último mês</i></small><span class="stat-mark saving-mark">↘</span></article>
-                <article><span class="stat-label">ALERTAS ATIVOS</span><strong>04</strong><small>2 produtos próximos do alvo</small><span class="stat-mark alert-mark">♧</span></article>
-                <article><span class="stat-label">OFERTAS SALVAS</span><strong id="dashboardSavedCount">00</strong><small>Organize para decidir depois</small><span class="stat-mark saved-mark">♡</span></article>
-              </div>
-              <div class="panel-bottom-grid">
-                <article class="price-radar"><div class="radar-heading"><div><span class="stat-label">RADAR DE PREÇO</span><h4>Seu item mais próximo</h4></div><span class="radar-tag">-18% do alvo</span></div><div class="radar-body"><div class="radar-product"><span class="radar-thumb">⌁</span><div><strong>iPhone 15 · 128 GB</strong><small>Mercado Livre · R$ 3.999 hoje</small></div></div><svg viewBox="0 0 280 62" role="img" aria-label="Linha de preço descendente"><defs><linearGradient id="chartFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#c8ed68" stop-opacity=".55"/><stop offset="1" stop-color="#c8ed68" stop-opacity="0"/></linearGradient></defs><path d="M2 18 C24 24, 32 8, 53 18 S87 36, 107 25 S135 42, 156 30 S185 40, 208 29 S240 28, 278 8 V62 H2Z" fill="url(#chartFill)"/><path d="M2 18 C24 24, 32 8, 53 18 S87 36, 107 25 S135 42, 156 30 S185 40, 208 29 S240 28, 278 8" fill="none" stroke="#88ad2a" stroke-width="2" stroke-linecap="round"/><circle cx="278" cy="8" r="4" fill="#88ad2a" stroke="#fff" stroke-width="2"/></svg></div></article>
-                <article class="next-drop"><span class="stat-label">PRÓXIMA QUEDA ESTIMADA</span><strong>R$ 229</strong><p>Air Fryer Philips Walita<br /><span>Possível preço em até 7 dias</span></p><button data-search="air fryer">Ver oferta <span>→</span></button></article>
-              </div>
+          <div class="signal-board">
+            <article class="signal-feature">
+              <div class="signal-feature-top"><span class="signal-chip"><i></i> MONITORANDO AGORA</span><span class="signal-time">Atualizado há 4 min</span></div>
+              <div class="signal-product"><div class="signal-orb">⌁</div><div><small>SEU PRÓXIMO ACHADO</small><h3>Air Fryer Philips<br />Walita Essential XL</h3><p>O preço está <strong>18% abaixo</strong> da média recente.</p></div></div>
+              <div class="signal-chart"><div class="chart-line"><svg viewBox="0 0 620 115" preserveAspectRatio="none" aria-label="Histórico de preço em queda"><defs><linearGradient id="signalFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#b7f255" stop-opacity=".42"/><stop offset="1" stop-color="#b7f255" stop-opacity="0"/></linearGradient></defs><path d="M0 23 C45 42 82 8 122 28 S197 66 239 42 S305 72 354 59 S408 36 456 61 S522 78 620 18 V115H0Z" fill="url(#signalFill)"/><path d="M0 23 C45 42 82 8 122 28 S197 66 239 42 S305 72 354 59 S408 36 456 61 S522 78 620 18" fill="none" stroke="#c9fb65" stroke-width="3" stroke-linecap="round"/><circle cx="620" cy="18" r="6" fill="#c9fb65" stroke="#10172c" stroke-width="3"/></svg></div><div class="chart-info"><span>R$ 699,00</span><b>R$ 499,00</b></div></div>
+              <button class="signal-action" id="dashboardAlertButton">Criar alerta para outro produto <span>↗</span></button>
+            </article>
+            <div class="signal-aside">
+              <article class="signal-stat hot"><span>QUEDAS AGORA</span><strong>02</strong><p>produtos em valor interessante</p><i>↘</i></article>
+              <article class="signal-stat saved"><span>SUA LISTA</span><strong id="dashboardSavedCount">00</strong><p>itens esperando sua decisão</p><i>♡</i></article>
+              <article class="signal-quote"><span>“</span><p>Quando a compra faz sentido, o preço não precisa gritar.</p><small>IDEIA MAVVRI</small></article>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="categories-section" id="categorias">
+      <section class="collections-section" id="categorias">
         <div class="shell">
-          <div class="section-heading compact-heading">
-            <div><p class="eyebrow"><span>✦</span> EXPLORE POR CATEGORIA</p><h2>O que você quer encontrar?</h2></div>
-            <div class="carousel-controls"><button class="round-control" id="catPrev" aria-label="Categorias anteriores">←</button><button class="round-control active" id="catNext" aria-label="Próximas categorias">→</button></div>
-          </div>
-          <div class="categories-scroll" id="categoryList">
-            <button class="category-card active" data-category="Todos"><span class="category-icon tech">⌘</span><strong>Todas as ofertas</strong><small>2.480 itens</small></button>
-            <button class="category-card" data-category="Tecnologia"><span class="category-icon lilac">⌁</span><strong>Tecnologia</strong><small>832 itens</small></button>
-            <button class="category-card" data-category="Casa"><span class="category-icon orange">⌂</span><strong>Casa & cozinha</strong><small>390 itens</small></button>
-            <button class="category-card" data-category="Moda"><span class="category-icon pink">♧</span><strong>Moda & beleza</strong><small>516 itens</small></button>
-            <button class="category-card" data-category="Esporte"><span class="category-icon blue">◒</span><strong>Esportes</strong><small>205 itens</small></button>
-            <button class="category-card" data-category="Games"><span class="category-icon yellow">⌁</span><strong>Games</strong><small>167 itens</small></button>
-            <button class="category-card" data-category="Mercado"><span class="category-icon green">✳</span><strong>Mercado</strong><small>370 itens</small></button>
+          <div class="collections-heading"><div><p class="eyebrow"><span>✦</span> COMECE PELO QUE IMPORTA</p><h2>Qual é a sua<br /><em>próxima escolha?</em></h2></div><p>Uma seleção de caminhos para sair da busca infinita e chegar ao produto certo.</p></div>
+          <div class="collection-toolbar"><span>EXPLORE AS CATEGORIAS</span><div class="carousel-controls"><button class="round-control" id="catPrev" aria-label="Categorias anteriores">←</button><button class="round-control active" id="catNext" aria-label="Próximas categorias">→</button></div></div>
+          <div class="category-rail" id="categoryList">
+            <button class="category-card active" data-category="Todos"><span class="category-number">00</span><span class="category-icon tech">✦</span><strong>Tudo que está em movimento</strong><small>Ofertas selecionadas agora</small><i>↗</i></button>
+            <button class="category-card" data-category="Tecnologia"><span class="category-number">01</span><span class="category-icon lilac">⌁</span><strong>Tecnologia para o dia a dia</strong><small>Fones, celulares e mais</small><i>↗</i></button>
+            <button class="category-card" data-category="Casa"><span class="category-number">02</span><span class="category-icon orange">⌂</span><strong>Casa que funciona melhor</strong><small>Pequenos grandes upgrades</small><i>↗</i></button>
+            <button class="category-card" data-category="Moda"><span class="category-number">03</span><span class="category-icon pink">♧</span><strong>O que combina com você</strong><small>Estilo, beleza e autocuidado</small><i>↗</i></button>
+            <button class="category-card" data-category="Esporte"><span class="category-number">04</span><span class="category-icon blue">◒</span><strong>Movimento é investimento</strong><small>Para cuidar do seu ritmo</small><i>↗</i></button>
+            <button class="category-card" data-category="Games"><span class="category-number">05</span><span class="category-icon yellow">◌</span><strong>Seu tempo de jogar</strong><small>Consoles e experiências</small><i>↗</i></button>
           </div>
         </div>
       </section>
 
-      <section class="deals-section" id="ofertas">
+      <section class="catalog-section" id="ofertas">
         <div class="shell">
-          <div class="section-heading deals-heading">
-            <div><p class="eyebrow"><span>✦</span> CURADORIA DIÁRIA</p><h2>Ofertas para aproveitar agora</h2><p>Selecionadas por preço, histórico e reputação da loja.</p></div>
-            <button class="filter-mobile" id="mobileFilterButton"><svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg> Filtros <span id="mobileFilterCount">0</span></button>
-          </div>
-          <div class="deals-layout">
+          <div class="catalog-hero"><div><p class="eyebrow"><span>✦</span> SELEÇÃO EM TEMPO REAL</p><h2>Achados que<br /><em>merecem atenção.</em></h2></div><p>Não é uma vitrine infinita. É uma curadoria para você decidir com segurança.</p><button class="filter-mobile" id="mobileFilterButton"><svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg> Filtros <span id="mobileFilterCount">0</span></button></div>
+          <div class="catalog-layout">
             <aside class="filters" id="filtersPanel">
-              <div class="filter-header"><h3>Filtre as ofertas</h3><button id="clearFilters">Limpar</button></div>
-              <div class="filter-group">
-                <div class="filter-label"><span>Faixa de preço</span><strong id="rangeLabel">Até R$ 4.000</strong></div>
-                <input type="range" class="price-range" id="priceRange" min="100" max="5000" step="100" value="4000" aria-label="Preço máximo" />
-                <div class="range-values"><span>R$ 100</span><span>R$ 5.000+</span></div>
-              </div>
-              <div class="filter-group">
-                <div class="filter-title">Loja</div>
-                <label class="check-row"><input type="checkbox" value="Amazon" class="store-filter" /><span class="fake-check"></span><span>Amazon</span><small>6</small></label>
-                <label class="check-row"><input type="checkbox" value="Mercado Livre" class="store-filter" /><span class="fake-check"></span><span>Mercado Livre</span><small>6</small></label>
-                <p class="source-caption">Novas fontes entram somente após validação.</p>
-              </div>
-              <div class="filter-group last">
-                <div class="filter-title">Tipo de oferta</div>
-                <label class="check-row"><input type="checkbox" value="cupom" class="type-filter" /><span class="fake-check"></span><span>Tem cupom</span></label>
-                <label class="check-row"><input type="checkbox" value="frete" class="type-filter" /><span class="fake-check"></span><span>Frete grátis</span></label>
-                <label class="check-row"><input type="checkbox" value="historico" class="type-filter" /><span class="fake-check"></span><span>Menor preço histórico</span></label>
-              </div>
-              <div class="price-alert-mini">
-                <div class="alert-icon">♧</div><div><strong>Não achou ainda?</strong><p>Crie um alerta de preço.</p><button id="sideAlertButton">Criar alerta <span>→</span></button></div>
-              </div>
+              <div class="filter-header"><h3>Ajuste seu radar</h3><button id="clearFilters">Limpar tudo</button></div>
+              <div class="filter-group"><div class="filter-label"><span>Quanto pretende investir?</span><strong id="rangeLabel">Até R$ 4.000</strong></div><input type="range" class="price-range" id="priceRange" min="100" max="5000" step="100" value="4000" aria-label="Preço máximo" /><div class="range-values"><span>R$ 100</span><span>R$ 5.000+</span></div></div>
+              <div class="filter-group"><div class="filter-title">Onde comprar</div><label class="check-row"><input type="checkbox" value="Amazon" class="store-filter" /><span class="fake-check"></span><span>Amazon</span><small>6</small></label><label class="check-row"><input type="checkbox" value="Mercado Livre" class="store-filter" /><span class="fake-check"></span><span>Mercado Livre</span><small>6</small></label></div>
+              <div class="filter-group last"><div class="filter-title">O que faz diferença</div><label class="check-row"><input type="checkbox" value="cupom" class="type-filter" /><span class="fake-check"></span><span>Tem cupom</span></label><label class="check-row"><input type="checkbox" value="frete" class="type-filter" /><span class="fake-check"></span><span>Frete grátis</span></label><label class="check-row"><input type="checkbox" value="historico" class="type-filter" /><span class="fake-check"></span><span>Melhor preço histórico</span></label></div>
+              <div class="price-alert-mini"><div class="alert-icon">✦</div><div><strong>Quer esperar o momento?</strong><p>Seu alerta trabalha por você.</p><button id="sideAlertButton">Criar alerta <span>→</span></button></div></div>
             </aside>
-
             <div class="catalog-area">
-              <div class="source-toolbar">
-                <div class="marketplace-tabs" role="tablist" aria-label="Filtrar por loja">
-                  <button class="marketplace-tab active" data-marketplace="Todos" role="tab" aria-selected="true"><span class="all-source-icon">✦</span> Tudo</button>
-                  <button class="marketplace-tab" data-marketplace="Amazon" role="tab" aria-selected="false"><span class="amazon-dot">a</span> Amazon</button>
-                  <button class="marketplace-tab" data-marketplace="Mercado Livre" role="tab" aria-selected="false"><span class="meli-dot">≋</span> Mercado Livre</button>
-                </div>
-                <div class="catalog-trust"><span class="live-indicator"></span><span id="catalogStatus">Links para a loja de origem</span></div>
-              </div>
-              <div class="catalog-toolbar">
-                <p><strong id="dealCount">8 ofertas</strong> encontradas <span class="result-for" id="resultFor"></span></p>
-                <label class="sort-select">Ordenar: <select id="sortSelect"><option value="relevance">Mais relevantes</option><option value="lowest">Menor preço</option><option value="discount">Maior desconto</option><option value="latest">Adicionados agora</option></select><span>⌄</span></label>
-              </div>
-              <div class="products-grid" id="productsGrid"></div>
-              <button class="load-more" id="loadMore">Ver mais ofertas <span>↓</span></button>
-              <p class="catalog-note">Ao seguir uma oferta, você é direcionado para a página da loja parceira. Preço e disponibilidade são confirmados no destino.</p>
+              <div class="source-toolbar"><div class="marketplace-tabs" role="tablist" aria-label="Filtrar por loja"><button class="marketplace-tab active" data-marketplace="Todos" role="tab" aria-selected="true"><span class="all-source-icon">✦</span> Tudo</button><button class="marketplace-tab" data-marketplace="Amazon" role="tab" aria-selected="false"><span class="amazon-dot">a</span> Amazon</button><button class="marketplace-tab" data-marketplace="Mercado Livre" role="tab" aria-selected="false"><span class="meli-dot">≋</span> Mercado Livre</button></div><div class="catalog-trust"><span class="live-indicator"></span><span id="catalogStatus">Links para a loja de origem</span></div></div>
+              <div class="catalog-toolbar"><p><strong id="dealCount">8 ofertas</strong> escolhidas para você <span class="result-for" id="resultFor"></span></p><label class="sort-select">Ordenar: <select id="sortSelect"><option value="relevance">Mais relevantes</option><option value="lowest">Menor preço</option><option value="discount">Maior desconto</option><option value="latest">Adicionados agora</option></select><span>⌄</span></label></div>
+              <div class="products-grid" id="productsGrid"></div><button class="load-more" id="loadMore">Quero ver mais achados <span>↓</span></button><p class="catalog-note">Você finaliza sua compra na loja parceira. Estoque e condições são confirmados no destino.</p>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="how-section" id="como-funciona">
-        <div class="shell how-grid">
-          <div class="how-copy"><p class="eyebrow light"><span>✦</span> MAIS TEMPO PARA VOCÊ</p><h2>Comprar bem não<br />precisa dar trabalho.</h2><p>Nosso radar acompanha milhares de produtos, identifica quedas reais de preço e mostra onde cada oferta está mais vantajosa.</p><a href="#ofertas" class="text-link">Conheça nossas ofertas <span>→</span></a></div>
-          <div class="steps">
-            <article><span>01</span><div><h3>A gente rastreia</h3><p>Monitoramos preços e disponibilidade nas lojas que você já conhece.</p></div><i>⌁</i></article>
-            <article><span>02</span><div><h3>Você compara</h3><p>Veja histórico, condições e alternativas antes de decidir.</p></div><i>◒</i></article>
-            <article><span>03</span><div><h3>Você economiza</h3><p>Escolha a melhor oportunidade e compre direto na loja parceira.</p></div><i>✦</i></article>
-          </div>
-        </div>
+      <section class="story-section" id="como-funciona">
+        <div class="shell story-grid"><div class="story-title"><p class="eyebrow light"><span>✦</span> DO DESEJO À ESCOLHA</p><h2>Não é sobre<br />comprar mais.<br /><em>É sobre comprar<br />melhor.</em></h2></div><div class="story-steps"><article><span>01</span><div><h3>Você pensa no que quer</h3><p>Sem precisar decidir tudo agora. Salve, acompanhe ou configure um alerta.</p></div></article><article><span>02</span><div><h3>A Mavvri organiza o caminho</h3><p>Preço, loja e condição ficam claros para você não entrar em cilada.</p></div></article><article><span>03</span><div><h3>Você escolhe no momento certo</h3><p>E fecha a compra diretamente com quem vende. Simples e seguro.</p></div></article><a href="#ofertas" class="story-link">Começar a explorar <span>→</span></a></div></div>
       </section>
 
-      <section class="newsletter" id="tendencias">
-        <div class="shell newsletter-card">
-          <div class="newsletter-spark">✦</div>
-          <div><p class="eyebrow"><span>✦</span> ALERTAS INTELIGENTES</p><h2>O preço ideal chega até você.</h2><p>Conte o que você quer. Quando aparecer uma boa oferta, a gente avisa.</p></div>
-          <form id="alertForm" class="newsletter-form"><input type="email" required placeholder="Seu melhor e-mail" aria-label="Seu melhor e-mail" /><button type="submit">Quero receber <span>→</span></button></form>
-        </div>
-      </section>
+      <section class="join-section" id="tendencias"><div class="shell join-card"><div class="join-glow"></div><div class="join-copy"><p class="eyebrow"><span>✦</span> O RADAR É SEU</p><h2>Quando o preço cair,<br />você fica sabendo.</h2><p>Receba alertas pontuais. Nada de caixa de entrada cheia.</p></div><form id="alertForm" class="join-form"><label>SEU E-MAIL<input type="email" required placeholder="nome@exemplo.com" aria-label="Seu melhor e-mail" /></label><button type="submit">Quero entrar no radar <span>↗</span></button><small>Sem spam. Você define o que vale receber.</small></form></div></section>
     </main>
 
-    <footer>
-      <div class="shell footer-top">
-        <a class="brand footer-brand" href="#topo"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>mav<span>vri</span></span></a>
-        <p>Boas escolhas começam com<br />uma boa comparação.</p>
-        <div class="footer-links"><div><strong>Explorar</strong><a href="#ofertas">Ofertas do dia</a><a href="#categorias">Categorias</a><a href="#tendencias">Alertas de preço</a></div><div><strong>Sobre</strong><a href="#como-funciona">Como funciona</a><a href="#">Lojas parceiras</a><a href="#">Ajuda</a></div></div>
+
+    <footer class="site-footer">
+      <div class="shell footer-main">
+        <div class="footer-branding"><a class="brand footer-brand" href="#topo"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>mav<span>vri</span></span></a><p>Seu radar para escolhas mais inteligentes.</p><span class="footer-status"><i></i> Feito para quem compra com calma</span></div>
+        <div class="footer-column"><strong>DESCUBRA</strong><a href="#ofertas">Achados do momento</a><a href="#categorias">Categorias</a><a href="#painel">Meu radar</a></div>
+        <div class="footer-column"><strong>ENTENDA</strong><a href="#como-funciona">Como funciona</a><a href="#tendencias">Alertas de preço</a><a href="#">Lojas parceiras</a></div>
+        <div class="footer-seal"><span>COMPRA<br />COM<br />CONTEXTO</span><i>✦</i></div>
       </div>
-      <div class="shell footer-bottom"><span>© 2026 Mavvri. Feito para escolhas mais inteligentes.</span><div><a href="#">Privacidade</a><a href="#">Termos de uso</a><a href="#">Cookies</a></div></div>
+      <div class="shell footer-legal"><span>© 2026 Mavvri. Todo clique é uma escolha.</span><div><a href="#">Privacidade</a><a href="#">Termos</a><a href="#">Cookies</a></div></div>
     </footer>
 
     <div class="toast" id="toast" role="status" aria-live="polite"><span class="toast-icon">✓</span><span id="toastText">Tudo certo!</span></div>

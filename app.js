@@ -608,7 +608,7 @@ document.querySelector("#catPrev").addEventListener("click", () => document.quer
 document.querySelector("#catNext").addEventListener("click", () => document.querySelector("#categoryList").scrollBy({ left: 260, behavior: "smooth" }));
 
 function setupViewportMotion() {
-  const sections = document.querySelectorAll(".dashboard-section, .categories-section, .deals-section, .how-section, .newsletter");
+  const sections = document.querySelectorAll(".signal-section, .collections-section, .catalog-section, .story-section, .join-section");
   if (!("IntersectionObserver" in window)) {
     sections.forEach((section) => section.classList.add("is-visible"));
     return;

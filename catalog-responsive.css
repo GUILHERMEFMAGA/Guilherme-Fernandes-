@@ -1,0 +1,10 @@
+/* Marketplace controls and conversion CTAs. */
+@media (max-width: 720px) {
+  .source-toolbar { min-height: 38px; margin: -2px 0 7px; gap: 9px; }
+  .marketplace-tabs { gap: 2px; padding: 3px; }
+  .marketplace-tab { height: 25px; padding: 0 6px; font-size: 8px; }
+  .catalog-trust { max-width: 88px; align-items: start; line-height: 1.35; font-size: 8px; }
+  .catalog-toolbar { margin-bottom: 10px; }
+  .direct-offer { height: 27px; margin-top: 9px; padding: 0 7px; font-size: 8px; }
+  .catalog-note { margin-top: 12px; font-size: 8px; }
+}

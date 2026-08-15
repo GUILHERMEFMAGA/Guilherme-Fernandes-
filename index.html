@@ -11,8 +11,17 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="dashboard-responsive.css" />
+    <link rel="stylesheet" href="catalog-responsive.css" />
   </head>
   <body>
+    <div class="site-loader" id="siteLoader" role="status" aria-live="polite">
+      <div class="loader-content">
+        <a class="brand loader-brand" href="#topo" aria-label="Mavvri"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>mav<span>vri</span></span></a>
+        <div class="loader-orbit"><span></span></div>
+        <p>Preparando achados que fazem sentido.</p>
+        <div class="loader-progress"><i></i></div>
+      </div>
+    </div>
     <div class="promo-strip">
       <div class="shell promo-inner">
         <p><span class="pulse-dot"></span>Ofertas verificadas e atualizadas todos os dias</p>
@@ -50,7 +59,7 @@
           <div class="hero-copy">
             <p class="eyebrow"><span>✦</span> UMA COMPRA MELHOR COMEÇA AQUI</p>
             <h1>Ofertas que <em>valem</em><br />cada clique.</h1>
-            <p class="hero-description">A gente rastreia preços, compara lojas e separa só o que realmente está em oferta para você comprar com mais certeza.</p>
+            <p class="hero-description">Encontre boas oportunidades, compare com calma e finalize sua compra direto na Amazon ou no Mercado Livre — sem desvio e sem ruído.</p>
             <form class="hero-search" id="heroSearch">
               <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.2 4.2"/></svg>
               <input id="searchInput" type="search" placeholder="O que você está procurando hoje?" autocomplete="off" />
@@ -90,7 +99,7 @@
           </div>
         </div>
         <div class="shell retailers-bar" aria-label="Lojas monitoradas">
-          <span>Monitoramos preços em</span><b>Amazon</b><b>mercado livre</b><b>Magalu</b><b>KaBuM!</b><b>Casas Bahia</b><b>+ 37 lojas</b>
+          <span>Você compra direto em</span><b>Amazon</b><b>mercado livre</b><b>links verificados</b><b>preços atualizados</b><b>pagamento na loja</b><b>+ novas fontes em breve</b>
         </div>
       </section>
 
@@ -159,11 +168,9 @@
               </div>
               <div class="filter-group">
                 <div class="filter-title">Loja</div>
-                <label class="check-row"><input type="checkbox" value="Amazon" class="store-filter" /><span class="fake-check"></span><span>Amazon</span><small>488</small></label>
-                <label class="check-row"><input type="checkbox" value="Mercado Livre" class="store-filter" /><span class="fake-check"></span><span>Mercado Livre</span><small>425</small></label>
-                <label class="check-row"><input type="checkbox" value="Magalu" class="store-filter" /><span class="fake-check"></span><span>Magalu</span><small>284</small></label>
-                <label class="check-row"><input type="checkbox" value="KaBuM!" class="store-filter" /><span class="fake-check"></span><span>KaBuM!</span><small>172</small></label>
-                <button class="show-more">Ver mais lojas <span>⌄</span></button>
+                <label class="check-row"><input type="checkbox" value="Amazon" class="store-filter" /><span class="fake-check"></span><span>Amazon</span><small>6</small></label>
+                <label class="check-row"><input type="checkbox" value="Mercado Livre" class="store-filter" /><span class="fake-check"></span><span>Mercado Livre</span><small>6</small></label>
+                <p class="source-caption">Novas fontes entram somente após validação.</p>
               </div>
               <div class="filter-group last">
                 <div class="filter-title">Tipo de oferta</div>
@@ -177,12 +184,21 @@
             </aside>
 
             <div class="catalog-area">
+              <div class="source-toolbar">
+                <div class="marketplace-tabs" role="tablist" aria-label="Filtrar por loja">
+                  <button class="marketplace-tab active" data-marketplace="Todos" role="tab" aria-selected="true"><span class="all-source-icon">✦</span> Tudo</button>
+                  <button class="marketplace-tab" data-marketplace="Amazon" role="tab" aria-selected="false"><span class="amazon-dot">a</span> Amazon</button>
+                  <button class="marketplace-tab" data-marketplace="Mercado Livre" role="tab" aria-selected="false"><span class="meli-dot">≋</span> Mercado Livre</button>
+                </div>
+                <div class="catalog-trust"><span class="live-indicator"></span><span id="catalogStatus">Links para a loja de origem</span></div>
+              </div>
               <div class="catalog-toolbar">
                 <p><strong id="dealCount">8 ofertas</strong> encontradas <span class="result-for" id="resultFor"></span></p>
                 <label class="sort-select">Ordenar: <select id="sortSelect"><option value="relevance">Mais relevantes</option><option value="lowest">Menor preço</option><option value="discount">Maior desconto</option><option value="latest">Adicionados agora</option></select><span>⌄</span></label>
               </div>
               <div class="products-grid" id="productsGrid"></div>
               <button class="load-more" id="loadMore">Ver mais ofertas <span>↓</span></button>
+              <p class="catalog-note">Ao seguir uma oferta, você é direcionado para a página da loja parceira. Preço e disponibilidade são confirmados no destino.</p>
             </div>
           </div>
         </div>

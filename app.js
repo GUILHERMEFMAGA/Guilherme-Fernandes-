@@ -181,18 +181,46 @@ const products = [
   },
 ];
 
+const marketplaceOverrides = {
+  3: "Mercado Livre", 5: "Amazon", 7: "Mercado Livre", 8: "Mercado Livre",
+  9: "Amazon", 10: "Amazon", 11: "Mercado Livre", 12: "Mercado Livre",
+};
+
+const productLinks = {
+  1: "https://www.amazon.com.br/Sony-Fones-ouvido-cancelamento-WH-1000XM5/dp/B0DGL6R3SX",
+  2: "https://lista.mercadolivre.com.br/apple-iphone-15-128gb",
+  3: "https://lista.mercadolivre.com.br/air-fryer-philips-walita-essential-xl",
+  4: "https://www.amazon.com.br/s?k=new+balance+530",
+  5: "https://www.amazon.com.br/Console-Nintendo-Switch-OLED-Branco/dp/B098RKWHHZ",
+  6: "https://www.amazon.com.br/s?k=galaxy+watch6+40mm",
+  7: "https://lista.mercadolivre.com.br/monitor-lg-ultragear-24-144hz",
+  8: "https://lista.mercadolivre.com.br/nespresso-essenza-mini-aeroccino",
+  9: "https://www.amazon.com.br/s?k=mochila+adidas+classic",
+  10: "https://www.amazon.com.br/s?k=cadeira+gamer+thunderx3+yama1",
+  11: "https://lista.mercadolivre.com.br/kit-skincare-creamy",
+  12: "https://lista.mercadolivre.com.br/azeite-gallo-500ml-kit-3",
+};
+
+products.forEach((product) => {
+  product.store = marketplaceOverrides[product.id] || product.store;
+  product.url = productLinks[product.id];
+});
+
 const state = {
   category: "Todos",
   query: "",
   maxPrice: 4000,
   stores: [],
   types: [],
+  marketplace: "Todos",
+  remoteProducts: [],
   sort: "relevance",
   visible: 6,
   saved: new Set(),
   savedOnly: false,
 };
 
+const siteLoader = document.querySelector("#siteLoader");
 const grid = document.querySelector("#productsGrid");
 const dealCount = document.querySelector("#dealCount");
 const resultFor = document.querySelector("#resultFor");
@@ -204,6 +232,8 @@ const toastText = document.querySelector("#toastText");
 const savedCount = document.querySelector(".saved-count");
 const mobileFilterCount = document.querySelector("#mobileFilterCount");
 const dashboardSavedCount = document.querySelector("#dashboardSavedCount");
+const catalogStatus = document.querySelector("#catalogStatus");
+const marketplaceCache = new Map();
 let toastTimer;
 
 function currency(value) {
@@ -212,15 +242,17 @@ function currency(value) {
 
 function getFilteredProducts() {
   const normalizedQuery = state.query.trim().toLocaleLowerCase("pt-BR");
-  const filtered = products.filter((product) => {
+  const catalog = [...state.remoteProducts, ...products];
+  const filtered = catalog.filter((product) => {
     const matchesCategory = state.category === "Todos" || product.category === state.category;
     const searchable = `${product.name} ${product.category} ${product.store}`.toLocaleLowerCase("pt-BR");
     const matchesSearch = !normalizedQuery || searchable.includes(normalizedQuery) || matchesSynonym(normalizedQuery, product);
     const matchesPrice = product.price <= state.maxPrice;
     const matchesStore = !state.stores.length || state.stores.includes(product.store);
+    const matchesMarketplace = state.marketplace === "Todos" || product.store === state.marketplace;
     const matchesType = !state.types.length || state.types.every((type) => product.tags.includes(type));
-    const matchesSaved = !state.savedOnly || state.saved.has(product.id);
-    return matchesCategory && matchesSearch && matchesPrice && matchesStore && matchesType && matchesSaved;
+    const matchesSaved = !state.savedOnly || state.saved.has(String(product.id));
+    return matchesCategory && matchesSearch && matchesPrice && matchesStore && matchesMarketplace && matchesType && matchesSaved;
   });
 
   return filtered.sort((a, b) => {
@@ -244,21 +276,32 @@ function matchesSynonym(query, product) {
   return (aliases[query] || []).some((term) => product.name.toLocaleLowerCase("pt-BR").includes(term));
 }
 
+function escapeHtml(value) {
+  return String(value).replace(/[&<>'\"]/g, (character) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", "\"": "&quot;",
+  }[character]));
+}
+
 function cardTemplate(product, index) {
-  const saved = state.saved.has(product.id);
+  const saved = state.saved.has(String(product.id));
   const storeClass = product.store.toLocaleLowerCase("pt-BR").replace(" ", "-").replace("!", "");
+  const safeName = escapeHtml(product.name);
+  const safeUrl = escapeHtml(product.url || "#");
+  const safeStore = escapeHtml(product.store);
+  const updateLabel = product.live ? "Oferta ao vivo" : "Link verificado";
   return `
-    <article class="product-card" style="animation-delay:${index * 35}ms">
+    <article class="product-card" data-product-url="${safeUrl}" role="link" tabindex="0" aria-label="Abrir ${safeName} na ${safeStore}" style="animation-delay:${index * 35}ms">
       <div class="product-image">
-        <span class="product-badge ${product.badgeClass}">${product.badge}</span>
-        <button class="save-product ${saved ? "is-saved" : ""}" data-save="${product.id}" aria-label="${saved ? "Remover" : "Salvar"} ${product.name}" aria-pressed="${saved}">${saved ? "♥" : "♡"}</button>
-        <img src="${product.image}" alt="${product.name}" loading="lazy" onerror="this.style.opacity='0'" />
+        <span class="product-badge ${product.badgeClass}">${escapeHtml(product.badge)}</span>
+        <button class="save-product ${saved ? "is-saved" : ""}" data-save="${escapeHtml(product.id)}" aria-label="${saved ? "Remover" : "Salvar"} ${safeName}" aria-pressed="${saved}">${saved ? "♥" : "♡"}</button>
+        <img src="${escapeHtml(product.image)}" alt="${safeName}" loading="lazy" onerror="this.style.opacity='0'" />
       </div>
       <div class="product-content">
-        <div class="product-source"><span class="source-logo ${storeClass}">${product.store}</span><span>Atualizado agora</span></div>
-        <h3 class="product-title">${product.name}</h3>
-        <div class="product-price-line"><strong class="product-price">${currency(product.price)}</strong><span class="product-old-price">${currency(product.oldPrice)}</span><span class="discount">-${product.discount}%</span></div>
-        <div class="product-meta"><span>${product.delivery}</span><i class="sep"></i><span>${product.tags.includes("cupom") ? "Cupom disponível" : "Em até 10x"}</span>${product.tags.includes("historico") ? '<span class="history">mínima histórica</span>' : ""}</div>
+        <div class="product-source"><span class="source-logo ${storeClass}">${safeStore}</span><span>${updateLabel}</span></div>
+        <h3 class="product-title">${safeName}</h3>
+        <div class="product-price-line"><strong class="product-price">${currency(product.price)}</strong>${product.oldPrice > product.price ? `<span class="product-old-price">${currency(product.oldPrice)}</span>` : ""}${product.discount ? `<span class="discount">-${product.discount}%</span>` : ""}</div>
+        <div class="product-meta"><span>${escapeHtml(product.delivery)}</span><i class="sep"></i><span>${product.tags.includes("cupom") ? "Cupom disponível" : "Em até 10x"}</span>${product.tags.includes("historico") ? '<span class="history">mínima histórica</span>' : ""}</div>
+        <a class="direct-offer" href="${safeUrl}" target="_blank" rel="noopener sponsored" aria-label="Abrir ${safeName} na ${safeStore}">Abrir na ${safeStore} <span>↗</span></a>
       </div>
     </article>`;
 }
@@ -310,12 +353,66 @@ function showToast(message) {
   toastTimer = setTimeout(() => toast.classList.remove("show"), 3200);
 }
 
+let activeSearchRequest = 0;
+
+async function loadMercadoLivreResults(query) {
+  if (query.length < 3 || state.marketplace === "Amazon") return;
+  const normalizedQuery = query.toLocaleLowerCase("pt-BR");
+  const requestId = ++activeSearchRequest;
+  catalogStatus.textContent = "Consultando ofertas do Mercado Livre…";
+
+  try {
+    let liveProducts = marketplaceCache.get(normalizedQuery);
+    if (!liveProducts) {
+      const response = await fetch(`https://api.mercadolibre.com/sites/MLB/search?q=${encodeURIComponent(query)}&limit=18`);
+      if (!response.ok) throw new Error(`Mercado Livre respondeu ${response.status}`);
+      const payload = await response.json();
+      liveProducts = (payload.results || []).map((item, index) => {
+        const price = Number(item.price) || 0;
+        const oldPrice = Number(item.original_price) || price;
+        const discount = oldPrice > price ? Math.round((1 - price / oldPrice) * 100) : 0;
+        return {
+          id: `meli-${item.id}`,
+          name: item.title,
+          category: "Busca ao vivo",
+          store: "Mercado Livre",
+          price,
+          oldPrice,
+          discount,
+          badge: item.shipping?.free_shipping ? "FRETE GRÁTIS" : "AO VIVO",
+          badgeClass: item.shipping?.free_shipping ? "price-low" : "coupon",
+          image: String(item.thumbnail || "").replace(/^http:/, "https:"),
+          delivery: item.shipping?.free_shipping ? "Frete grátis" : "Consulte o envio",
+          tags: item.shipping?.free_shipping ? ["frete"] : [],
+          timing: -index,
+          url: item.permalink,
+          live: true,
+        };
+      });
+      marketplaceCache.set(normalizedQuery, liveProducts);
+    }
+
+    if (requestId !== activeSearchRequest || state.query.toLocaleLowerCase("pt-BR") !== normalizedQuery) return;
+    state.remoteProducts = liveProducts;
+    state.visible = 6;
+    catalogStatus.textContent = `${liveProducts.length} resultados ao vivo do Mercado Livre`;
+    renderProducts();
+  } catch (error) {
+    if (requestId !== activeSearchRequest) return;
+    state.remoteProducts = [];
+    catalogStatus.textContent = "Links para a loja de origem";
+    renderProducts();
+  }
+}
+
 function runSearch(query) {
   state.query = query.trim();
+  state.remoteProducts = [];
   state.visible = 6;
   document.querySelector("#searchInput").value = state.query;
   document.querySelector("#ofertas").scrollIntoView({ behavior: "smooth", block: "start" });
   renderProducts();
+  void loadMercadoLivreResults(state.query);
 }
 
 document.querySelector("#heroSearch").addEventListener("submit", (event) => {
@@ -363,6 +460,21 @@ document.querySelectorAll(".type-filter").forEach((input) => {
   });
 });
 
+document.querySelectorAll(".marketplace-tab").forEach((button) => {
+  button.addEventListener("click", () => {
+    state.marketplace = button.dataset.marketplace;
+    state.visible = 6;
+    document.querySelectorAll(".marketplace-tab").forEach((item) => {
+      const active = item === button;
+      item.classList.toggle("active", active);
+      item.setAttribute("aria-selected", active);
+    });
+    catalogStatus.textContent = state.marketplace === "Todos" ? "Links para a loja de origem" : `Exibindo ofertas da ${state.marketplace}`;
+    renderProducts();
+    if (state.query && state.marketplace === "Mercado Livre") void loadMercadoLivreResults(state.query);
+  });
+});
+
 document.querySelector("#sortSelect").addEventListener("change", (event) => {
   state.sort = event.target.value;
   renderProducts();
@@ -381,18 +493,37 @@ document.querySelector("#clearFilters").addEventListener("click", () => {
   showToast("Filtros removidos.");
 });
 
+function openProductDestination(card) {
+  const url = card?.dataset.productUrl;
+  if (!url || url === "#") return;
+  window.open(url, "_blank", "noopener");
+}
+
 grid.addEventListener("click", (event) => {
   const saveButton = event.target.closest("[data-save]");
-  if (!saveButton) return;
-  const id = Number(saveButton.dataset.save);
-  if (state.saved.has(id)) {
-    state.saved.delete(id);
-    showToast("Oferta removida dos seus salvos.");
-  } else {
-    state.saved.add(id);
-    showToast("Oferta salva para você acompanhar.");
+  if (saveButton) {
+    const id = saveButton.dataset.save;
+    if (state.saved.has(id)) {
+      state.saved.delete(id);
+      showToast("Oferta removida dos seus salvos.");
+    } else {
+      state.saved.add(id);
+      showToast("Oferta salva para você acompanhar.");
+    }
+    renderProducts();
+    return;
   }
-  renderProducts();
+  if (event.target.closest("a")) return;
+  openProductDestination(event.target.closest(".product-card"));
+});
+
+grid.addEventListener("keydown", (event) => {
+  if (event.key === "Enter" || event.key === " ") {
+    const card = event.target.closest(".product-card");
+    if (!card) return;
+    event.preventDefault();
+    openProductDestination(card);
+  }
 });
 
 document.querySelector("#savedButton").addEventListener("click", () => {
@@ -479,3 +610,9 @@ document.querySelector("#catNext").addEventListener("click", () => document.quer
 updateRangeStyle();
 updateMobileFilterCount();
 renderProducts();
+
+window.addEventListener("load", () => {
+  window.setTimeout(() => siteLoader.classList.add("is-hidden"), 720);
+});
+
+window.setTimeout(() => siteLoader.classList.add("is-hidden"), 2600);

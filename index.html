@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b1b16" />
+    <meta name="description" content="Oferta Certa encontra, compara e organiza as melhores promoções da internet." />
+    <title>Oferta Certa — encontre ofertas que valem a pena</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="promo-strip">
+      <div class="shell promo-inner">
+        <p><span class="pulse-dot"></span>Ofertas verificadas e atualizadas todos os dias</p>
+        <a href="#como-funciona">Como selecionamos as ofertas <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+
+    <header class="site-header" id="topo">
+      <div class="shell nav-row">
+        <a class="brand" href="#topo" aria-label="Oferta Certa, início">
+          <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span>oferta<span>certa</span></span>
+        </a>
+        <nav class="desktop-nav" aria-label="Navegação principal">
+          <a href="#ofertas">Ofertas</a>
+          <a href="#categorias">Categorias</a>
+          <a href="#tendencias">Tendências</a>
+          <a href="#como-funciona">Como funciona</a>
+        </nav>
+        <div class="nav-actions">
+          <button class="icon-button saved-button" id="savedButton" aria-label="Ver ofertas salvas">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.9-8.6a5.5 5.5 0 0 0-.1-7.8Z"/></svg>
+            <span class="saved-count">0</span>
+          </button>
+          <button class="profile-button"><span class="avatar">GF</span><span class="profile-name">Minha conta</span><span class="chevron">⌄</span></button>
+          <button class="menu-button" id="menuButton" aria-label="Abrir menu"><span></span><span></span></button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="shell hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow"><span>✦</span> UMA COMPRA MELHOR COMEÇA AQUI</p>
+            <h1>Ofertas que <em>valem</em><br />cada clique.</h1>
+            <p class="hero-description">A gente rastreia preços, compara lojas e separa só o que realmente está em oferta para você comprar com mais certeza.</p>
+            <form class="hero-search" id="heroSearch">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.2 4.2"/></svg>
+              <input id="searchInput" type="search" placeholder="O que você está procurando hoje?" autocomplete="off" />
+              <button type="submit">Buscar <span>→</span></button>
+            </form>
+            <div class="search-hints" aria-label="Buscas populares">
+              <span>Em alta:</span>
+              <button data-search="celular">celulares</button>
+              <button data-search="air fryer">air fryer</button>
+              <button data-search="tênis">tênis</button>
+              <button data-search="notebook">notebooks</button>
+            </div>
+            <div class="hero-proof">
+              <div class="proof-avatars" aria-hidden="true"><span>JM</span><span>LN</span><span>AB</span><span>+</span></div>
+              <p><strong>12.480 pessoas</strong> encontraram uma boa oferta hoje</p>
+            </div>
+          </div>
+
+          <div class="hero-visual" aria-label="Resumo de oferta em destaque">
+            <div class="visual-dots dots-top"></div>
+            <div class="offer-window">
+              <div class="window-top"><span class="window-store"><i></i> oferta certa</span><span class="window-time">agora</span></div>
+              <div class="deal-visual-content">
+                <div class="visual-tag">OFERTA RELÂMPAGO <span>⚡</span></div>
+                <div class="headphone-visual">
+                  <div class="headphone-arch"></div><div class="ear ear-left"></div><div class="ear ear-right"></div><div class="headphone-shine"></div>
+                </div>
+                <p class="visual-category">ÁUDIO · MAIS DESEJADO</p>
+                <h2>Fone Sony WH-1000XM5</h2>
+                <div class="visual-prices"><strong>R$ 1.899</strong><span>R$ 2.699</span><b>-29%</b></div>
+              </div>
+              <div class="window-bottom"><span class="store-chip black"><i></i> Amazon</span><span>Menor preço em 90 dias</span></div>
+            </div>
+            <div class="floating-price"><span class="mini-chart"><i></i><i></i><i></i><i></i><i></i></span><div><small>O preço caiu</small><strong>R$ 800,00</strong></div></div>
+            <div class="floating-heart">♡</div>
+            <div class="visual-dots dots-bottom"></div>
+          </div>
+        </div>
+        <div class="shell retailers-bar" aria-label="Lojas monitoradas">
+          <span>Monitoramos preços em</span><b>Amazon</b><b>mercado livre</b><b>Magalu</b><b>KaBuM!</b><b>Casas Bahia</b><b>+ 37 lojas</b>
+        </div>
+      </section>
+
+      <section class="categories-section" id="categorias">
+        <div class="shell">
+          <div class="section-heading compact-heading">
+            <div><p class="eyebrow"><span>✦</span> EXPLORE POR CATEGORIA</p><h2>O que você quer encontrar?</h2></div>
+            <div class="carousel-controls"><button class="round-control" id="catPrev" aria-label="Categorias anteriores">←</button><button class="round-control active" id="catNext" aria-label="Próximas categorias">→</button></div>
+          </div>
+          <div class="categories-scroll" id="categoryList">
+            <button class="category-card active" data-category="Todos"><span class="category-icon tech">⌘</span><strong>Todas as ofertas</strong><small>2.480 itens</small></button>
+            <button class="category-card" data-category="Tecnologia"><span class="category-icon lilac">⌁</span><strong>Tecnologia</strong><small>832 itens</small></button>
+            <button class="category-card" data-category="Casa"><span class="category-icon orange">⌂</span><strong>Casa & cozinha</strong><small>390 itens</small></button>
+            <button class="category-card" data-category="Moda"><span class="category-icon pink">♧</span><strong>Moda & beleza</strong><small>516 itens</small></button>
+            <button class="category-card" data-category="Esporte"><span class="category-icon blue">◒</span><strong>Esportes</strong><small>205 itens</small></button>
+            <button class="category-card" data-category="Games"><span class="category-icon yellow">⌁</span><strong>Games</strong><small>167 itens</small></button>
+            <button class="category-card" data-category="Mercado"><span class="category-icon green">✳</span><strong>Mercado</strong><small>370 itens</small></button>
+          </div>
+        </div>
+      </section>
+
+      <section class="deals-section" id="ofertas">
+        <div class="shell">
+          <div class="section-heading deals-heading">
+            <div><p class="eyebrow"><span>✦</span> CURADORIA DIÁRIA</p><h2>Ofertas para aproveitar agora</h2><p>Selecionadas por preço, histórico e reputação da loja.</p></div>
+            <button class="filter-mobile" id="mobileFilterButton"><svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg> Filtros <span id="mobileFilterCount">0</span></button>
+          </div>
+          <div class="deals-layout">
+            <aside class="filters" id="filtersPanel">
+              <div class="filter-header"><h3>Filtre as ofertas</h3><button id="clearFilters">Limpar</button></div>
+              <div class="filter-group">
+                <div class="filter-label"><span>Faixa de preço</span><strong id="rangeLabel">Até R$ 4.000</strong></div>
+                <input type="range" class="price-range" id="priceRange" min="100" max="5000" step="100" value="4000" aria-label="Preço máximo" />
+                <div class="range-values"><span>R$ 100</span><span>R$ 5.000+</span></div>
+              </div>
+              <div class="filter-group">
+                <div class="filter-title">Loja</div>
+                <label class="check-row"><input type="checkbox" value="Amazon" class="store-filter" /><span class="fake-check"></span><span>Amazon</span><small>488</small></label>
+                <label class="check-row"><input type="checkbox" value="Mercado Livre" class="store-filter" /><span class="fake-check"></span><span>Mercado Livre</span><small>425</small></label>
+                <label class="check-row"><input type="checkbox" value="Magalu" class="store-filter" /><span class="fake-check"></span><span>Magalu</span><small>284</small></label>
+                <label class="check-row"><input type="checkbox" value="KaBuM!" class="store-filter" /><span class="fake-check"></span><span>KaBuM!</span><small>172</small></label>
+                <button class="show-more">Ver mais lojas <span>⌄</span></button>
+              </div>
+              <div class="filter-group last">
+                <div class="filter-title">Tipo de oferta</div>
+                <label class="check-row"><input type="checkbox" value="cupom" class="type-filter" /><span class="fake-check"></span><span>Tem cupom</span></label>
+                <label class="check-row"><input type="checkbox" value="frete" class="type-filter" /><span class="fake-check"></span><span>Frete grátis</span></label>
+                <label class="check-row"><input type="checkbox" value="historico" class="type-filter" /><span class="fake-check"></span><span>Menor preço histórico</span></label>
+              </div>
+              <div class="price-alert-mini">
+                <div class="alert-icon">♧</div><div><strong>Não achou ainda?</strong><p>Crie um alerta de preço.</p><button id="sideAlertButton">Criar alerta <span>→</span></button></div>
+              </div>
+            </aside>
+
+            <div class="catalog-area">
+              <div class="catalog-toolbar">
+                <p><strong id="dealCount">8 ofertas</strong> encontradas <span class="result-for" id="resultFor"></span></p>
+                <label class="sort-select">Ordenar: <select id="sortSelect"><option value="relevance">Mais relevantes</option><option value="lowest">Menor preço</option><option value="discount">Maior desconto</option><option value="latest">Adicionados agora</option></select><span>⌄</span></label>
+              </div>
+              <div class="products-grid" id="productsGrid"></div>
+              <button class="load-more" id="loadMore">Ver mais ofertas <span>↓</span></button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="how-section" id="como-funciona">
+        <div class="shell how-grid">
+          <div class="how-copy"><p class="eyebrow light"><span>✦</span> MAIS TEMPO PARA VOCÊ</p><h2>Comprar bem não<br />precisa dar trabalho.</h2><p>Nosso radar acompanha milhares de produtos, identifica quedas reais de preço e mostra onde cada oferta está mais vantajosa.</p><a href="#ofertas" class="text-link">Conheça nossas ofertas <span>→</span></a></div>
+          <div class="steps">
+            <article><span>01</span><div><h3>A gente rastreia</h3><p>Monitoramos preços e disponibilidade nas lojas que você já conhece.</p></div><i>⌁</i></article>
+            <article><span>02</span><div><h3>Você compara</h3><p>Veja histórico, condições e alternativas antes de decidir.</p></div><i>◒</i></article>
+            <article><span>03</span><div><h3>Você economiza</h3><p>Escolha a melhor oportunidade e compre direto na loja parceira.</p></div><i>✦</i></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="newsletter" id="tendencias">
+        <div class="shell newsletter-card">
+          <div class="newsletter-spark">✦</div>
+          <div><p class="eyebrow"><span>✦</span> ALERTAS INTELIGENTES</p><h2>O preço ideal chega até você.</h2><p>Conte o que você quer. Quando aparecer uma boa oferta, a gente avisa.</p></div>
+          <form id="alertForm" class="newsletter-form"><input type="email" required placeholder="Seu melhor e-mail" aria-label="Seu melhor e-mail" /><button type="submit">Quero receber <span>→</span></button></form>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="shell footer-top">
+        <a class="brand footer-brand" href="#topo"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>oferta<span>certa</span></span></a>
+        <p>Boas escolhas começam com<br />uma boa comparação.</p>
+        <div class="footer-links"><div><strong>Explorar</strong><a href="#ofertas">Ofertas do dia</a><a href="#categorias">Categorias</a><a href="#tendencias">Alertas de preço</a></div><div><strong>Sobre</strong><a href="#como-funciona">Como funciona</a><a href="#">Lojas parceiras</a><a href="#">Ajuda</a></div></div>
+      </div>
+      <div class="shell footer-bottom"><span>© 2026 Oferta Certa. Feito para compras mais inteligentes.</span><div><a href="#">Privacidade</a><a href="#">Termos de uso</a><a href="#">Cookies</a></div></div>
+    </footer>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"><span class="toast-icon">✓</span><span id="toastText">Tudo certo!</span></div>
+    <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
+      <section class="alert-modal" role="dialog" aria-modal="true" aria-labelledby="alertTitle">
+        <button class="modal-close" id="modalClose" aria-label="Fechar">×</button><span class="modal-icon">♧</span><p class="eyebrow"><span>✦</span> ALERTA DE PREÇO</p><h2 id="alertTitle">Não perca a próxima queda.</h2><p>Cadastre um produto e avisaremos quando ele chegar no valor que você espera.</p>
+        <form id="modalAlertForm"><label>Produto<input id="alertProduct" required placeholder="Ex.: iPhone 15 128GB" /></label><label>Preço desejado<input type="number" min="1" required placeholder="Ex.: 3999" /></label><button type="submit">Criar meu alerta <span>→</span></button></form>
+      </section>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>

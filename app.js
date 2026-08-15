@@ -607,12 +607,32 @@ document.querySelectorAll(".panel-link").forEach((button) => {
 document.querySelector("#catPrev").addEventListener("click", () => document.querySelector("#categoryList").scrollBy({ left: -260, behavior: "smooth" }));
 document.querySelector("#catNext").addEventListener("click", () => document.querySelector("#categoryList").scrollBy({ left: 260, behavior: "smooth" }));
 
+function setupViewportMotion() {
+  const sections = document.querySelectorAll(".dashboard-section, .categories-section, .deals-section, .how-section, .newsletter");
+  if (!("IntersectionObserver" in window)) {
+    sections.forEach((section) => section.classList.add("is-visible"));
+    return;
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add("is-visible");
+      observer.unobserve(entry.target);
+    });
+  }, { threshold: .1 });
+  sections.forEach((section) => {
+    section.classList.add("motion-section");
+    observer.observe(section);
+  });
+}
+
+setupViewportMotion();
 updateRangeStyle();
 updateMobileFilterCount();
 renderProducts();
 
 window.addEventListener("load", () => {
-  window.setTimeout(() => siteLoader.classList.add("is-hidden"), 1150);
+  window.setTimeout(() => siteLoader.classList.add("is-hidden"), 1450);
 });
 
 window.setTimeout(() => siteLoader.classList.add("is-hidden"), 2600);

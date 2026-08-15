@@ -4,12 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0b1b16" />
-    <meta name="description" content="Oferta Certa encontra, compara e organiza as melhores promoções da internet." />
-    <title>Oferta Certa — encontre ofertas que valem a pena</title>
+    <meta name="description" content="Mavvri encontra, compara e organiza as melhores promoções da internet." />
+    <title>Mavvri — boas escolhas, no momento certo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="dashboard-responsive.css" />
   </head>
   <body>
     <div class="promo-strip">
@@ -21,11 +22,12 @@
 
     <header class="site-header" id="topo">
       <div class="shell nav-row">
-        <a class="brand" href="#topo" aria-label="Oferta Certa, início">
+        <a class="brand" href="#topo" aria-label="Mavvri, início">
           <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
-          <span>oferta<span>certa</span></span>
+          <span>mav<span>vri</span></span>
         </a>
         <nav class="desktop-nav" aria-label="Navegação principal">
+          <a href="#painel">Meu painel</a>
           <a href="#ofertas">Ofertas</a>
           <a href="#categorias">Categorias</a>
           <a href="#tendencias">Tendências</a>
@@ -70,7 +72,7 @@
           <div class="hero-visual" aria-label="Resumo de oferta em destaque">
             <div class="visual-dots dots-top"></div>
             <div class="offer-window">
-              <div class="window-top"><span class="window-store"><i></i> oferta certa</span><span class="window-time">agora</span></div>
+              <div class="window-top"><span class="window-store"><i></i> mavvri</span><span class="window-time">agora</span></div>
               <div class="deal-visual-content">
                 <div class="visual-tag">OFERTA RELÂMPAGO <span>⚡</span></div>
                 <div class="headphone-visual">
@@ -89,6 +91,37 @@
         </div>
         <div class="shell retailers-bar" aria-label="Lojas monitoradas">
           <span>Monitoramos preços em</span><b>Amazon</b><b>mercado livre</b><b>Magalu</b><b>KaBuM!</b><b>Casas Bahia</b><b>+ 37 lojas</b>
+        </div>
+      </section>
+
+      <section class="dashboard-section" id="painel" aria-labelledby="dashboard-title">
+        <div class="shell">
+          <div class="dashboard-heading">
+            <div><p class="eyebrow"><span>✦</span> SEU ESPAÇO MAVVRI</p><h2 id="dashboard-title">Seu painel de economia</h2></div>
+            <p>Clareza para acompanhar o que importa — sem ruído, sem exagero.</p>
+          </div>
+          <div class="dashboard-card">
+            <aside class="dashboard-nav" aria-label="Menu do painel">
+              <span class="panel-overline">PAINEL PESSOAL</span>
+              <button class="panel-link active" data-panel-tab="overview"><i>◈</i> Visão geral</button>
+              <button class="panel-link" data-panel-tab="alerts"><i>♧</i> Meus alertas <b>04</b></button>
+              <button class="panel-link" data-panel-tab="saved"><i>♡</i> Ofertas salvas</button>
+              <div class="panel-profile"><span class="avatar">GF</span><div><strong>Guilherme</strong><small>Membro desde 2026</small></div><span>⌄</span></div>
+            </aside>
+            <div class="dashboard-content">
+              <div class="panel-topline"><div><span class="live-indicator"></span><span>Atualizado há 4 min</span></div><button class="panel-period">Este mês <span>⌄</span></button></div>
+              <div class="panel-welcome"><div><p>Bom dia, Guilherme</p><h3>Você está acompanhando bem<br />suas melhores oportunidades.</h3></div><button class="panel-add" id="dashboardAlertButton"><span>+</span> Novo alerta</button></div>
+              <div class="stats-grid">
+                <article><span class="stat-label">ECONOMIA POTENCIAL</span><strong>R$ 1.248</strong><small class="positive">↗ 18% <i>vs. último mês</i></small><span class="stat-mark saving-mark">↘</span></article>
+                <article><span class="stat-label">ALERTAS ATIVOS</span><strong>04</strong><small>2 produtos próximos do alvo</small><span class="stat-mark alert-mark">♧</span></article>
+                <article><span class="stat-label">OFERTAS SALVAS</span><strong id="dashboardSavedCount">00</strong><small>Organize para decidir depois</small><span class="stat-mark saved-mark">♡</span></article>
+              </div>
+              <div class="panel-bottom-grid">
+                <article class="price-radar"><div class="radar-heading"><div><span class="stat-label">RADAR DE PREÇO</span><h4>Seu item mais próximo</h4></div><span class="radar-tag">-18% do alvo</span></div><div class="radar-body"><div class="radar-product"><span class="radar-thumb">⌁</span><div><strong>iPhone 15 · 128 GB</strong><small>Mercado Livre · R$ 3.999 hoje</small></div></div><svg viewBox="0 0 280 62" role="img" aria-label="Linha de preço descendente"><defs><linearGradient id="chartFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#c8ed68" stop-opacity=".55"/><stop offset="1" stop-color="#c8ed68" stop-opacity="0"/></linearGradient></defs><path d="M2 18 C24 24, 32 8, 53 18 S87 36, 107 25 S135 42, 156 30 S185 40, 208 29 S240 28, 278 8 V62 H2Z" fill="url(#chartFill)"/><path d="M2 18 C24 24, 32 8, 53 18 S87 36, 107 25 S135 42, 156 30 S185 40, 208 29 S240 28, 278 8" fill="none" stroke="#88ad2a" stroke-width="2" stroke-linecap="round"/><circle cx="278" cy="8" r="4" fill="#88ad2a" stroke="#fff" stroke-width="2"/></svg></div></article>
+                <article class="next-drop"><span class="stat-label">PRÓXIMA QUEDA ESTIMADA</span><strong>R$ 229</strong><p>Air Fryer Philips Walita<br /><span>Possível preço em até 7 dias</span></p><button data-search="air fryer">Ver oferta <span>→</span></button></article>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -177,11 +210,11 @@
 
     <footer>
       <div class="shell footer-top">
-        <a class="brand footer-brand" href="#topo"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>oferta<span>certa</span></span></a>
+        <a class="brand footer-brand" href="#topo"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>mav<span>vri</span></span></a>
         <p>Boas escolhas começam com<br />uma boa comparação.</p>
         <div class="footer-links"><div><strong>Explorar</strong><a href="#ofertas">Ofertas do dia</a><a href="#categorias">Categorias</a><a href="#tendencias">Alertas de preço</a></div><div><strong>Sobre</strong><a href="#como-funciona">Como funciona</a><a href="#">Lojas parceiras</a><a href="#">Ajuda</a></div></div>
       </div>
-      <div class="shell footer-bottom"><span>© 2026 Oferta Certa. Feito para compras mais inteligentes.</span><div><a href="#">Privacidade</a><a href="#">Termos de uso</a><a href="#">Cookies</a></div></div>
+      <div class="shell footer-bottom"><span>© 2026 Mavvri. Feito para escolhas mais inteligentes.</span><div><a href="#">Privacidade</a><a href="#">Termos de uso</a><a href="#">Cookies</a></div></div>
     </footer>
 
     <div class="toast" id="toast" role="status" aria-live="polite"><span class="toast-icon">✓</span><span id="toastText">Tudo certo!</span></div>

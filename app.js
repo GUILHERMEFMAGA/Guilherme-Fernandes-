@@ -203,6 +203,7 @@ const toast = document.querySelector("#toast");
 const toastText = document.querySelector("#toastText");
 const savedCount = document.querySelector(".saved-count");
 const mobileFilterCount = document.querySelector("#mobileFilterCount");
+const dashboardSavedCount = document.querySelector("#dashboardSavedCount");
 let toastTimer;
 
 function currency(value) {
@@ -282,6 +283,7 @@ function updateSavedUI() {
   const count = state.saved.size;
   savedCount.textContent = count;
   savedCount.classList.toggle("visible", count > 0);
+  dashboardSavedCount.textContent = String(count).padStart(2, "0");
   document.querySelector("#savedButton").classList.toggle("is-active", state.savedOnly);
 }
 
@@ -423,6 +425,7 @@ function closeAlertModal() {
   modal.setAttribute("aria-hidden", "true");
 }
 document.querySelector("#sideAlertButton").addEventListener("click", () => openAlertModal());
+document.querySelector("#dashboardAlertButton").addEventListener("click", () => openAlertModal());
 document.querySelector("#modalClose").addEventListener("click", closeAlertModal);
 modal.addEventListener("click", (event) => { if (event.target === modal) closeAlertModal(); });
 document.addEventListener("keydown", (event) => { if (event.key === "Escape") closeAlertModal(); });
@@ -450,6 +453,25 @@ document.querySelector("#menuButton").addEventListener("click", () => {
 });
 
 document.querySelectorAll(".desktop-nav a").forEach((link) => link.addEventListener("click", () => document.querySelector(".site-header").classList.remove("menu-open")));
+
+document.querySelectorAll(".panel-link").forEach((button) => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll(".panel-link").forEach((item) => item.classList.toggle("active", item === button));
+    const tab = button.dataset.panelTab;
+    if (tab === "alerts") showToast("Você tem 4 alertas ativos em acompanhamento.");
+    if (tab === "saved") {
+      if (!state.saved.size) {
+        showToast("Suas ofertas salvas aparecerão aqui.");
+      } else {
+        state.savedOnly = true;
+        state.visible = 6;
+        renderProducts();
+        document.querySelector("#ofertas").scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+    if (tab === "overview") showToast("Visão geral atualizada agora.");
+  });
+});
 
 document.querySelector("#catPrev").addEventListener("click", () => document.querySelector("#categoryList").scrollBy({ left: -260, behavior: "smooth" }));
 document.querySelector("#catNext").addEventListener("click", () => document.querySelector("#categoryList").scrollBy({ left: 260, behavior: "smooth" }));

@@ -1,6 +1,6 @@
-# Oferta Certa
+# Mavvri
 
-Uma experiência responsiva de hub de ofertas para pesquisar, comparar e salvar produtos de diferentes lojas em um só lugar.
+Uma experiência responsiva de hub de ofertas, com um painel pessoal elegante, para pesquisar, comparar e salvar produtos de diferentes lojas em um só lugar.
 
 ## O que está incluído
 

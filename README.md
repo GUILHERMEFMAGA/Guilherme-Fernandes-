@@ -13,7 +13,7 @@ Uma plataforma brasileira de descoberta de ofertas inspirada na clareza de servi
 
 ## Fontes de catálogo
 
-- **Mercado Livre:** `server.mjs` consulta e normaliza resultados do endpoint de catálogo para o site `MLB`, com cache curto e links de anúncio retornados pela fonte.
+- **Mercado Livre:** a rota `/api/catalog?source=mercadolivre` lê apenas o snapshot local; um proxy privado, configurado no servidor, usa a API autorizada do site `MLB` e devolve os links de anúncio.
 - **Amazon Brasil:** o front-end e a rota `/api/catalog?source=amazon` estão prontos, mas só exibem produtos depois que um conector oficial de Creators/Associates for configurado no servidor. Chaves, tags e tokens nunca devem ir para o navegador.
 
 Leia [INTEGRATIONS.md](INTEGRATIONS.md) para os detalhes de integração, formato do conector Amazon e cuidados de produção.

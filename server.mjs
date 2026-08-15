@@ -50,11 +50,13 @@ async function catalogHandler(requestUrl, response) {
   const result = querySnapshot(snapshot, { source, query, limit, offset });
   const sourceStatus = snapshot.sources.length ? snapshot.sources : getSourceDefinitions();
   const hasSnapshot = Boolean(snapshot.updatedAt);
-  sendJson(response, hasSnapshot ? 200 : 503, {
+  const noWorkingSource = !snapshot.offers.length && sourceStatus.every((item) => item.error || !item.configured);
+  const available = hasSnapshot && !noWorkingSource;
+  sendJson(response, available ? 200 : 503, {
     ...result,
     sources: sourceStatus,
     updatedAt: snapshot.updatedAt,
-    error: hasSnapshot ? undefined : "Catálogo ainda não foi sincronizado. Execute npm run sync ou configure um job agendado.",
+    error: available ? undefined : "Nenhuma fonte autorizada está sincronizada. Execute npm run sync em um ambiente com acesso às APIs e conectores configurados.",
   });
 }
 

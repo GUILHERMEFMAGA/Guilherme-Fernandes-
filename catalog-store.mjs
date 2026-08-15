@@ -1,4 +1,4 @@
-import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rename, stat, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { fetchSourceCatalog, getSourceDefinitions, sourceKeys } from "./catalog-providers.mjs";
@@ -6,18 +6,22 @@ import { fetchSourceCatalog, getSourceDefinitions, sourceKeys } from "./catalog-
 const root = fileURLToPath(new URL(".", import.meta.url));
 const snapshotPath = join(root, "data", "catalog-snapshot.json");
 let memorySnapshot = null;
+let memoryMtime = 0;
 
 function emptySnapshot() {
   return { updatedAt: null, offers: [], sources: getSourceDefinitions().map((source) => ({ ...source, lastSyncAt: null, error: null })) };
 }
 
 export async function readSnapshot() {
-  if (memorySnapshot) return memorySnapshot;
   try {
+    const fileInfo = await stat(snapshotPath);
+    if (memorySnapshot && memoryMtime === fileInfo.mtimeMs) return memorySnapshot;
     memorySnapshot = JSON.parse(await readFile(snapshotPath, "utf8"));
+    memoryMtime = fileInfo.mtimeMs;
     return memorySnapshot;
   } catch {
     memorySnapshot = emptySnapshot();
+    memoryMtime = 0;
     return memorySnapshot;
   }
 }
@@ -28,6 +32,7 @@ async function writeSnapshot(snapshot) {
   await writeFile(tempPath, JSON.stringify(snapshot, null, 2));
   await rename(tempPath, snapshotPath);
   memorySnapshot = snapshot;
+  memoryMtime = (await stat(snapshotPath)).mtimeMs;
   return snapshot;
 }
 

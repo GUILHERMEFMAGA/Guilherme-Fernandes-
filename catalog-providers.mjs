@@ -1,9 +1,5 @@
 const sourceDefinitions = {
-  mercadolivre: {
-    key: "mercadolivre",
-    label: "Mercado Livre",
-    env: null,
-  },
+  mercadolivre: { key: "mercadolivre", label: "Mercado Livre", env: "MERCADOLIVRE_CATALOG_PROXY_URL" },
   amazon: { key: "amazon", label: "Amazon", env: "AMAZON_CATALOG_PROXY_URL" },
   americanas: { key: "americanas", label: "Americanas", env: "AMERICANAS_CATALOG_PROXY_URL" },
   shopee: { key: "shopee", label: "Shopee", env: "SHOPEE_CATALOG_PROXY_URL" },
@@ -99,10 +95,12 @@ async function proxyProvider(source, { query, limit, offset }) {
 }
 
 export async function fetchSourceCatalog(source, params) {
-  if (source === "mercadolivre") return mercadoLivreProvider(params);
+  // The public endpoint can be useful for a local experiment. Production should
+  // use the authorized proxy so OAuth/affiliate handling never reaches the browser.
+  if (source === "mercadolivre" && process.env.MELI_ALLOW_PUBLIC_SEARCH === "true") return mercadoLivreProvider(params);
   return proxyProvider(source, params);
 }
 
 export function getSourceDefinitions() {
-  return sourceKeys.map((key) => ({ key, label: sourceDefinitions[key].label, configured: key === "mercadolivre" || Boolean(process.env[sourceDefinitions[key].env]) }));
+  return sourceKeys.map((key) => ({ key, label: sourceDefinitions[key].label, configured: Boolean(process.env[sourceDefinitions[key].env]) }));
 }

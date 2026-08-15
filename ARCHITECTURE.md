@@ -59,7 +59,7 @@ interface NormalizedOffer {
 }
 ```
 
-- **Mercado Livre:** adaptador nativo usando a API de itens/busca autorizada.
+- **Mercado Livre:** proxy privado que encapsula a API de itens/busca autorizada e a camada de afiliados.
 - **Amazon:** proxy privado que encapsula a Creators API/Associates.
 - **Americanas, Shopee, Magazine Luiza, Shein e OLX:** proxies de feed aprovados por programa de afiliados, rede de afiliados ou parceria direta. O browser nunca recebe credenciais.
 

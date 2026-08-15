@@ -1,93 +1,146 @@
-# Assistente Guilherme para Windows
+# Assistente Guilherme V2 para Windows
 
-Um assistente local com **voz e texto** que abre o YouTube, outros sites permitidos e alguns aplicativos do Windows. Ele foi feito em PowerShell com recursos já presentes no Windows 10 e 11, sem bibliotecas externas.
+Assistente local com **voz, texto, comandos seguros, notas, lembretes e IA opcional**. Ele abre sites e aplicativos permitidos, pesquisa, responde perguntas e pode ser personalizado no Visual Studio Code.
 
-## Como iniciar
+A parte básica usa recursos do próprio Windows e funciona sem instalar bibliotecas. Para conversas e perguntas livres, a integração opcional usa [Ollama](https://ollama.com/) e um modelo executado no próprio computador — sem chave de API.
 
-1. Baixe ou copie **a pasta inteira** para o seu computador Windows.
+## Começar em 1 minuto
+
+1. Baixe e extraia a pasta inteira no Windows.
 2. Dê dois cliques em **`Iniciar Assistente.bat`**.
-3. Na janela do assistente, clique em **Ouvir**.
-4. Diga: **“abra o YouTube”**.
+3. Clique em **Ouvir**.
+4. Diga **“abra o WhatsApp”** ou **“abra o YouTube”**.
 
-Você também pode digitar o comando e pressionar **Enter** ou clicar em **Executar**.
+Você também pode digitar e pressionar **Enter**. Não execute o programa de dentro do ZIP e não separe os arquivos da pasta.
 
-> Não separe os arquivos da pasta. O iniciador precisa encontrar `Assistente.ps1` e `Assistente.Core.ps1` no mesmo local.
+### Criar atalhos
 
-## Criar um atalho na Área de Trabalho
+- **`Instalar Atalho.bat`** cria um atalho na Área de Trabalho.
+- **`Abrir no VS Code.bat`** abre todo o projeto no Visual Studio Code.
 
-Dê dois cliques em **`Instalar Atalho.bat`**. Um atalho chamado **Assistente Guilherme** será criado na Área de Trabalho.
+## O que a V2 faz
 
-Mantenha a pasta original no mesmo local depois de criar o atalho.
+### Navegação e pesquisa
 
-## Exemplos de comandos
+- Abre YouTube, Google, Gmail, Maps, WhatsApp, ChatGPT, GitHub, Spotify, Netflix, Instagram, Facebook, LinkedIn, Outlook e OneDrive.
+- Pesquisa no Google e YouTube.
+- Abre a previsão do tempo da região no navegador.
+- Permite cadastrar sites HTTPS adicionais no `config.json`.
 
-### Sites
+### Windows
 
-- “Abra o YouTube”
-- “Abra o Google”
-- “Abra o Gmail”
-- “Abra o Maps”
-- “Abra o WhatsApp”
-- “Abra o ChatGPT”
-- “Abra o GitHub”
+- Abre Calculadora, Bloco de Notas, Explorador, Paint, Visual Studio Code, Terminal, Configurações, câmera e captura de tela.
+- Abre Downloads, Documentos, Área de Trabalho, Imagens, Músicas e Vídeos.
+- Informa data, hora, bateria e dados básicos do computador.
+- Copia e lê textos da área de transferência.
 
-### Pesquisas
+### Organização
 
-- “Pesquise no YouTube por música brasileira”
-- “Procure no Google por previsão do tempo”
-- “Pesquise por receitas de bolo”
+- Salva notas locais e abre todas elas no Bloco de Notas.
+- Cria temporizadores e lembretes de até 7 dias.
+- Exige confirmação visual antes de apagar todas as notas.
 
-### Aplicativos do Windows
+### Inteligência local opcional
 
-- “Abra a calculadora”
-- “Abra o Bloco de Notas”
-- “Abra o Explorador de Arquivos”
+- Responde perguntas e mantém um pequeno contexto da conversa enquanto a janela está aberta.
+- Interpreta pedidos escritos de maneira mais natural.
+- Roda no computador por meio do Ollama.
+- Nunca transforma a resposta da IA diretamente em shell: comandos ainda precisam passar pela lista segura do aplicativo.
 
-### Controle
+Consulte **`GUIA-COMANDOS.md`** para ver todos os exemplos.
 
-- “Pare de ouvir”
-- “Ajuda”
+## Configurar a IA local
 
-Os botões de atalho também funcionam sem o microfone.
+A IA é opcional; todos os comandos diretos continuam funcionando sem ela.
 
-## Ativar o reconhecimento de voz
+1. Dê dois cliques em **`Configurar IA Local.bat`**.
+2. Se o Ollama não estiver instalado, o arquivo abrirá a página oficial de download.
+3. Instale e abra o Ollama pelo menu Iniciar.
+4. Execute **`Configurar IA Local.bat`** novamente.
+5. Confirme o download do modelo `qwen3:4b`.
+6. Abra o assistente e clique em **Verificar IA**.
 
-O aplicativo procura primeiro o reconhecimento de fala em **Português (Brasil)**. Caso a mensagem “Voz indisponível” apareça:
+O modelo ocupa alguns gigabytes. Em um computador com poucos recursos, instale outro modelo no Ollama e altere `ai.preferredModel` no `config.json`. Se o modelo preferido não existir, o aplicativo usa o primeiro modelo local disponível.
+
+> Modelos de IA podem cometer erros. Não use as respostas como única fonte para decisões médicas, jurídicas, financeiras ou de segurança.
+
+## Ativar reconhecimento de voz
+
+O aplicativo procura primeiro o reconhecimento de fala em **Português (Brasil)**. Caso apareça “Voz indisponível”:
 
 1. Abra **Configurações** do Windows.
 2. Entre em **Hora e idioma → Idioma e região**.
 3. Nas opções de **Português (Brasil)**, instale o pacote de **Fala**.
-4. Em **Privacidade e segurança → Microfone**, permita o acesso ao microfone para aplicativos da área de trabalho.
+4. Em **Privacidade e segurança → Microfone**, permita acesso para aplicativos da área de trabalho.
 5. Feche e abra o assistente novamente.
 
-Mesmo sem o pacote de voz, todos os comandos digitados e botões continuam funcionando.
+Sem o pacote de voz, comandos digitados e botões continuam funcionando.
+
+## Personalizar no Visual Studio Code
+
+Dê dois cliques em **`Abrir no VS Code.bat`** ou use o botão **VS Code** dentro do assistente.
+
+O arquivo `config.json` permite configurar:
+
+```json
+{
+  "assistantName": "Guilherme",
+  "voice": {
+    "autoListen": false,
+    "minimumConfidence": 0.45,
+    "speakReplies": false
+  },
+  "ai": {
+    "enabled": true,
+    "preferredModel": "qwen3:4b",
+    "timeoutSeconds": 90
+  },
+  "customSites": [
+    {
+      "name": "Arena",
+      "aliases": ["arena", "arena ai"],
+      "url": "https://arena.ai/"
+    }
+  ]
+}
+```
+
+Somente sites com endereço `https://` são aceitos. Reinicie o assistente depois de salvar mudanças no arquivo.
 
 ## Segurança e privacidade
 
-- O aplicativo **não solicita senha, login ou acesso de administrador**.
-- O áudio é tratado pelo mecanismo de reconhecimento instalado no Windows e **não é gravado nem salvo pelo aplicativo**.
-- Somente sites presentes na lista interna podem ser abertos por um comando de abertura.
-- Termos de pesquisa são enviados apenas quando o navegador abre a busca no Google ou YouTube.
-- O histórico mostrado na tela fica somente na memória e desaparece quando a janela é fechada.
-- Comandos desconhecidos não são executados como comandos do sistema.
+- Não solicita senha, login, chave de API ou acesso de administrador.
+- O áudio é tratado pelo mecanismo de fala instalado no Windows e não é salvo pelo aplicativo.
+- Notas ficam em `%LOCALAPPDATA%\AssistenteGuilherme\notas.txt`.
+- O contexto da conversa existe apenas na memória e desaparece ao fechar a janela.
+- A integração de IA só se comunica com `127.0.0.1`, isto é, com o Ollama no próprio computador.
+- Sites personalizados precisam usar HTTPS.
+- Comandos desconhecidos nunca são executados como PowerShell ou Prompt de Comando.
+- Exclusão de notas exige confirmação; desligamento, compras, mensagens e manipulação de senhas não são implementados.
 
-O iniciador usa uma permissão temporária (`ExecutionPolicy Bypass`) apenas para esta execução, pois o script local não possui assinatura digital. Ele não altera permanentemente a política do PowerShell ou as configurações de segurança do Windows.
+O inicializador usa `ExecutionPolicy Bypass` apenas no processo atual porque o script não possui assinatura digital. Ele não muda permanentemente a política do PowerShell ou a segurança do Windows.
 
 ## Solução de problemas
 
-### A janela fecha ou mostra um erro
+### A janela não abre
 
-Confirme que você está usando **Windows 10 ou Windows 11** e que estes arquivos continuam juntos:
+Use Windows 10 ou 11 e confirme que todos estes arquivos estão juntos:
 
 - `Assistente.ps1`
 - `Assistente.Core.ps1`
+- `Assistente.Services.ps1`
+- `config.json`
 - `Iniciar Assistente.bat`
 
-Execute novamente pelo arquivo `.bat`, não abrindo o `.ps1` diretamente.
+Execute pelo `.bat`, não abrindo o `.ps1` diretamente.
+
+### “IA local não conectada”
+
+Abra o Ollama no menu Iniciar, execute `Configurar IA Local.bat` e depois clique em **Verificar IA**. Os comandos básicos continuam disponíveis mesmo quando a IA está desligada.
 
 ### O microfone não funciona
 
-Confira a permissão do microfone e o pacote de Fala seguindo a seção anterior. Headsets Bluetooth também precisam estar selecionados como dispositivo de entrada padrão do Windows.
+Confira o pacote de Fala, a permissão de microfone e o dispositivo de entrada padrão do Windows.
 
 ### O navegador não abre
 
@@ -95,22 +148,24 @@ Defina um navegador padrão em **Configurações → Aplicativos → Aplicativos
 
 ## Testes
 
-No Windows PowerShell, os testes do interpretador de comandos podem ser executados com:
+No Windows PowerShell:
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tests\Assistente.Core.Tests.ps1
 ```
 
-A validação estática, disponível também em macOS e Linux quando Python 3 está instalado, pode ser executada com:
+Validação estática em qualquer sistema com Python 3:
 
 ```bash
 python3 tests/validate_repository.py
 ```
 
-## Estrutura do projeto
+## Estrutura
 
-- `Assistente.ps1`: interface gráfica, microfone e execução das ações.
-- `Assistente.Core.ps1`: interpretação segura dos comandos.
-- `Iniciar Assistente.bat`: inicializador para Windows.
-- `Instalar-Atalho.ps1` e `Instalar Atalho.bat`: criação opcional do atalho.
-- `tests/`: verificações do interpretador e da estrutura do aplicativo.
+- `Assistente.ps1`: interface, voz, lembretes e execução controlada.
+- `Assistente.Core.ps1`: interpretação determinística e lista segura.
+- `Assistente.Services.ps1`: configuração, notas e integração local com Ollama.
+- `config.json`: preferências editáveis.
+- `GUIA-COMANDOS.md`: catálogo de comandos.
+- Arquivos `.bat`: inicialização, atalhos, IA e VS Code.
+- `tests/`: testes e validações do projeto.

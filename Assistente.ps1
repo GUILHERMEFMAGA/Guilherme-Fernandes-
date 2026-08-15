@@ -2,6 +2,10 @@
 Set-StrictMode -Version Latest
 
 . (Join-Path $PSScriptRoot 'Assistente.Core.ps1')
+. (Join-Path $PSScriptRoot 'Assistente.Services.ps1')
+
+$script:configPath = Join-Path $PSScriptRoot 'config.json'
+$script:config = Get-AssistantConfig -Path $script:configPath
 
 Add-Type -AssemblyName PresentationFramework
 Add-Type -AssemblyName PresentationCore
@@ -11,11 +15,11 @@ Add-Type -AssemblyName WindowsBase
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Name="MainWindow"
-        Title="Assistente Guilherme"
-        Width="900"
-        Height="720"
-        MinWidth="760"
-        MinHeight="620"
+        Title="Assistente Guilherme — Inteligente e local"
+        Width="960"
+        Height="790"
+        MinWidth="800"
+        MinHeight="680"
         WindowStartupLocation="CenterScreen"
         Background="#08111F"
         Foreground="#F8FAFC"
@@ -68,17 +72,20 @@ Add-Type -AssemblyName WindowsBase
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0">
-                <TextBlock Text="ASSISTENTE GUILHERME"
+                <TextBlock Text="ASSISTENTE GUILHERME · V2"
                            Foreground="#A78BFA"
                            FontSize="12"
                            FontWeight="Bold" />
-                <TextBlock Text="O que vamos abrir hoje?"
+                <TextBlock Text="Comandos, conversa e IA local"
                            FontSize="30"
                            FontWeight="Bold"
                            Margin="0,5,0,4" />
-                <TextBlock Text="Use sua voz ou digite um comando. Você sempre continua no controle."
+                <TextBlock Text="Use voz ou texto. Ações são limitadas e perguntas podem ser respondidas por uma IA privada no seu PC."
                            Foreground="#94A3B8"
-                           FontSize="14" />
+                           FontSize="14"
+                           TextWrapping="Wrap"
+                           MaxWidth="590"
+                           HorizontalAlignment="Left" />
             </StackPanel>
 
             <Border Grid.Column="1"
@@ -86,20 +93,40 @@ Add-Type -AssemblyName WindowsBase
                     BorderBrush="#26364D"
                     BorderThickness="1"
                     CornerRadius="14"
-                    Padding="16,12"
-                    VerticalAlignment="Center">
-                <StackPanel Orientation="Horizontal">
-                    <Ellipse x:Name="StatusDot"
-                             Width="10"
-                             Height="10"
-                             Fill="#64748B"
-                             Margin="0,0,9,0"
-                             VerticalAlignment="Center" />
-                    <TextBlock x:Name="VoiceStatusText"
-                               Text="Preparando a voz..."
-                               Foreground="#CBD5E1"
-                               VerticalAlignment="Center"
-                               FontSize="13" />
+                    Padding="16,11"
+                    VerticalAlignment="Center"
+                    MinWidth="270">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <Ellipse x:Name="StatusDot"
+                                 Width="10"
+                                 Height="10"
+                                 Fill="#64748B"
+                                 Margin="0,0,9,0"
+                                 VerticalAlignment="Center" />
+                        <TextBlock x:Name="VoiceStatusText"
+                                   Text="Preparando voz..."
+                                   Foreground="#CBD5E1"
+                                   VerticalAlignment="Center"
+                                   FontSize="12"
+                                   MaxWidth="235"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse x:Name="AiStatusDot"
+                                 Width="10"
+                                 Height="10"
+                                 Fill="#64748B"
+                                 Margin="0,0,9,0"
+                                 VerticalAlignment="Center" />
+                        <TextBlock x:Name="AiStatusText"
+                                   Text="Verificando IA local..."
+                                   Foreground="#CBD5E1"
+                                   VerticalAlignment="Center"
+                                   FontSize="12"
+                                   MaxWidth="235"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
                 </StackPanel>
             </Border>
         </Grid>
@@ -112,7 +139,7 @@ Add-Type -AssemblyName WindowsBase
                 Padding="20"
                 Margin="0,0,0,16">
             <StackPanel>
-                <TextBlock Text="Comando"
+                <TextBlock Text="Fale um comando ou faça uma pergunta"
                            FontWeight="SemiBold"
                            FontSize="14"
                            Margin="0,0,0,9" />
@@ -128,7 +155,7 @@ Add-Type -AssemblyName WindowsBase
                              Height="46"
                              Padding="13,11"
                              VerticalContentAlignment="Center"
-                             ToolTip="Exemplo: abra o YouTube" />
+                             ToolTip="Exemplo: abra o WhatsApp ou explique o que é inteligência artificial" />
                     <Button x:Name="SendButton"
                             Grid.Column="1"
                             Content="Executar"
@@ -149,7 +176,7 @@ Add-Type -AssemblyName WindowsBase
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0"
-                               Text="Exemplo: “pesquise no YouTube por música brasileira”"
+                               Text="Ex.: “me lembre de beber água em dez minutos” ou “anote comprar pão”"
                                Foreground="#64748B"
                                FontSize="12"
                                VerticalAlignment="Center" />
@@ -179,10 +206,12 @@ Add-Type -AssemblyName WindowsBase
                 <WrapPanel>
                     <Button x:Name="YouTubeButton" Content="▶  YouTube" Style="{StaticResource SecondaryButton}" />
                     <Button x:Name="GoogleButton" Content="⌕  Google" Style="{StaticResource SecondaryButton}" />
-                    <Button x:Name="GmailButton" Content="✉  Gmail" Style="{StaticResource SecondaryButton}" />
-                    <Button x:Name="MapsButton" Content="⌖  Maps" Style="{StaticResource SecondaryButton}" />
                     <Button x:Name="WhatsAppButton" Content="●  WhatsApp" Style="{StaticResource SecondaryButton}" />
                     <Button x:Name="CalculatorButton" Content="＋  Calculadora" Style="{StaticResource SecondaryButton}" />
+                    <Button x:Name="NotesButton" Content="✎  Notas" Style="{StaticResource SecondaryButton}" />
+                    <Button x:Name="VsCodeButton" Content="&lt;/&gt;  VS Code" Style="{StaticResource SecondaryButton}" />
+                    <Button x:Name="ConfigButton" Content="⚙  Configurar" Style="{StaticResource SecondaryButton}" />
+                    <Button x:Name="RefreshAiButton" Content="↻  Verificar IA" Style="{StaticResource SecondaryButton}" />
                 </WrapPanel>
             </StackPanel>
         </Border>
@@ -204,12 +233,12 @@ Add-Type -AssemblyName WindowsBase
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0"
-                               Text="Atividade"
+                               Text="Conversa e atividade"
                                FontWeight="SemiBold"
                                FontSize="14" />
                     <Button x:Name="ClearHistoryButton"
                             Grid.Column="1"
-                            Content="Limpar"
+                            Content="Limpar conversa"
                             Background="Transparent"
                             Foreground="#94A3B8"
                             BorderThickness="0"
@@ -228,7 +257,7 @@ Add-Type -AssemblyName WindowsBase
         </Border>
 
         <TextBlock Grid.Row="4"
-                   Text="Privacidade: o áudio é processado pelo mecanismo de reconhecimento instalado no Windows e não é salvo por este aplicativo."
+                   Text="Privacidade: voz, notas e IA ficam no computador. A IA nunca executa comandos fora da lista segura."
                    Foreground="#64748B"
                    FontSize="11"
                    TextAlignment="Center"
@@ -252,6 +281,8 @@ function Get-NamedControl {
 
 $script:statusDot = Get-NamedControl -Name 'StatusDot'
 $script:voiceStatusText = Get-NamedControl -Name 'VoiceStatusText'
+$script:aiStatusDot = Get-NamedControl -Name 'AiStatusDot'
+$script:aiStatusText = Get-NamedControl -Name 'AiStatusText'
 $script:commandInput = Get-NamedControl -Name 'CommandInput'
 $script:sendButton = Get-NamedControl -Name 'SendButton'
 $script:listenButton = Get-NamedControl -Name 'ListenButton'
@@ -260,16 +291,26 @@ $script:historyTextBox = Get-NamedControl -Name 'HistoryTextBox'
 $script:clearHistoryButton = Get-NamedControl -Name 'ClearHistoryButton'
 $script:youtubeButton = Get-NamedControl -Name 'YouTubeButton'
 $script:googleButton = Get-NamedControl -Name 'GoogleButton'
-$script:gmailButton = Get-NamedControl -Name 'GmailButton'
-$script:mapsButton = Get-NamedControl -Name 'MapsButton'
 $script:whatsAppButton = Get-NamedControl -Name 'WhatsAppButton'
 $script:calculatorButton = Get-NamedControl -Name 'CalculatorButton'
+$script:notesButton = Get-NamedControl -Name 'NotesButton'
+$script:vsCodeButton = Get-NamedControl -Name 'VsCodeButton'
+$script:configButton = Get-NamedControl -Name 'ConfigButton'
+$script:refreshAiButton = Get-NamedControl -Name 'RefreshAiButton'
 
 $script:recognizer = $null
 $script:synthesizer = $null
 $script:speechHandler = $null
 $script:isListening = $false
 $script:brushConverter = New-Object System.Windows.Media.BrushConverter
+$script:aiStatus = [PSCustomObject]@{ Available = $false; Model = ''; Message = 'IA não verificada.' }
+$script:aiJob = $null
+$script:aiOriginalPrompt = ''
+$script:conversation = New-Object System.Collections.ArrayList
+$script:reminders = New-Object System.Collections.ArrayList
+$script:isClosing = $false
+$script:speakRepliesCheckBox.IsChecked = [bool]$script:config.voice.speakReplies
+$script:window.Title = "Assistente $($script:config.assistantName) — Inteligente e local"
 
 function Set-VoiceStatus {
     param(
@@ -281,6 +322,16 @@ function Set-VoiceStatus {
     $script:statusDot.Fill = $script:brushConverter.ConvertFromString($Color)
 }
 
+function Set-AiStatus {
+    param(
+        [Parameter(Mandatory = $true)][string]$Text,
+        [Parameter(Mandatory = $true)][string]$Color
+    )
+
+    $script:aiStatusText.Text = $Text
+    $script:aiStatusDot.Fill = $script:brushConverter.ConvertFromString($Color)
+}
+
 function Add-HistoryEntry {
     param(
         [Parameter(Mandatory = $true)][string]$Speaker,
@@ -290,6 +341,18 @@ function Add-HistoryEntry {
     $timestamp = Get-Date -Format 'HH:mm'
     $script:historyTextBox.AppendText("[$timestamp] ${Speaker}: $Text`r`n")
     $script:historyTextBox.ScrollToEnd()
+}
+
+function Add-ConversationMessage {
+    param(
+        [Parameter(Mandatory = $true)][ValidateSet('user', 'assistant')][string]$Role,
+        [Parameter(Mandatory = $true)][string]$Content
+    )
+
+    [void]$script:conversation.Add([PSCustomObject]@{ role = $Role; content = $Content })
+    while ($script:conversation.Count -gt 8) {
+        $script:conversation.RemoveAt(0)
+    }
 }
 
 function Speak-AssistantMessage {
@@ -310,6 +373,13 @@ function Speak-AssistantMessage {
     }
 }
 
+function Write-AssistantResponse {
+    param([Parameter(Mandatory = $true)][string]$Message)
+
+    Add-HistoryEntry -Speaker $script:config.assistantName -Text $Message
+    Speak-AssistantMessage -Message $Message
+}
+
 function Stop-VoiceRecognition {
     if ($null -eq $script:recognizer -or -not $script:isListening) {
         return
@@ -319,7 +389,7 @@ function Stop-VoiceRecognition {
         $script:recognizer.RecognizeAsyncCancel()
     }
     catch {
-        # O reconhecedor pode já estar encerrando. Nesse caso, basta atualizar a interface.
+        # O reconhecedor pode já estar encerrando.
     }
 
     $script:isListening = $false
@@ -332,7 +402,6 @@ function Start-VoiceRecognition {
         Add-HistoryEntry -Speaker 'Sistema' -Text 'O reconhecimento de voz não está disponível. Confira o pacote de fala do Windows.'
         return
     }
-
     if ($script:isListening) {
         return
     }
@@ -342,7 +411,7 @@ function Start-VoiceRecognition {
         $script:isListening = $true
         $script:listenButton.Content = '■  Parar'
         Set-VoiceStatus -Text 'Ouvindo... diga um comando.' -Color '#A78BFA'
-        Add-HistoryEntry -Speaker 'Sistema' -Text 'Microfone ativado. Diga, por exemplo: “abra o YouTube”.'
+        Add-HistoryEntry -Speaker 'Sistema' -Text 'Microfone ativado. Diga um comando ou faça uma pergunta.'
     }
     catch {
         Set-VoiceStatus -Text 'Não foi possível acessar o microfone.' -Color '#EF4444'
@@ -350,38 +419,298 @@ function Start-VoiceRecognition {
     }
 }
 
-function Invoke-ResolvedCommand {
-    param([Parameter(Mandatory = $true)]$Result)
+function Start-LocalAiRequest {
+    param([Parameter(Mandatory = $true)][string]$Prompt)
 
-    Add-HistoryEntry -Speaker 'Assistente' -Text $Result.Message
-    Speak-AssistantMessage -Message $Result.Message
+    if (-not [bool]$script:aiStatus.Available) {
+        Write-AssistantResponse -Message 'Não reconheci esse comando. Para perguntas livres, configure a IA local pelo arquivo “Configurar IA Local.bat”. Os comandos básicos continuam funcionando sem ela.'
+        return
+    }
+    if ($null -ne $script:aiJob) {
+        Add-HistoryEntry -Speaker 'Sistema' -Text 'A IA ainda está processando a solicitação anterior.'
+        return
+    }
+
+    $script:aiOriginalPrompt = $Prompt
+    Set-AiStatus -Text "Pensando com $($script:aiStatus.Model)..." -Color '#A78BFA'
+    $script:sendButton.IsEnabled = $false
+    Add-HistoryEntry -Speaker 'Sistema' -Text 'IA local processando...'
+    try {
+        $script:aiJob = Start-AssistantAiJob `
+            -Model $script:aiStatus.Model `
+            -UserMessage $Prompt `
+            -TimeoutSeconds ([int]$script:config.ai.timeoutSeconds) `
+            -Conversation @($script:conversation)
+        $script:aiPollTimer.Start()
+    }
+    catch {
+        $script:aiJob = $null
+        $script:sendButton.IsEnabled = $true
+        Set-AiStatus -Text "IA pronta: $($script:aiStatus.Model)" -Color '#22C55E'
+        Add-HistoryEntry -Speaker 'Sistema' -Text "Não foi possível iniciar a IA local: $($_.Exception.Message)"
+    }
+}
+
+function Complete-LocalAiRequest {
+    if ($null -eq $script:aiJob) {
+        return
+    }
+
+    $jobState = [string]$script:aiJob.State
+    if ($jobState -notin @('Completed', 'Failed', 'Stopped')) {
+        return
+    }
+
+    $output = $null
+    try {
+        $output = @(Receive-Job -Job $script:aiJob -ErrorAction SilentlyContinue) | Select-Object -Last 1
+    }
+    finally {
+        Remove-Job -Job $script:aiJob -Force -ErrorAction SilentlyContinue
+        $script:aiJob = $null
+        $script:aiPollTimer.Stop()
+        $script:sendButton.IsEnabled = $true
+    }
+
+    Set-AiStatus -Text "IA pronta: $($script:aiStatus.Model)" -Color '#22C55E'
+
+    if (
+        $null -eq $output -or
+        $null -eq $output.PSObject.Properties['Success'] -or
+        -not [bool]$output.Success
+    ) {
+        $errorMessage = if ($null -ne $output -and $null -ne $output.PSObject.Properties['Error']) {
+            [string]$output.Error
+        }
+        else {
+            'A IA local não respondeu.'
+        }
+        Add-HistoryEntry -Speaker 'Sistema' -Text "Falha da IA local: $errorMessage"
+        return
+    }
+
+    if (
+        $null -eq $output.PSObject.Properties['Content'] -or
+        [string]::IsNullOrWhiteSpace([string]$output.Content)
+    ) {
+        Write-AssistantResponse -Message 'A IA local respondeu sem conteúdo utilizável.'
+        return
+    }
+
+    $aiResult = ConvertFrom-AssistantAiResponse -Content ([string]$output.Content)
+    if ($aiResult.Kind -eq 'answer') {
+        $answer = $aiResult.Answer.Trim()
+        if ($answer.Length -gt 4000) {
+            $answer = $answer.Substring(0, 4000) + '…'
+        }
+        Write-AssistantResponse -Message $answer
+        Add-ConversationMessage -Role 'user' -Content $script:aiOriginalPrompt
+        Add-ConversationMessage -Role 'assistant' -Content $answer
+        return
+    }
+
+    if ($aiResult.Kind -eq 'command') {
+        $classified = Resolve-AssistantCommand `
+            -Command $aiResult.Command `
+            -CustomSites @($script:config.customSites)
+        if ($classified.Action -ne 'Unknown') {
+            Add-HistoryEntry -Speaker 'IA local' -Text "Entendi como: $($aiResult.Command)"
+            Invoke-ResolvedCommand -Result $classified -FromAi $true
+            return
+        }
+    }
+
+    Write-AssistantResponse -Message 'A IA respondeu em um formato que não consegui validar com segurança. Tente escrever de outra forma.'
+}
+
+function Initialize-LocalAi {
+    Set-AiStatus -Text 'Verificando IA local...' -Color '#F59E0B'
+    $script:aiStatus = Get-AssistantOllamaStatus -Config $script:config
+    if ([bool]$script:aiStatus.Available) {
+        Set-AiStatus -Text "IA pronta: $($script:aiStatus.Model)" -Color '#22C55E'
+    }
+    else {
+        Set-AiStatus -Text $script:aiStatus.Message -Color '#F59E0B'
+    }
+}
+
+function Add-Reminder {
+    param(
+        [Parameter(Mandatory = $true)][long]$Seconds,
+        [Parameter(Mandatory = $true)][string]$Label
+    )
+
+    if ($Seconds -lt 1 -or $Seconds -gt 604800) {
+        throw 'O lembrete precisa estar entre 1 segundo e 7 dias.'
+    }
+
+    $dueAt = (Get-Date).AddSeconds($Seconds)
+    [void]$script:reminders.Add([PSCustomObject]@{
+        DueAt = $dueAt
+        Label = $Label
+    })
+    return $dueAt
+}
+
+function Check-Reminders {
+    $now = Get-Date
+    foreach ($reminder in @($script:reminders)) {
+        if ($reminder.DueAt -le $now) {
+            [void]$script:reminders.Remove($reminder)
+            $message = "Lembrete: $($reminder.Label)"
+            Write-AssistantResponse -Message $message
+            [void]$script:window.Activate()
+            [System.Windows.MessageBox]::Show(
+                $script:window,
+                $message,
+                "Assistente $($script:config.assistantName)",
+                [System.Windows.MessageBoxButton]::OK,
+                [System.Windows.MessageBoxImage]::Information
+            ) | Out-Null
+        }
+    }
+}
+
+function Invoke-ResolvedCommand {
+    param(
+        [Parameter(Mandatory = $true)]$Result,
+        [bool]$FromAi = $false
+    )
+
+    if ($Result.Action -eq 'Unknown') {
+        if ($FromAi) {
+            Write-AssistantResponse -Message 'Não consegui transformar essa resposta em uma ação segura.'
+        }
+        else {
+            Start-LocalAiRequest -Prompt $Result.Parameter
+        }
+        return
+    }
 
     try {
         switch ($Result.Action) {
             'OpenUrl' {
+                Write-AssistantResponse -Message $Result.Message
                 Start-Process $Result.Target
                 break
             }
             'SearchYouTube' {
+                Write-AssistantResponse -Message $Result.Message
                 $encodedQuery = [System.Uri]::EscapeDataString($Result.Parameter)
                 Start-Process "https://www.youtube.com/results?search_query=$encodedQuery"
                 break
             }
             'SearchWeb' {
+                Write-AssistantResponse -Message $Result.Message
                 $encodedQuery = [System.Uri]::EscapeDataString($Result.Parameter)
                 Start-Process "https://www.google.com/search?q=$encodedQuery"
                 break
             }
             'OpenApplication' {
+                Write-AssistantResponse -Message $Result.Message
                 Start-Process $Result.Target
                 break
             }
+            'OpenFolder' {
+                $folderPath = Resolve-AssistantKnownFolder -Folder $Result.Target
+                if ([string]::IsNullOrWhiteSpace($folderPath) -or -not (Test-Path -LiteralPath $folderPath)) {
+                    throw 'A pasta não foi encontrada neste computador.'
+                }
+                Write-AssistantResponse -Message $Result.Message
+                Start-Process explorer.exe -ArgumentList "`"$folderPath`""
+                break
+            }
+            'CreateNote' {
+                [void](Add-AssistantNote -Text $Result.Parameter)
+                Write-AssistantResponse -Message $Result.Message
+                break
+            }
+            'ShowNotes' {
+                $notesPath = Get-AssistantNotesPath
+                Write-AssistantResponse -Message $Result.Message
+                Start-Process notepad.exe -ArgumentList "`"$notesPath`""
+                break
+            }
+            'ClearNotes' {
+                $confirmation = [System.Windows.MessageBox]::Show(
+                    $script:window,
+                    'Deseja realmente apagar todas as notas salvas?',
+                    'Confirmar exclusão das notas',
+                    [System.Windows.MessageBoxButton]::YesNo,
+                    [System.Windows.MessageBoxImage]::Warning
+                )
+                if ($confirmation -eq [System.Windows.MessageBoxResult]::Yes) {
+                    Clear-AssistantNotes
+                    Write-AssistantResponse -Message 'Todas as notas foram apagadas.'
+                }
+                else {
+                    Write-AssistantResponse -Message 'Exclusão cancelada.'
+                }
+                break
+            }
+            'CopyToClipboard' {
+                [System.Windows.Clipboard]::SetText($Result.Parameter)
+                Write-AssistantResponse -Message $Result.Message
+                break
+            }
+            'ReadClipboard' {
+                if ([System.Windows.Clipboard]::ContainsText()) {
+                    $clipboardText = [System.Windows.Clipboard]::GetText()
+                    Write-AssistantResponse -Message "A área de transferência contém: $clipboardText"
+                }
+                else {
+                    Write-AssistantResponse -Message 'A área de transferência não contém texto.'
+                }
+                break
+            }
+            'ShowTime' {
+                Write-AssistantResponse -Message "Agora são $(Get-Date -Format 'HH:mm')."
+                break
+            }
+            'ShowDate' {
+                $culture = [System.Globalization.CultureInfo]::GetCultureInfo('pt-BR')
+                Write-AssistantResponse -Message "Hoje é $((Get-Date).ToString('dddd, dd \d\e MMMM \d\e yyyy', $culture))."
+                break
+            }
+            'ShowBattery' {
+                $battery = Get-CimInstance -ClassName Win32_Battery -ErrorAction SilentlyContinue | Select-Object -First 1
+                if ($null -eq $battery) {
+                    Write-AssistantResponse -Message 'Este computador não informou uma bateria. Isso é normal em computadores de mesa.'
+                }
+                else {
+                    Write-AssistantResponse -Message "A bateria está em $($battery.EstimatedChargeRemaining) por cento."
+                }
+                break
+            }
+            'ShowSystemInfo' {
+                $computer = Get-CimInstance -ClassName Win32_ComputerSystem
+                $operatingSystem = Get-CimInstance -ClassName Win32_OperatingSystem
+                $memoryGb = [Math]::Round([double]$computer.TotalPhysicalMemory / (1024 * 1024 * 1024), 1)
+                $message = "$($operatingSystem.Caption), computador $($computer.Manufacturer) $($computer.Model), com $memoryGb GB de memória RAM."
+                Write-AssistantResponse -Message $message
+                break
+            }
+            'SetTimer' {
+                $seconds = [long]$Result.Target
+                $dueAt = Add-Reminder -Seconds $seconds -Label $Result.Parameter
+                Write-AssistantResponse -Message "$($Result.Message) Horário: $($dueAt.ToString('HH:mm:ss'))."
+                break
+            }
             'StopListening' {
+                Write-AssistantResponse -Message $Result.Message
                 Stop-VoiceRecognition
                 break
             }
+            'Help' {
+                Write-AssistantResponse -Message $Result.Message
+                $guidePath = Join-Path $PSScriptRoot 'GUIA-COMANDOS.md'
+                if (Test-Path -LiteralPath $guidePath) {
+                    Start-Process $guidePath
+                }
+                break
+            }
             default {
-                # Help e Unknown só precisam mostrar a resposta.
+                Write-AssistantResponse -Message $Result.Message
                 break
             }
         }
@@ -392,27 +721,28 @@ function Invoke-ResolvedCommand {
 }
 
 function Submit-AssistantCommand {
-    param([AllowEmptyString()][string]$Command)
+    param(
+        [AllowEmptyString()][string]$Command,
+        [bool]$FromVoice = $false,
+        [double]$Confidence = 0
+    )
 
     if ([string]::IsNullOrWhiteSpace($Command)) {
         return
     }
 
-    Add-HistoryEntry -Speaker 'Você' -Text $Command.Trim()
-    $result = Resolve-AssistantCommand -Command $Command
-    Invoke-ResolvedCommand -Result $result
-}
+    $trimmedCommand = $Command.Trim()
+    if ($FromVoice) {
+        $percentage = [Math]::Round($Confidence * 100)
+        Add-HistoryEntry -Speaker "Você · voz $percentage%" -Text $trimmedCommand
+    }
+    else {
+        Add-HistoryEntry -Speaker 'Você' -Text $trimmedCommand
+    }
 
-function Handle-RecognizedSpeech {
-    param(
-        [Parameter(Mandatory = $true)][string]$Text,
-        [Parameter(Mandatory = $true)][double]$Confidence
-    )
-
-    $percentage = [Math]::Round($Confidence * 100)
-    $script:commandInput.Text = $Text
-    Add-HistoryEntry -Speaker "Você · voz $percentage%" -Text $Text
-    $result = Resolve-AssistantCommand -Command $Text
+    $result = Resolve-AssistantCommand `
+        -Command $trimmedCommand `
+        -CustomSites @($script:config.customSites)
     Invoke-ResolvedCommand -Result $result
 }
 
@@ -443,21 +773,25 @@ function Initialize-SpeechServices {
             $selectedRecognizer.Culture
         )
         $dictationGrammar = [System.Speech.Recognition.DictationGrammar]::new()
-        $dictationGrammar.Name = 'Comandos do Assistente Guilherme'
+        $dictationGrammar.Name = 'Comandos e perguntas do Assistente Guilherme'
         $script:recognizer.LoadGrammar($dictationGrammar)
         $script:recognizer.SetInputToDefaultAudioDevice()
 
         $script:speechHandler = [System.EventHandler[System.Speech.Recognition.SpeechRecognizedEventArgs]] {
             param($sender, $eventArgs)
 
-            if ($eventArgs.Result.Confidence -lt 0.45) {
+            if ($eventArgs.Result.Confidence -lt [double]$script:config.voice.minimumConfidence) {
                 return
             }
 
             $recognizedText = $eventArgs.Result.Text
             $recognizedConfidence = [double]$eventArgs.Result.Confidence
             $uiCallback = [System.Action]({
-                Handle-RecognizedSpeech -Text $recognizedText -Confidence $recognizedConfidence
+                $script:commandInput.Text = $recognizedText
+                Submit-AssistantCommand `
+                    -Command $recognizedText `
+                    -FromVoice $true `
+                    -Confidence $recognizedConfidence
             }.GetNewClosure())
             [void]$script:window.Dispatcher.Invoke($uiCallback)
         }
@@ -475,16 +809,25 @@ function Initialize-SpeechServices {
         }
 
         Set-VoiceStatus `
-            -Text "Voz pronta ($($selectedRecognizer.Culture.Name)). Clique em Ouvir." `
+            -Text "Voz pronta ($($selectedRecognizer.Culture.Name))." `
             -Color '#22C55E'
     }
     catch {
         $script:recognizer = $null
         $script:listenButton.IsEnabled = $false
-        Set-VoiceStatus -Text 'Voz indisponível; use o campo de texto.' -Color '#F59E0B'
+        Set-VoiceStatus -Text 'Voz indisponível; use texto.' -Color '#F59E0B'
         Add-HistoryEntry -Speaker 'Sistema' -Text "Voz indisponível: $($_.Exception.Message)"
     }
 }
+
+$script:aiPollTimer = New-Object System.Windows.Threading.DispatcherTimer
+$script:aiPollTimer.Interval = [TimeSpan]::FromMilliseconds(350)
+$script:aiPollTimer.Add_Tick({ Complete-LocalAiRequest })
+
+$script:reminderTimer = New-Object System.Windows.Threading.DispatcherTimer
+$script:reminderTimer.Interval = [TimeSpan]::FromSeconds(1)
+$script:reminderTimer.Add_Tick({ Check-Reminders })
+$script:reminderTimer.Start()
 
 $script:sendButton.Add_Click({
     Submit-AssistantCommand -Command $script:commandInput.Text
@@ -509,20 +852,55 @@ $script:listenButton.Add_Click({
 
 $script:clearHistoryButton.Add_Click({
     $script:historyTextBox.Clear()
+    $script:conversation.Clear()
 })
 
 $script:youtubeButton.Add_Click({ Submit-AssistantCommand -Command 'abra o YouTube' })
 $script:googleButton.Add_Click({ Submit-AssistantCommand -Command 'abra o Google' })
-$script:gmailButton.Add_Click({ Submit-AssistantCommand -Command 'abra o Gmail' })
-$script:mapsButton.Add_Click({ Submit-AssistantCommand -Command 'abra o Maps' })
 $script:whatsAppButton.Add_Click({ Submit-AssistantCommand -Command 'abra o WhatsApp' })
 $script:calculatorButton.Add_Click({ Submit-AssistantCommand -Command 'abra a calculadora' })
+$script:notesButton.Add_Click({ Submit-AssistantCommand -Command 'mostre as notas' })
+$script:vsCodeButton.Add_Click({
+    try {
+        Start-Process code -ArgumentList "`"$PSScriptRoot`""
+    }
+    catch {
+        Add-HistoryEntry -Speaker 'Sistema' -Text 'O comando “code” não foi encontrado. Instale o VS Code e marque a opção para adicioná-lo ao PATH.'
+    }
+})
+$script:configButton.Add_Click({
+    try {
+        if ($null -ne (Get-Command code -ErrorAction SilentlyContinue)) {
+            Start-Process code -ArgumentList "`"$script:configPath`""
+        }
+        else {
+            Start-Process notepad.exe -ArgumentList "`"$script:configPath`""
+        }
+    }
+    catch {
+        Add-HistoryEntry -Speaker 'Sistema' -Text "Não foi possível abrir o config.json: $($_.Exception.Message)"
+    }
+})
+$script:refreshAiButton.Add_Click({ Initialize-LocalAi })
 
 $script:window.Add_ContentRendered({
     [void]$script:commandInput.Focus()
+    if ([bool]$script:config.voice.autoListen -and $null -ne $script:recognizer) {
+        Start-VoiceRecognition
+    }
 })
 
 $script:window.Add_Closing({
+    $script:isClosing = $true
+    $script:aiPollTimer.Stop()
+    $script:reminderTimer.Stop()
+
+    if ($null -ne $script:aiJob) {
+        Stop-Job -Job $script:aiJob -ErrorAction SilentlyContinue
+        Remove-Job -Job $script:aiJob -Force -ErrorAction SilentlyContinue
+        $script:aiJob = $null
+    }
+
     if ($null -ne $script:recognizer) {
         try {
             if ($script:isListening) {
@@ -535,7 +913,7 @@ $script:window.Add_Closing({
             $script:recognizer.Dispose()
         }
         catch {
-            # A janela já está fechando; não há ação adicional necessária.
+            # A janela já está fechando.
         }
     }
 
@@ -545,11 +923,15 @@ $script:window.Add_Closing({
             $script:synthesizer.Dispose()
         }
         catch {
-            # A janela já está fechando; não há ação adicional necessária.
+            # A janela já está fechando.
         }
     }
 })
 
-Add-HistoryEntry -Speaker 'Assistente' -Text 'Olá! Digite um comando ou clique em Ouvir para usar o microfone.'
+if ($null -ne $script:config.PSObject.Properties['configWarning']) {
+    Add-HistoryEntry -Speaker 'Sistema' -Text "O config.json contém um erro e os padrões foram usados: $($script:config.configWarning)"
+}
+Add-HistoryEntry -Speaker $script:config.assistantName -Text 'Olá! Posso executar comandos, guardar notas, criar lembretes e, com a IA local configurada, conversar e responder perguntas.'
 Initialize-SpeechServices
+Initialize-LocalAi
 [void]$script:window.ShowDialog()

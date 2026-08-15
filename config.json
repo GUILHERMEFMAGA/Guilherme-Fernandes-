@@ -1,0 +1,20 @@
+{
+  "assistantName": "Guilherme",
+  "voice": {
+    "autoListen": false,
+    "minimumConfidence": 0.45,
+    "speakReplies": false
+  },
+  "ai": {
+    "enabled": true,
+    "preferredModel": "qwen3:4b",
+    "timeoutSeconds": 90
+  },
+  "customSites": [
+    {
+      "name": "Arena",
+      "aliases": ["arena", "arena ai"],
+      "url": "https://arena.ai/"
+    }
+  ]
+}

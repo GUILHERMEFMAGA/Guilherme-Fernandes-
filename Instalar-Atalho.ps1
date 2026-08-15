@@ -4,7 +4,9 @@ Set-StrictMode -Version Latest
 Add-Type -AssemblyName PresentationFramework
 
 try {
-    $desktopPath = [Environment]::GetFolderPath([Environment+SpecialFolder]::DesktopDirectory)
+    $specialFolderType = [System.Environment].GetNestedType('SpecialFolder')
+    $desktopFolder = [System.Enum]::Parse($specialFolderType, 'DesktopDirectory')
+    $desktopPath = [System.Environment]::GetFolderPath($desktopFolder)
     $shortcutPath = Join-Path $desktopPath 'Assistente Guilherme.lnk'
     $powerShellPath = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
     $assistantPath = Join-Path $PSScriptRoot 'Assistente.ps1'

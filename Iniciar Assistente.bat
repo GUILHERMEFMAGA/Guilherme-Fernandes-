@@ -11,6 +11,11 @@ if not exist "%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" (
     exit /b 1
 )
 
+if not exist "%~dp0Assistente.ps1" goto :missing
+if not exist "%~dp0Assistente.Core.ps1" goto :missing
+if not exist "%~dp0Assistente.Services.ps1" goto :missing
+if not exist "%~dp0config.json" goto :missing
+
 "%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" ^
     -NoLogo ^
     -NoProfile ^
@@ -26,3 +31,11 @@ if errorlevel 1 (
 )
 
 endlocal
+exit /b 0
+
+:missing
+echo Um ou mais arquivos do Assistente estao faltando.
+echo Extraia novamente a pasta inteira antes de iniciar.
+pause
+endlocal
+exit /b 1

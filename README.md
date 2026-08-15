@@ -60,3 +60,44 @@ app.js          → modais, player de trailer, menu, reveal, newsletter
 favicon.svg     → ícone "VI"
 assets/         → arte oficial de divulgação recondicionada (hero, trailers, cards, notícias)
 ```
+
+---
+
+## Neon Horizon (landing page original — `neon-horizon/`)
+
+Landing page **"Coming Soon"** cinematográfica e original para um videogame
+fictício chamado **NEON HORIZON** (subtítulo *"The City Never Sleeps"*), com
+lançamento fictício em **19.11.2027**, ambientada na cidade fictícia de
+**Aurora Bay**.
+
+> Projeto 100% independente: **não** utiliza logos, imagens, textos, personagens
+> ou assets da Rockstar Games / Grand Theft Auto. Toda a arte foi gerada como
+> material original (cidade tropical fictícia à noite) e o aviso
+> "FAN CONCEPT — NOT AN OFFICIAL GAME" está no rodapé.
+
+### Recursos
+- Loading screen com barra de progresso e porcentagem + transição cinematográfica
+- Hero 100vh: ken burns lento, vinheta, granulação, partículas sutis, parallax,
+  "EM BREVE", data 19.11.2027, contador regressivo em tempo real e CTA "Explorar"
+- Navbar minimalista transparente → blur ao rolar, menu hamburger no mobile,
+  link ativo por seção
+- Seção **O Jogo** (editorial + cards de informações com reveal)
+- Seção **O Mundo**: mapa vetorial SVG fictício de Aurora Bay com praias, centro,
+  porto, bairros, aeroporto, estradas e 6 marcadores interativos + botão de zoom
+- Seção **Personagens**: 3 personagens fictícios (Dante Vale, Luna Marques,
+  Rui Castelo) com hover zoom e overlay
+- Seção **Trailer**: bloco 16:9 com pôster placeholder, botão PLAY pulsante e
+  modal de prévia
+- Seção **Galeria**: grid assimétrico + lightbox (zoom, fechar, anterior/próxima,
+  navegação por teclado)
+- Seção final "Seu próximo destino está chegando." com contador + pré-registro
+- Rodapé premium: logo, links, redes sociais, classificação 18+ fictícia,
+  copyright fictício e aviso FAN CONCEPT
+- Cursor personalizado (desktop), scroll reveal com blur, parallax, smooth scroll
+- Totalmente responsivo e com suporte a `prefers-reduced-motion`
+
+### Como rodar
+```bash
+cd neon-horizon
+python3 -m http.server 8000 --bind 0.0.0.0
+```

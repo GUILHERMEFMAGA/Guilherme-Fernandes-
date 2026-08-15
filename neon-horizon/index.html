@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NEON HORIZON — Em Breve (19.11.2027)</title>
+  <meta name="description" content="Neon Horizon — The City Never Sleeps. Um videogame fictício ambientado em Aurora Bay, a cidade costeira que nunca dorme. Em breve. 19.11.2027." />
+
+  <!-- Tipografia editorial (fontes abertas via CDN, com fallback local) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="loading">
+
+  <!-- ============================================================
+       CURSOR PERSONALIZADO (desktop)
+       ============================================================ -->
+  <div class="cursor-dot" aria-hidden="true"></div>
+  <div class="cursor-ring" aria-hidden="true"></div>
+
+  <!-- ============================================================
+       LOADING SCREEN
+       ============================================================ -->
+  <div class="loader" id="loader" role="status" aria-label="Carregando Neon Horizon">
+    <div class="loader-inner">
+      <p class="loader-kicker">Uma nova era na cidade</p>
+      <p class="loader-logo" aria-hidden="true">NEON<span>HORIZON</span></p>
+      <p class="loader-tag">The City Never Sleeps</p>
+      <div class="loader-bar" aria-hidden="true"><span id="loader-fill"></span></div>
+      <p class="loader-pct" id="loader-pct">0%</p>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       OVERLAYS GLOBAIS (grão + vinheta)
+       ============================================================ -->
+  <div class="grain" aria-hidden="true"></div>
+  <div class="vignette-fixed" aria-hidden="true"></div>
+
+  <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
+
+  <!-- ============================================================
+       NAVBAR
+       ============================================================ -->
+  <header class="nav" id="nav">
+    <a class="nav-logo" href="#inicio" aria-label="Neon Horizon — voltar ao início">
+      NEON<span>HORIZON</span>
+    </a>
+
+    <button class="nav-burger" id="nav-burger" type="button"
+            aria-expanded="false" aria-controls="nav-menu" aria-label="Abrir menu de navegação">
+      <span></span><span></span><span></span>
+    </button>
+
+    <nav class="nav-menu" id="nav-menu" aria-label="Navegação principal">
+      <a href="#inicio" class="nav-link">Início</a>
+      <a href="#jogo" class="nav-link">O Jogo</a>
+      <a href="#personagens" class="nav-link">Personagens</a>
+      <a href="#mundo" class="nav-link">Mundo</a>
+      <a href="#trailer" class="nav-link">Trailer</a>
+      <a href="#galeria" class="nav-link">Galeria</a>
+      <button class="btn btn-solid btn-sm" type="button" data-open="pre">Pré-registro</button>
+    </nav>
+
+    <button class="btn btn-solid btn-sm nav-cta" type="button" data-open="pre">Pré-registro</button>
+  </header>
+
+  <main id="conteudo">
+
+    <!-- ============================================================
+         HERO — tela inicial cinematográfica
+         ============================================================ -->
+    <section class="hero" id="inicio">
+      <div class="hero-bg" data-parallax="0.22">
+        <img src="assets/hero.jpg" alt="Vista noturna de Aurora Bay, cidade costeira fictícia com neon rosa e azul" />
+      </div>
+      <div class="hero-grad" aria-hidden="true"></div>
+      <div class="hero-neon" aria-hidden="true"></div>
+      <canvas class="hero-particles" id="particles" aria-hidden="true"></canvas>
+
+      <div class="hero-content">
+        <p class="hero-kicker" id="hero-kicker">
+          <span class="line" aria-hidden="true"></span> Em breve <span class="line" aria-hidden="true"></span>
+        </p>
+        <h1 class="hero-title" id="hero-title">NEON<span>HORIZON</span></h1>
+        <p class="hero-sub" id="hero-sub">The City Never Sleeps</p>
+        <p class="hero-date" id="hero-date">19.11.2027</p>
+
+        <div class="countdown" id="countdown-hero" role="timer" aria-label="Contagem regressiva para o lançamento">
+          <div class="cd-item">
+            <span class="cd-num" id="cdh-days">00</span>
+            <span class="cd-label">Dias</span>
+          </div>
+          <div class="cd-item">
+            <span class="cd-num" id="cdh-hours">00</span>
+            <span class="cd-label">Horas</span>
+          </div>
+          <div class="cd-item">
+            <span class="cd-num" id="cdh-mins">00</span>
+            <span class="cd-label">Min</span>
+          </div>
+          <div class="cd-item">
+            <span class="cd-num" id="cdh-secs">00</span>
+            <span class="cd-label">Seg</span>
+          </div>
+        </div>
+
+        <a class="btn btn-solid btn-lg btn-explore" href="#jogo">
+          Explorar
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12.7071 19.7071C12.3166 20.0976 11.6834 20.0976 11.2929 19.7071L4.29289 12.7071C3.90237 12.3166 3.90237 11.6834 4.29289 11.2929C4.68342 10.9024 5.31658 10.9024 5.70711 11.2929L11 16.5858V4C11 3.44772 11.4477 3 12 3C12.5523 3 13 3.44772 13 4V16.5858L18.2929 11.2929C18.6834 10.9024 19.3166 10.9024 19.7071 11.2929C20.0976 11.6834 20.0976 12.3166 19.7071 12.7071L12.7071 19.7071Z" fill="currentColor"/>
+          </svg>
+        </a>
+      </div>
+
+      <a class="scroll-hint" href="#jogo" aria-label="Role para continuar">
+        <span class="scroll-hint-text">Role para continuar</span>
+        <span class="scroll-hint-line" aria-hidden="true"><i></i></span>
+      </a>
+    </section>
+
+    <!-- ============================================================
+         SEÇÃO: O JOGO
+         ============================================================ -->
+    <section class="section jogo" id="jogo">
+      <div class="section-head reveal">
+        <p class="kicker">O Jogo</p>
+        <h2 class="section-title">Bem-vindo a <em>Aurora&nbsp;Bay</em></h2>
+      </div>
+
+      <div class="jogo-grid">
+        <figure class="jogo-media reveal" data-parallax="0.06">
+          <img src="assets/game.jpg" alt="Rua noturna de Aurora Bay com carro esportivo sob marquise iluminada" loading="lazy" />
+        </figure>
+
+        <div class="jogo-copy reveal">
+          <p class="jogo-lead">Quando o sol se põe, a cidade acorda.</p>
+          <p>
+            Aurora Bay é uma metrópole costeira erguida sobre dinheiro sujo, hotéis de luxo
+            e letreiros de neon. De dia, as praias pertencem aos turistas. De noite, a cidade
+            pertence a quem tem coragem de atravessá-la.
+          </p>
+          <p>
+            Em <strong>NEON HORIZON</strong>, você vive a sua própria queda — e a sua própria
+            redenção — em um dos mapas urbanos mais densos já imaginados, do píer iluminado
+            ao porto industrial abandonado.
+          </p>
+        </div>
+      </div>
+
+      <div class="facts">
+        <div class="fact reveal" style="--d:.05s">
+          <span class="fact-label">Gênero</span>
+          <span class="fact-value">Ação &amp; Aventura</span>
+        </div>
+        <div class="fact reveal" style="--d:.12s">
+          <span class="fact-label">Plataformas</span>
+          <span class="fact-value">Console &amp; PC</span>
+        </div>
+        <div class="fact reveal" style="--d:.19s">
+          <span class="fact-label">Modo</span>
+          <span class="fact-value">Um jogador</span>
+        </div>
+        <div class="fact reveal" style="--d:.26s">
+          <span class="fact-label">Classificação</span>
+          <span class="fact-value">18+ (fictícia)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SEÇÃO: O MUNDO (mapa interativo fictício)
+         ============================================================ -->
+    <section class="section mundo" id="mundo">
+      <div class="section-head reveal">
+        <p class="kicker">O Mundo</p>
+        <h2 class="section-title">Aurora Bay, <em>de ponta a ponta</em></h2>
+        <p class="section-sub">
+          Uma cidade costeira completa: praias, centro financeiro, bairros antigos,
+          porto industrial e estradas que cortam a noite. Explore os marcadores.
+        </p>
+      </div>
+
+      <div class="map-wrap reveal" id="map-wrap">
+        <div class="map-inner" id="map-inner">
+
+          <!-- Mapa vetorial fictício (SVG) -->
+          <svg class="map-svg" viewBox="0 0 1000 620" role="img"
+               aria-label="Mapa fictício da cidade costeira de Aurora Bay, com praias ao leste, centro urbano, porto industrial e bairros">
+            <defs>
+              <linearGradient id="ocean" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#0a1c33" />
+                <stop offset="1" stop-color="#04101f" />
+              </linearGradient>
+              <linearGradient id="land" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#11141d" />
+                <stop offset="1" stop-color="#0b0d14" />
+              </linearGradient>
+              <radialGradient id="centroGlow" cx=".5" cy=".5" r=".5">
+                <stop offset="0" stop-color="#ff2e8a" stop-opacity=".22" />
+                <stop offset="1" stop-color="#ff2e8a" stop-opacity="0" />
+              </radialGradient>
+            </defs>
+
+            <!-- oceano -->
+            <rect width="1000" height="620" fill="url(#ocean)" />
+
+            <!-- ondas decorativas -->
+            <g class="map-waves" stroke="#1c3a5e" stroke-width="1.4" fill="none" opacity=".75">
+              <path d="M600 90 q10 -6 20 0 q10 6 20 0" />
+              <path d="M700 150 q10 -6 20 0 q10 6 20 0" />
+              <path d="M640 260 q10 -6 20 0 q10 6 20 0" />
+              <path d="M760 320 q10 -6 20 0 q10 6 20 0" />
+              <path d="M680 440 q10 -6 20 0 q10 6 20 0" />
+              <path d="M820 500 q10 -6 20 0 q10 6 20 0" />
+              <path d="M620 560 q10 -6 20 0 q10 6 20 0" />
+            </g>
+
+            <!-- continente -->
+            <path d="M0 0 L520 0 C548 180 588 400 604 620 L0 620 Z" fill="url(#land)" />
+
+            <!-- faixa de praia -->
+            <path d="M520 0 C548 180 588 400 604 620 L560 620 C544 400 508 180 484 0 Z"
+                  fill="#191724" opacity=".9" />
+
+            <!-- centro financeiro (brilho + quarteirões) -->
+            <circle cx="380" cy="260" r="130" fill="url(#centroGlow)" />
+            <path d="M300 180 L470 190 L458 330 L292 318 Z" fill="#151a29" stroke="#ff2e8a" stroke-opacity=".55" stroke-width="1" />
+            <g class="map-bld" fill="#1d2336" stroke="none">
+              <rect x="318" y="205" width="26" height="52" />
+              <rect x="352" y="196" width="22" height="66" />
+              <rect x="382" y="210" width="30" height="48" />
+              <rect x="420" y="200" width="20" height="58" />
+              <rect x="330" y="270" width="24" height="40" />
+              <rect x="362" y="278" width="30" height="30" />
+              <rect x="400" y="266" width="22" height="44" />
+            </g>
+
+            <!-- bairro antigo -->
+            <path d="M90 210 L260 200 L250 420 L80 432 Z" fill="#12141d" stroke="#d9b36a" stroke-opacity=".5" stroke-width="1" />
+            <g class="map-bld" fill="#1a1d28">
+              <rect x="112" y="236" width="20" height="20" />
+              <rect x="142" y="252" width="22" height="26" />
+              <rect x="176" y="236" width="18" height="34" />
+              <rect x="124" y="300" width="24" height="18" />
+              <rect x="160" y="318" width="20" height="24" />
+            </g>
+
+            <!-- jardins da aurora -->
+            <path d="M70 30 L300 20 L310 170 L80 182 Z" fill="#0f1a16" stroke="#1f6f5b" stroke-opacity=".6" stroke-width="1" />
+            <g class="map-park" fill="#163327">
+              <circle cx="140" cy="90" r="14" />
+              <circle cx="190" cy="70" r="10" />
+              <circle cx="230" cy="110" r="16" />
+              <circle cx="160" cy="140" r="11" />
+            </g>
+
+            <!-- porto industrial -->
+            <path d="M560 380 L990 372 L1000 620 L600 620 Z" fill="#131722" stroke="#22d3ff" stroke-opacity=".55" stroke-width="1" />
+            <g class="map-crane" stroke="#22d3ff" stroke-opacity=".5" stroke-width="2" fill="none">
+              <path d="M640 430 v70 h46 v-70" />
+              <path d="M740 460 v70 h52 v-70" />
+              <path d="M850 440 v70 h44 v-70" />
+            </g>
+            <path d="M600 520 h400" stroke="#22d3ff" stroke-opacity=".35" stroke-width="3" />
+
+            <!-- aeroporto -->
+            <path d="M70 460 L330 450 L342 580 L72 592 Z" fill="#14161f" stroke="#5c6377" stroke-width="1" />
+            <path d="M110 505 L300 497 L304 540 L112 548 Z" fill="#1a1e2a" />
+
+            <!-- rodovias com brilho neon -->
+            <g class="map-road-glow" stroke-opacity=".16" stroke-width="10" fill="none">
+              <path d="M170 300 C 260 282 330 266 380 260" stroke="#ff2e8a" />
+              <path d="M380 260 C 425 228 490 186 545 150" stroke="#ff2e8a" />
+              <path d="M380 260 C 420 340 500 400 585 430" stroke="#22d3ff" />
+              <path d="M170 300 C 152 380 144 460 165 520" stroke="#22d3ff" />
+              <path d="M545 150 C 700 138 840 200 905 300" stroke="#22d3ff" />
+            </g>
+            <g class="map-road" stroke="#262d40" stroke-width="5" fill="none">
+              <path d="M170 300 C 260 282 330 266 380 260" />
+              <path d="M380 260 C 425 228 490 186 545 150" />
+              <path d="M380 260 C 420 340 500 400 585 430" />
+              <path d="M170 300 C 152 380 144 460 165 520" />
+              <path d="M545 150 C 700 138 840 200 905 300" />
+            </g>
+
+            <!-- rótulos dos distritos -->
+            <g class="map-label" fill="#525a72" font-family="Inter, sans-serif" font-size="13" letter-spacing="2.5">
+              <text x="452" y="84" text-anchor="end">PRAIA NEON</text>
+              <text x="432" y="250" text-anchor="middle">CENTRO</text>
+              <text x="86" y="330" text-anchor="middle" transform="rotate(-90 86 330)">BAIRRO ANTIGO</text>
+              <text x="180" y="128" text-anchor="middle">JARDINS</text>
+              <text x="720" y="404" text-anchor="middle">PORTO</text>
+              <text x="200" y="614" text-anchor="middle">AEROPORTO</text>
+            </g>
+          </svg>
+
+          <!-- marcadores interativos -->
+          <div class="map-marker" style="--x:59%;--y:22%" data-name="Praia Neon">
+            <button class="marker-btn" type="button" aria-label="Explorar: Praia Neon"><span></span></button>
+            <div class="marker-tip" role="tooltip">
+              <strong>Praia Neon</strong>
+              <p>Faixa de areia que brilha com a luz dos hotéis. Onde a cidade se encontra com o mar.</p>
+            </div>
+          </div>
+          <div class="map-marker" style="--x:38%;--y:42%" data-name="Centro Financeiro">
+            <button class="marker-btn" type="button" aria-label="Explorar: Centro Financeiro"><span></span></button>
+            <div class="marker-tip" role="tooltip">
+              <strong>Centro Financeiro</strong>
+              <p>Torres de vidro e apostas altas. Toda fortuna de Aurora Bay passa por aqui.</p>
+            </div>
+          </div>
+          <div class="map-marker" style="--x:88%;--y:84%" data-name="Porto Industrial">
+            <button class="marker-btn" type="button" aria-label="Explorar: Porto Industrial"><span></span></button>
+            <div class="marker-tip" role="tooltip">
+              <strong>Porto Industrial</strong>
+              <p>Guindastes e contêineres escondem o que ninguém deve encontrar. Território proibido.</p>
+            </div>
+          </div>
+          <div class="map-marker" style="--x:17%;--y:48%" data-name="Bairro Antigo">
+            <button class="marker-btn" type="button" aria-label="Explorar: Bairro Antigo"><span></span></button>
+            <div class="marker-tip" role="tooltip">
+              <strong>Bairro Antigo</strong>
+              <p>Fachadas de outra era, segredos de sempre. As ruas aqui têm memória longa.</p>
+            </div>
+          </div>
+          <div class="map-marker" style="--x:18%;--y:18%" data-name="Jardins da Aurora">
+            <button class="marker-btn" type="button" aria-label="Explorar: Jardins da Aurora"><span></span></button>
+            <div class="marker-tip" role="tooltip">
+              <strong>Jardins da Aurora</strong>
+              <p>O pulmão da cidade. Calmo de dia, vigiado de noite.</p>
+            </div>
+          </div>
+          <div class="map-marker" style="--x:20%;--y:84%" data-name="Aeroporto">
+            <button class="marker-btn" type="button" aria-label="Explorar: Aeroporto"><span></span></button>
+            <div class="marker-tip" role="tooltip">
+              <strong>Aeroporto</strong>
+              <p>Para quem chega — e para quem precisa partir rápido demais.</p>
+            </div>
+          </div>
+
+          <p class="map-legend"><span class="legend-dot" aria-hidden="true"></span> Toque nos marcadores para explorar</p>
+          <button class="map-zoom" id="map-zoom" type="button" aria-pressed="false" aria-label="Aplicar zoom no mapa">+</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SEÇÃO: PERSONAGENS
+         ============================================================ -->
+    <section class="section personagens" id="personagens">
+      <div class="section-head reveal">
+        <p class="kicker">Personagens</p>
+        <h2 class="section-title">Quem domina <em>a noite</em></h2>
+      </div>
+
+      <div class="chars-grid">
+        <article class="char reveal" style="--d:.05s">
+          <figure class="char-media">
+            <img src="assets/char1.jpg" alt="Retrato de Dante Vale, personagem fictício de Neon Horizon" loading="lazy" />
+            <figcaption class="char-role">O Corredor</figcaption>
+          </figure>
+          <div class="char-info">
+            <h3 class="char-name">Dante Vale</h3>
+            <p>Ex-piloto de fuga. Voltou a Aurora Bay para cobrar um preço — e ninguém atravessa a cidade mais rápido que ele.</p>
+          </div>
+        </article>
+
+        <article class="char reveal" style="--d:.15s">
+          <figure class="char-media">
+            <img src="assets/char2.jpg" alt="Retrato de Luna Marques, personagem fictícia de Neon Horizon" loading="lazy" />
+            <figcaption class="char-role">A Sombra</figcaption>
+          </figure>
+          <div class="char-info">
+            <h3 class="char-name">Luna Marques</h3>
+            <p>Os olhos dela estão em cada câmera da cidade. Se a verdade está enterrada, Luna sabe onde cavar.</p>
+          </div>
+        </article>
+
+        <article class="char reveal" style="--d:.25s">
+          <figure class="char-media">
+            <img src="assets/char3.jpg" alt="Retrato de Rui Castelo, personagem fictício de Neon Horizon" loading="lazy" />
+            <figcaption class="char-role">O Magnata</figcaption>
+          </figure>
+          <div class="char-info">
+            <h3 class="char-name">Rui Castelo</h3>
+            <p>Dono dos cassinos e de metade dos segredos da costa. Sorri como quem vende a noite — e cobra caro por ela.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SEÇÃO: TRAILER (placeholder original)
+         ============================================================ -->
+    <section class="section trailer" id="trailer">
+      <div class="trailer-media reveal" data-parallax="0.05">
+        <!-- fundo desfocado para preencher o bloco 16:9 -->
+        <img class="trailer-blur" src="assets/trailer.jpg" alt="" aria-hidden="true" loading="lazy" />
+        <img class="trailer-poster" src="assets/trailer.jpg" alt="Pôster conceitual do trailer de Neon Horizon: silhueta em um terraço sobre a cidade iluminada" loading="lazy" />
+
+        <button class="trailer-play" id="trailer-play" type="button" aria-label="Reproduzir trailer">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M8 5.14v13.72c0 .8.87 1.3 1.56.9l11-6.86a1.05 1.05 0 0 0 0-1.8l-11-6.86A1.05 1.05 0 0 0 8 5.14Z"/>
+          </svg>
+        </button>
+
+        <div class="trailer-caption">
+          <p class="kicker">Trailer</p>
+          <h3 class="trailer-title">Primeiro olhar</h3>
+          <p>A noite de Aurora Bay em movimento. Vídeo placeholder — trailer oficial em breve.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SEÇÃO: GALERIA
+         ============================================================ -->
+    <section class="section galeria" id="galeria">
+      <div class="section-head reveal">
+        <p class="kicker">Galeria</p>
+        <h2 class="section-title">Cenas <em>da cidade</em></h2>
+      </div>
+
+      <div class="gallery-grid">
+        <button class="gallery-item g-tall reveal" type="button"
+                data-full="assets/hero.jpg" data-title="Aurora Bay" data-caption="O skyline ao anoitecer, visto do píer." style="--d:.05s">
+          <img src="assets/hero.jpg" alt="Skyline noturno de Aurora Bay" loading="lazy" />
+          <span class="gallery-zoom" aria-hidden="true">+</span>
+        </button>
+        <button class="gallery-item reveal" type="button"
+                data-full="assets/game.jpg" data-title="Ruas do Centro" data-caption="Neon refletido no asfalto molhado." style="--d:.1s">
+          <img src="assets/game.jpg" alt="Rua noturna com carro esportivo sob neon" loading="lazy" />
+          <span class="gallery-zoom" aria-hidden="true">+</span>
+        </button>
+        <button class="gallery-item reveal" type="button"
+                data-full="assets/beach.jpg" data-title="Costa das Palmeiras" data-caption="A praia que nunca dorme." style="--d:.15s">
+          <img src="assets/beach.jpg" alt="Praia à noite com calçadão iluminado" loading="lazy" />
+          <span class="gallery-zoom" aria-hidden="true">+</span>
+        </button>
+        <button class="gallery-item g-wide reveal" type="button"
+                data-full="assets/car.jpg" data-title="Rodovia da Costa" data-caption="Velocidade ao longo do mar." style="--d:.2s">
+          <img src="assets/car.jpg" alt="Carro esportivo em rodovia costeira à noite" loading="lazy" />
+          <span class="gallery-zoom" aria-hidden="true">+</span>
+        </button>
+        <button class="gallery-item reveal" type="button"
+                data-full="assets/trailer.jpg" data-title="O Vigilante" data-caption="Um terraço, uma cidade, uma decisão." style="--d:.25s">
+          <img src="assets/trailer.jpg" alt="Silhueta em um terraço sobre a cidade" loading="lazy" />
+          <span class="gallery-zoom" aria-hidden="true">+</span>
+        </button>
+        <button class="gallery-item g-tall reveal" type="button"
+                data-full="assets/char1.jpg" data-title="Dante Vale" data-caption="O corredor da noite." style="--d:.3s">
+          <img src="assets/char1.jpg" alt="Retrato de Dante Vale em beco iluminado" loading="lazy" />
+          <span class="gallery-zoom" aria-hidden="true">+</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SEÇÃO FINAL
+         ============================================================ -->
+    <section class="final" id="final">
+      <div class="final-bg" data-parallax="0.16">
+        <img src="assets/beach.jpg" alt="" aria-hidden="true" loading="lazy" />
+      </div>
+      <div class="final-grad" aria-hidden="true"></div>
+
+      <div class="final-content">
+        <p class="kicker reveal">A contagem começou</p>
+        <h2 class="final-title reveal">Seu próximo destino<br />está chegando.</h2>
+
+        <div class="countdown countdown-final reveal" id="countdown-final" role="timer" aria-label="Contagem regressiva para o lançamento">
+          <div class="cd-item">
+            <span class="cd-num" id="cdf-days">00</span>
+            <span class="cd-label">Dias</span>
+          </div>
+          <div class="cd-item">
+            <span class="cd-num" id="cdf-hours">00</span>
+            <span class="cd-label">Horas</span>
+          </div>
+          <div class="cd-item">
+            <span class="cd-num" id="cdf-mins">00</span>
+            <span class="cd-label">Min</span>
+          </div>
+          <div class="cd-item">
+            <span class="cd-num" id="cdf-secs">00</span>
+            <span class="cd-label">Seg</span>
+          </div>
+        </div>
+
+        <button class="btn btn-solid btn-lg reveal" type="button" data-open="pre" style="--d:.1s">Pré-registre-se</button>
+        <p class="final-note reveal" style="--d:.2s">Aurora Bay espera por você. 19.11.2027.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================================
+       RODAPÉ
+       ============================================================ -->
+  <footer class="footer">
+    <div class="footer-top">
+      <a class="footer-logo" href="#inicio" aria-label="Neon Horizon — voltar ao início">NEON<span>HORIZON</span></a>
+
+      <nav class="footer-nav" aria-label="Links do rodapé">
+        <a href="#jogo">O Jogo</a>
+        <a href="#personagens">Personagens</a>
+        <a href="#mundo">Mundo</a>
+        <a href="#trailer">Trailer</a>
+        <a href="#galeria">Galeria</a>
+      </nav>
+
+      <div class="footer-social" aria-label="Redes sociais">
+        <a href="#" aria-label="X (Twitter)"><svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M9.142 7.081 13.609 2H12.55L8.671 6.412 5.573 2H2l4.685 6.672L2 14h1.059l4.096-4.66L10.427 14H14zm-1.45 1.65-.475-.665L3.44 2.78h1.626l3.048 4.266.475.664 3.962 5.546h-1.626z"/></svg></a>
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M5.515 2.042c-.638.03-1.074.132-1.455.282-.395.153-.73.36-1.062.694a2.9 2.9 0 0 0-.69 1.063c-.148.382-.248.818-.276 1.457s-.034.844-.031 2.474c.003 1.629.01 1.833.041 2.473.03.639.132 1.074.282 1.456.154.394.36.728.694 1.061s.668.537 1.064.69c.382.147.818.248 1.457.276.638.028.844.034 2.473.031s1.834-.01 2.474-.04 1.073-.133 1.455-.282c.394-.154.729-.36 1.061-.694a2.9 2.9 0 0 0 .69-1.064c.148-.382.248-.818.276-1.456.028-.64.034-.845.031-2.474s-.01-1.834-.04-2.474-.133-1.074-.282-1.456a2.95 2.95 0 0 0-.694-1.061 2.9 2.9 0 0 0-1.064-.69c-.382-.147-.818-.248-1.457-.276-.638-.027-.844-.034-2.473-.031s-1.834.01-2.474.041m.07 10.847c-.585-.026-.902-.123-1.114-.204a1.9 1.9 0 0 1-.691-.448 1.85 1.85 0 0 1-.45-.689c-.082-.212-.181-.529-.209-1.114-.03-.632-.036-.822-.04-2.424-.003-1.602.003-1.791.031-2.424.025-.584.123-.902.204-1.114.108-.28.238-.48.448-.69.21-.212.409-.342.689-.451.211-.083.529-.18 1.113-.209.633-.03.823-.036 2.424-.039 1.602-.004 1.792.002 2.425.03.585.026.903.123 1.114.204.28.108.48.238.69.448.212.21.342.409.451.69.083.21.181.527.209 1.112.03.633.037.823.04 2.424.002 1.602-.003 1.792-.031 2.424-.026.585-.123.903-.204 1.115-.108.28-.238.48-.448.69-.21.211-.409.341-.689.45-.211.083-.529.182-1.113.21-.633.03-.822.035-2.425.039s-1.791-.003-2.424-.03m4.892-8.096a.72.72 0 1 0 1.44-.002.72.72 0 0 0-1.44.002M4.919 8.006a3.08 3.08 0 1 0 6.162-.012 3.08 3.08 0 0 0-6.162.012M6 8.004a2 2 0 1 1 4-.008 2 2 0 0 1-4 .008"/></svg></a>
+        <a href="#" aria-label="YouTube"><svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M14.708 4.63a1.75 1.75 0 0 0-1.237-1.237C12.378 3.1 8 3.1 8 3.1s-4.378 0-5.47.293A1.75 1.75 0 0 0 1.293 4.63C1 5.722 1 8 1 8s0 2.278.293 3.37a1.75 1.75 0 0 0 1.237 1.237C3.622 12.9 8 12.9 8 12.9s4.378 0 5.47-.293a1.75 1.75 0 0 0 1.237-1.237C15 10.278 15 8 15 8s0-2.278-.293-3.37zM6.6 10.1V5.9L10.237 8z"/></svg></a>
+        <a href="#" aria-label="Twitch"><svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M5.143 2 3 4.143v7.714h2.571V14l2.143-2.143H9.43L13.286 8V2zm7.286 5.571-1.715 1.715H9l-1.5 1.5v-1.5H5.571V2.857h6.858z"/><path d="M11.143 4.357h-.857V6.93h.857zM8.786 4.357h-.857V6.93h.857z"/></svg></a>
+        <a href="#" aria-label="Discord"><svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M12.165 4.362A10 10 0 0 0 9.69 3.6q-.175.314-.317.645a9.2 9.2 0 0 0-2.747 0q-.142-.33-.317-.645a10 10 0 0 0-2.478.764C2.263 6.682 1.84 8.942 2.051 11.17a10 10 0 0 0 3.036 1.524 7.3 7.3 0 0 0 .65-1.049 6.5 6.5 0 0 1-1.023-.489q.129-.094.25-.188a7.13 7.13 0 0 0 6.071 0q.123.1.251.188-.492.29-1.025.49.28.552.65 1.048a10 10 0 0 0 3.038-1.523c.25-2.585-.426-4.824-1.784-6.81M6.007 9.8c-.592 0-1.081-.537-1.081-1.198S5.398 7.4 6.005 7.4s1.092.542 1.081 1.202c-.01.661-.476 1.198-1.08 1.198m3.986 0c-.592 0-1.08-.537-1.08-1.198S9.387 7.4 9.994 7.4s1.09.542 1.08 1.202c-.011.661-.476 1.198-1.08 1.198"/></svg></a>
+      </div>
+    </div>
+
+    <div class="footer-mid">
+      <div class="footer-rating">
+        <span class="rating-badge">18</span>
+        <p>Classificação indicativa fictícia: 18 anos.<br />Conteúdo sugestivo, violência e linguagem imprópria (conceito).</p>
+      </div>
+      <nav class="footer-legal" aria-label="Links legais">
+        <a href="#">Privacidade</a>
+        <a href="#">Termos de uso</a>
+        <a href="#">Cookies</a>
+        <a href="#">Imprensa</a>
+      </nav>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="disclaimer">FAN CONCEPT — NOT AN OFFICIAL GAME</p>
+      <p class="copyright">© <span data-year></span> Neon Horizon Studios. Projeto conceitual fictício — todos os personagens, lugares e marcas são fictícios.</p>
+    </div>
+  </footer>
+
+  <!-- ============================================================
+       LIGHTBOX (galeria)
+       ============================================================ -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Visualizador de imagens" hidden>
+    <div class="lightbox-backdrop" data-lb-close></div>
+    <button class="lightbox-close" type="button" data-lb-close aria-label="Fechar galeria">×</button>
+    <button class="lightbox-prev" type="button" aria-label="Imagem anterior">‹</button>
+    <figure class="lightbox-stage">
+      <img class="lightbox-img" id="lightbox-img" src="" alt="" />
+      <figcaption class="lightbox-caption">
+        <strong id="lightbox-title"></strong>
+        <span id="lightbox-text"></span>
+        <span class="lightbox-counter" id="lightbox-counter"></span>
+      </figcaption>
+    </figure>
+    <button class="lightbox-next" type="button" aria-label="Próxima imagem">›</button>
+  </div>
+
+  <!-- ============================================================
+       MODAL: TRAILER (placeholder)
+       ============================================================ -->
+  <div class="modal" id="modal-trailer" role="dialog" aria-modal="true" aria-label="Trailer de Neon Horizon" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-panel">
+      <button class="modal-close" type="button" data-close aria-label="Fechar trailer">×</button>
+      <div class="trailer-stage">
+        <img src="assets/trailer.jpg" alt="Pôster conceitual do trailer de Neon Horizon" />
+        <div class="trailer-stage-shade" aria-hidden="true"></div>
+        <span class="trailer-badge">Prévia</span>
+        <div class="trailer-stage-note">
+          <strong>NEON HORIZON — Primeiro olhar</strong>
+          <p>Espaço reservado para o vídeo oficial. O trailer chega em breve.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL: PRÉ-REGISTRO
+       ============================================================ -->
+  <div class="modal" id="modal-pre" role="dialog" aria-modal="true" aria-label="Pré-registro" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-panel modal-panel-sm">
+      <button class="modal-close" type="button" data-close aria-label="Fechar pré-registro">×</button>
+      <p class="kicker">Aurora Bay te espera</p>
+      <h2 class="modal-title">Pré-registre-se</h2>
+      <p class="modal-text">Receba em primeira mão o trailer, acesso antecipado a novidades e convites para o teste fechado (conceito).</p>
+
+      <form class="pre-form" id="pre-form" novalidate>
+        <label class="visually-hidden" for="pre-email">Seu melhor e-mail</label>
+        <input id="pre-email" name="email" type="email" required placeholder="seu@email.com" autocomplete="email" />
+        <button class="btn btn-solid" type="submit">Quero na lista</button>
+      </form>
+
+      <p class="pre-ok" id="pre-ok" hidden role="status">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 1a11 11 0 1 0 0 22 11 11 0 0 0 0-22Zm5.7 8.7-6 6a1 1 0 0 1-1.4 0l-3-3a1 1 0 1 1 1.4-1.4l2.3 2.29 5.3-5.3a1 1 0 0 1 1.4 1.41Z" fill="currentColor"/></svg>
+        Registro confirmado. Bem-vindo a Aurora Bay.
+      </p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -4,27 +4,29 @@
 
 Recreação estática local da página **https://www.rockstargames.com/VI** (versão pt-BR),
 construída do zero como um site auto-contido (HTML + CSS + JS), sem dependência
-externa de rede.
+externa de rede em tempo de execução.
 
-> ⚠️ Nota: o sandbox não tem acesso à internet, então não foi possível fazer um
-> *mirror* byte-a-byte (baixando os assets originais da Rockstar). Esta é uma
-> recriação fiel da estrutura, seções e textos da página, com arte original
-> gerada no mesmo estilo visual (Vice City / neon). Todos os textos, marcas e
-> referências pertencem aos seus respectivos titulares; este projeto é apenas
-> um exercício de clonagem de página.
+> ⚠️ Nota: o sandbox não tem acesso direto à internet, então não foi possível fazer
+> um *mirror* byte-a-byte dos assets originais da Rockstar. A estrutura, seções,
+> textos, datas e interações reproduzem fielmente a página real; a arte usa
+> material oficial de divulgação (key art, screenshots e thumbnails oficiais do
+> jogo) obtido via busca de imagens e recondicionado localmente. Todos os textos,
+> marcas e imagens pertencem aos seus respectivos titulares (Rockstar Games,
+> Netflix, Sony, Microsoft); este projeto é apenas um exercício de clonagem de
+> página para fins de estudo.
 
 ### Conteúdo replicado
 - Nav fixa com logo da Rockstar, botão **Reserve agora** e menu mobile
 - Banner de anúncio: *Um Olhar Estendido, em 27 de agosto*
 - Hero com data de lançamento (**19 de novembro de 2026**), logo VI e CTAs
-- Seção **Um Olhar Estendido** (parceria Netflix)
+- Seção **Um Olhar Estendido** (parceria Netflix, com botão "Lembre-me")
 - Seção de **Trailers** (1º e 2º trailer) com player simulado em modal
 - Promo **Ultimate Edition** com modal detalhado dos benefícios
 - Promo **Pacote Vintage Vice City** (bônus de reserva) com modal detalhado
 - Cards **Só em Leonida** e **Mídia e ilustrações**
 - Sinopse *"Vice City, EUA."* (back-of-box)
-- **Novidades em destaque** (boletim/newswire)
-- Rodapé completo: newsletter, redes sociais, links legais e selo OLA BR
+- **Novidades em destaque** (boletim/newswire com links reais)
+- Rodapé completo: newsletter (simulada), redes sociais, links legais e selo OLA BR
 
 ### Como rodar
 Basta servir a pasta raiz com qualquer servidor estático:
@@ -41,5 +43,5 @@ index.html      → página (pt-BR)
 styles.css      → tema (dark + neon Vice City), responsivo
 app.js          → modais, player de trailer, menu, reveal, newsletter
 favicon.svg     → ícone "VI"
-assets/         → arte original gerada (hero, trailers, cards, notícias)
+assets/         → arte oficial de divulgação recondicionada (hero, trailers, cards, notícias)
 ```

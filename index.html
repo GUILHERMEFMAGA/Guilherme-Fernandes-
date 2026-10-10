@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>PIXEL CRIME CITY — estilo GTA 1</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0; height: 100%; overflow: hidden; background: #08080c;
+    font-family: "Courier New", ui-monospace, monospace; color: #e8e4d6;
+    touch-action: none; user-select: none;
+  }
+  #app {
+    position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(circle at 50% 35%, #20203a 0%, #0b0b12 60%, #05050a 100%);
+  }
+  #wrap { position: relative; box-shadow: 0 0 0 2px #2a2a3a, 0 20px 60px rgba(0,0,0,.7); }
+  canvas { position: absolute; left: 0; top: 0; display: block; }
+  #game { z-index: 1; image-rendering: pixelated; image-rendering: crisp-edges; }
+  #ui { z-index: 2; }
+
+  /* ---------- menu ---------- */
+  #menu {
+    position: absolute; inset: 0; z-index: 5; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 1.2vmin; text-align: center;
+    background: linear-gradient(180deg, rgba(8,6,14,.93) 0%, rgba(14,10,22,.96) 100%);
+    padding: 2vmin;
+  }
+  #menu h1 {
+    margin: 0; font-size: 5.2vmin; letter-spacing: .3vmin; color: #ffd24a;
+    text-shadow: 3px 3px 0 #7a2a10, 6px 6px 0 rgba(0,0,0,.5);
+  }
+  #menu h2 { margin: 0; font-size: 1.9vmin; font-weight: normal; color: #9fd6ff; letter-spacing: .2vmin; }
+  #menu img {
+    width: 46%; max-width: 460px; border: 2px solid #ffd24a; border-radius: 3px;
+    image-rendering: pixelated; box-shadow: 0 6px 24px rgba(0,0,0,.6); margin: .6vmin 0;
+  }
+  .keys {
+    display: grid; grid-template-columns: auto auto; gap: .4vmin 1.6vmin;
+    font-size: 1.7vmin; color: #cfc8b8; text-align: left;
+  }
+  .keys b { color: #ffe14a; font-weight: bold; }
+  #startBtn {
+    margin-top: 1vmin; cursor: pointer; border: 2px solid #ffd24a; background: #c9422f;
+    color: #fff3d6; font-family: inherit; font-weight: bold; font-size: 2.4vmin;
+    padding: 1.2vmin 3.4vmin; border-radius: 2px; letter-spacing: .3vmin;
+    box-shadow: 0 4px 0 #6d2013; transition: transform .06s;
+  }
+  #startBtn:active { transform: translateY(3px); box-shadow: 0 1px 0 #6d2013; }
+  #menu small { color: #7f7a70; font-size: 1.4vmin; }
+
+  /* ---------- controles de toque ---------- */
+  #touch { display: none; position: absolute; inset: 0; z-index: 4; }
+  #stick {
+    position: absolute; left: 3%; bottom: 5%; width: 22vmin; height: 22vmin; border-radius: 50%;
+    background: rgba(20,18,28,.45); border: 2px solid rgba(255,210,90,.35);
+  }
+  #knob {
+    position: absolute; left: 50%; top: 50%; width: 40%; height: 40%; margin: -20% 0 0 -20%;
+    border-radius: 50%; background: rgba(255,210,90,.55); border: 2px solid rgba(255,230,150,.8);
+  }
+  .tbtn {
+    position: absolute; width: 12vmin; height: 12vmin; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.4vmin; font-weight: bold; color: #fff3d6;
+    background: rgba(200,60,45,.75); border: 2px solid rgba(255,210,90,.6);
+  }
+  #btnA { right: 5%; bottom: 12%; background: rgba(60,140,90,.75); }
+  #btnB { right: 20%; bottom: 5%; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="wrap">
+    <canvas id="game"></canvas>
+    <canvas id="ui"></canvas>
+
+    <div id="touch">
+      <div id="stick"><div id="knob"></div></div>
+      <div id="btnA" class="tbtn">E</div>
+      <div id="btnB" class="tbtn">F</div>
+    </div>
+
+    <div id="menu">
+      <h1>PIXEL CRIME CITY</h1>
+      <h2>cidade aberta em pixel art • visão top-down</h2>
+      <img src="assets/gta1_city.png" alt="referência: cidade pixel art estilo GTA 1">
+      <div class="keys">
+        <b>WASD / setas</b><span>andar / dirigir</span>
+        <b>E ou ENTER</b><span>entrar e sair do carro</span>
+        <b>F / clique</b><span>atirar</span>
+        <b>ESPAÇO</b><span>freio de mão (derrapar)</span>
+        <b>P</b><span>pausa • <b>M</b> mudo • <b>R</b> reiniciar</span><span>atropelar e explodir dá dinheiro (e estrelas)</span>
+      </div>
+      <button id="startBtn">JOGAR</button>
+      <small>feito a partir da imagem escolhida — cenário em tiles, nada é imagem de fundo</small>
+    </div>
+  </div>
+</div>
+
+<script src="js/pixel.js"></script>
+<script src="js/world.js"></script>
+<script src="js/entities.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>

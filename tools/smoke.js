@@ -7,7 +7,13 @@ const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 
+const NOOP = function () { return undefined; };
+const MEASURE = function () { return { width: 20 }; };
+const GRAD = function () { return { addColorStop: NOOP }; };
 function makeCtx(canvas) {
+  const cache = {
+    measureText: MEASURE, createLinearGradient: GRAD, createRadialGradient: GRAD
+  };
   const t = {
     canvas: canvas, fillStyle: '#000', strokeStyle: '#000', globalAlpha: 1,
     globalCompositeOperation: 'source-over', lineWidth: 1, font: '', textAlign: 'left',
@@ -16,11 +22,9 @@ function makeCtx(canvas) {
   return new Proxy(t, {
     get(o, p) {
       if (p in o) return o[p];
-      if (p === 'measureText') return () => ({ width: 20 });
-      if (p === 'createLinearGradient' || p === 'createRadialGradient') return () => ({ addColorStop() { } });
-      if (p === 'getImageData') return (x, y, w, h) => ({ data: new Uint8ClampedArray(Math.max(4, (w | 0) * (h | 0) * 4)) });
-      if (p === 'createBuffer') return null;
-      return () => undefined;
+      if (p in cache) return cache[p];
+      cache[p] = NOOP;                 // memoiza: evita alocar uma closure por acesso
+      return NOOP;
     },
     set(o, p, v) { o[p] = v; return true; }
   });
@@ -65,6 +69,7 @@ vm.createContext(sandbox);
 const root = path.join(__dirname, '..');
 const files = ['js/pixel.js', 'js/world.js', 'js/entities.js', 'js/game.js'];
 const frames = parseInt(process.argv[2] || '2500', 10);
+const FRAMES = frames;
 const MODE = process.argv[3] || 'random';
 
 let src = files.map(f => fs.readFileSync(path.join(root, f), 'utf8')).join('\n;\n');
@@ -152,6 +157,8 @@ let erros = 0;
 const OFFLOG = [];
 const PREVT = new Map();
 const PARADO = new Map();
+const TRANS = [];
+let ULTIMO = G.state;
 let entrou = false, px0 = G.player.x, py0 = G.player.y, distPercorrida = 0;
 let dentroDePredio = 0;
 try {
@@ -181,6 +188,12 @@ try {
     draw();
     distPercorrida += Math.hypot(G.player.x - ax, G.player.y - ay);
 
+    if (__MODE__ === 'chaos') {
+      if (i === 120) G.player.hurt(500);            // forca WASTED
+      if (i === 500) { G.wanted = 4; }              // forca 4 estrelas
+      if (i === 900) { if (G.inCar) exitCar(false); G.player.x -= 0; }
+      if (G.state !== ULTIMO) { TRANS.push(i + ':' + ULTIMO + '->' + G.state); ULTIMO = G.state; }
+    }
     for (const c of G.cars) {
       if (c.state !== 'traffic' && c.state !== 'police') continue;
       const t = PARADO.get(c) || 0;
@@ -220,6 +233,15 @@ try {
 } catch (e) {
   erros++;
   console.error('ERRO:', e && e.stack ? e.stack : e);
+}
+if (__MODE__ === 'chaos') {
+  console.log('transicoes de estado:', TRANS.join(' | '));
+  let pol = 0;
+  for (const c of G.cars) if (c.state === 'police') pol++;
+  console.log('viaturas perseguindo:', pol, '| procurado:', G.wanted.toFixed(2),
+    '| vida:', Math.round(G.player.health), '| estado final:', G.state);
+  console.log('kills:', G.stats.kills, '| roubos:', G.stats.jacks, '| explosoes:', G.stats.booms);
+  process.exit(0);
 }
 let somaTrafego = 0, nTrafego = 0, parados = 0;
 let paradoMax = 0;
@@ -279,7 +301,7 @@ console.log('OK');
 `;
 
 try {
-  vm.runInContext(src, sandbox, { filename: 'bundle.js', timeout: 120000 });
+  vm.runInContext(src, sandbox, { filename: 'bundle.js', timeout: 900000 });
 } catch (e) {
   console.error('FALHA AO CARREGAR:', e && e.stack ? e.stack : e);
   process.exit(1);

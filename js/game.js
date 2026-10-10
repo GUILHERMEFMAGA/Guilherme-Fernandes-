@@ -319,6 +319,7 @@ function playerShoot() {
 
 function updatePlayerOnFoot(dt) {
   const p = G.player;
+  p.sanity();
   let mx = (Input.right ? 1 : 0) - (Input.left ? 1 : 0);
   let my = (Input.down ? 1 : 0) - (Input.up ? 1 : 0);
   if (Input.touch && Input.joy.active) { mx = Input.joy.x; my = Input.joy.y; }
@@ -986,11 +987,19 @@ function drawMenuBg() {
 
 /* ---------------- eventos ---------------- */
 function startGame() {
+  if (G.loading) return;
   Sfx.init(); Sfx.resume();
   const menu = document.getElementById('menu');
-  if (menu) menu.style.display = 'none';
-  initGame();
-  G.state = 'play';
+  const btn = document.getElementById('startBtn');
+  if (btn) { btn.textContent = 'CARREGANDO...'; btn.disabled = true; }
+  G.loading = true;
+  setTimeout(function () {          // da tempo de pintar o "CARREGANDO..."
+    initGame();
+    G.loading = false;
+    G.state = 'play';
+    if (menu) menu.style.display = 'none';
+    if (btn) { btn.textContent = 'JOGAR'; btn.disabled = false; }
+  }, 40);
 }
 
 function setupInput() {

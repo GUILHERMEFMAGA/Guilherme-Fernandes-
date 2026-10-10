@@ -5,6 +5,7 @@
 
 /* ---------- colisao circulo x tiles ---------- */
 function circleVsTiles(px, py, r) {
+  if (!isFinite(px) || !isFinite(py) || !isFinite(r)) return null;
   const t0x = Math.floor((px - r) / 16), t1x = Math.floor((px + r) / 16);
   const t0y = Math.floor((py - r) / 16), t1y = Math.floor((py + r) / 16);
   let bestD = 0, bnx = 0, bny = 0;
@@ -12,19 +13,21 @@ function circleVsTiles(px, py, r) {
     for (let tx = t0x; tx <= t1x; tx++) {
       if (!World.isSolid(tx, ty)) continue;
       const rx = tx * 16, ry = ty * 16;
-      const nx = clamp(px, rx, rx + 16), ny = clamp(py, ry, ry + 16);
-      let dx = px - nx, dy = py - ny;
-      let d = Math.hypot(dx, dy);
-      if (d === 0) {
+      const qx = clamp(px, rx, rx + 16), qy = clamp(py, ry, ry + 16);
+      let dx = px - qx, dy = py - qy;
+      let d = Math.hypot(dx, dy), ux, uy;
+      if (d > 1e-6) { ux = dx / d; uy = dy / d; }
+      else {
+        /* centro dentro do tile: sai pelo lado mais proximo (vetor unitario!) */
         const l = px - rx, ri = rx + 16 - px, t = py - ry, b = ry + 16 - py;
         const m = Math.min(l, ri, t, b);
-        if (m === l) { dx = -1; dy = 0; } else if (m === ri) { dx = 1; dy = 0; }
-        else if (m === t) { dx = 0; dy = -1; } else { dx = 0; dy = 1; }
-        d = 0.0001;
+        ux = (m === l) ? -1 : (m === ri ? 1 : 0);
+        uy = (m === t) ? -1 : (m === b ? 1 : 0);
+        d = 0;
       }
       if (d < r) {
         const push = r - d;
-        if (push > bestD) { bestD = push; bnx = dx / d; bny = dy / d; }
+        if (push > bestD) { bestD = push; bnx = ux; bny = uy; }
       }
     }
   }
@@ -194,12 +197,13 @@ class Car {
     if (blocked) {
       this.throttle = 0;
       this.brake = this.speed > 25;
-      this.stuckT += dt;
     } else {
       this.brake = false;
       this.throttle = this.speed < maxS ? 1 : 0;
-      this.stuckT = Math.max(0, this.stuckT - dt * 0.5);
     }
+    /* contador de atolamento: conta tempo quase parado, bloqueado ou nao */
+    if (Math.abs(this.speed) < 10) this.stuckT += dt;
+    else this.stuckT = Math.max(0, this.stuckT - dt * 0.6);
     // curvas fechadas reduzem a velocidade
     if (Math.abs(this.steer) > 0.5 && this.speed > 70) { this.throttle = 0; this.brake = true; }
 
@@ -246,8 +250,8 @@ class Car {
     vl *= Math.pow(grip, dt);
     if (this.handbrake && Math.abs(vl) < 90) vl += this.steer * -Math.abs(vf) * 0.55 * dt;
 
-    this.vx = fx * vf - fy * vl;
-    this.vy = fy * vf + fx * vl;
+    this.vx = clamp(fx * vf - fy * vl, -900, 900);
+    this.vy = clamp(fy * vf + fx * vl, -900, 900);
     this.x += this.vx * dt;
     this.y += this.vy * dt;
     this.speed = vf;
@@ -300,12 +304,25 @@ class Car {
     const sh = clamp(300 / (1 + d * 0.02), 0, 10);
     if (sh > G.shake) G.shake = sh;
     if (d < 40 * 40) G.player.hurt(clamp(70 - Math.sqrt(d), 0, 70));
-    if (G.inCar === this) G.exitCar(true);
+    if (G.inCar === this) exitCar(true);
     if (this.state === 'police') G.wanted = Math.min(4, G.wanted + 0.5);
     G.stats.booms++;
   }
 
+  /* protecao: se a posicao/velocidade virar absurda, recoloca o carro na rua */
+  sanity() {
+    const bad = !isFinite(this.x) || !isFinite(this.y) || !isFinite(this.vx) || !isFinite(this.vy) ||
+      !isFinite(this.angle) || Math.abs(this.x) > 1e6 || Math.abs(this.y) > 1e6;
+    if (!bad) return false;
+    const p = World.randomRoad(Math.random, 60);
+    this.x = p.x; this.y = p.y; this.vx = 0; this.vy = 0; this.speed = 0;
+    this.angle = Math.atan2(DIRV[p.dir][1], DIRV[p.dir][0]);
+    this.dir = p.dir; this.wp = null; this.stuckT = 0; this.unstick = false;
+    return true;
+  }
+
   update(dt, tmp) {
+    if (this.sanity()) return;
     if (this.burning) {
       this.fireT += dt;
       this.vx *= Math.pow(0.05, dt); this.vy *= Math.pow(0.05, dt);
@@ -443,8 +460,20 @@ class Ped {
     this.tx = this.x; this.ty = this.y; this.retarget = 0;
   }
 
+  /* protecao: se a posicao/velocidade virar absurda, recoloca o pedestre na calcada */
+  sanity() {
+    const bad = !isFinite(this.x) || !isFinite(this.y) || !isFinite(this.vx) || !isFinite(this.vy) ||
+      Math.abs(this.x) > 1e6 || Math.abs(this.y) > 1e6;
+    if (!bad) return false;
+    const p = World.randomSidewalk(Math.random, 60);
+    this.x = p.x; this.y = p.y; this.vx = 0; this.vy = 0;
+    this.tx = p.x; this.ty = p.y; this.retarget = 0;
+    return true;
+  }
+
   update(dt, tmp) {
     if (this.state === 'dead') { this.deadT += dt; return; }
+    if (this.sanity()) return;
     this.retarget += dt;
     let dx = this.tx - this.x, dy = this.ty - this.y;
     const d = Math.hypot(dx, dy);
@@ -460,6 +489,7 @@ class Ped {
     } else {
       this.vx *= Math.pow(0.01, dt); this.vy *= Math.pow(0.01, dt);
     }
+    this.vx = clamp(this.vx, -400, 400); this.vy = clamp(this.vy, -400, 400);
     this.x += this.vx * dt; this.y += this.vy * dt;
 
     resolveTiles(this, 3.2, 0);

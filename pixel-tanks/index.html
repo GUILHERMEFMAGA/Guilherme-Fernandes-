@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pixel Tanks - Arcade</title>
+  <meta name="description" content="Arcade retrô de tanques em pixel art: duelo contra a CPU, 2 jogadores no mesmo teclado e modo sobrevivência.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%23070a0e'/><rect x='6' y='2' width='4' height='6' fill='%239df38f'/><rect x='2' y='7' width='12' height='2' fill='%233fc04a'/><rect x='2' y='9' width='12' height='5' fill='%239df38f'/><rect x='1' y='9' width='2' height='5' fill='%239df38f'/><rect x='13' y='9' width='2' height='5' fill='%239df38f'/></svg>">
+</head>
+
+<body>
+  <div class="wrap">
+    <header class="top">
+      <h1><span class="a">PIXEL</span> <span class="b">TANKS</span></h1>
+      <p class="tag">Arcade de tanques em pixel art &middot; duelo, 2 jogadores e sobrevivência</p>
+    </header>
+
+    <main class="stage">
+      <div class="cabinet">
+        <div class="cabinet-top">
+          <span class="dot d1"></span><span class="dot d2"></span><span class="dot d3"></span>
+          <span class="cab-label">INSIRA UMA FICHA</span>
+          <span class="cab-right">60 FPS &middot; 320x224</span>
+        </div>
+        <div class="screen-frame">
+          <canvas id="screen" width="320" height="224" aria-label="Jogo Pixel Tanks"></canvas>
+        </div>
+        <div class="cabinet-bottom">
+          <button id="btn-sound" type="button">SOM: ON</button>
+          <button id="btn-full" type="button">TELA CHEIA (F)</button>
+          <span class="hint">Clique na tela se o som não tocar</span>
+        </div>
+      </div>
+    </main>
+
+    <section class="panels">
+      <article class="card">
+        <h2>Mesa de testes <span class="live">ao vivo</span></h2>
+        <table class="score">
+          <thead>
+            <tr>
+              <th>JOGADOR</th>
+              <th>VIDAS</th>
+              <th>PONTOS</th>
+              <th>RODADAS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td id="p1-name" class="c-p1">P1 VERDE</td>
+              <td id="p1-lives">&mdash;</td>
+              <td id="p1-score">&mdash;</td>
+              <td id="p1-wins">&mdash;</td>
+            </tr>
+            <tr>
+              <td id="p2-name" class="c-p2">CPU VERMELHO</td>
+              <td id="p2-lives">&mdash;</td>
+              <td id="p2-score">&mdash;</td>
+              <td id="p2-wins">&mdash;</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="score small">
+          <tbody>
+            <tr>
+              <th>MODO</th>
+              <td id="t-mode">&mdash;</td>
+              <th>ARENA</th>
+              <td id="t-map">&mdash;</td>
+            </tr>
+            <tr>
+              <th>PONTOS</th>
+              <td id="t-score">0</td>
+              <th>RECORDE</th>
+              <td id="t-hi">0</td>
+            </tr>
+            <tr>
+              <th>ONDA</th>
+              <td id="t-wave">&mdash;</td>
+              <th>SITUAÇÃO</th>
+              <td id="t-status">MENU</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="card">
+        <h2>Controles</h2>
+        <table class="keys">
+          <tbody>
+            <tr>
+              <th>Jogador 1</th>
+              <td><kbd>&larr;</kbd><kbd>&uarr;</kbd><kbd>&darr;</kbd><kbd>&rarr;</kbd> mover</td>
+              <td><kbd>Espaço</kbd> atirar</td>
+            </tr>
+            <tr>
+              <th>Jogador 2</th>
+              <td><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> mover</td>
+              <td><kbd>Enter</kbd> / <kbd>Shift D</kbd> atirar</td>
+            </tr>
+            <tr>
+              <th>Menu</th>
+              <td><kbd>&uarr;</kbd><kbd>&darr;</kbd> navegar</td>
+              <td><kbd>Enter</kbd> escolher &middot; <kbd>Esc</kbd> voltar</td>
+            </tr>
+            <tr>
+              <th>Jogo</th>
+              <td><kbd>P</kbd> / <kbd>Esc</kbd> pausar</td>
+              <td><kbd>M</kbd> som &middot; <kbd>F</kbd> tela cheia</td>
+            </tr>
+          </tbody>
+        </table>
+        <ul class="tips">
+          <li><b>Duelo:</b> melhor de 5 rodadas. Elimine o tanque inimigo ou derrube a base dele.</li>
+          <li><b>2 jogadores:</b> vence quem sobreviver na rodada ou eliminar mais tanques.</li>
+          <li><b>Sobrevivência:</b> ondas infinitas. Não deixe sua base ser destruída.</li>
+          <li><b>Itens:</b> escudo, turbo, ricochete e tiro rápido caem na arena de tempo em tempo.</li>
+        </ul>
+      </article>
+    </section>
+
+    <footer class="foot">
+      <p>HTML + Canvas puro, sem dependências. Sprites e áudio gerados por código.</p>
+    </footer>
+  </div>
+
+  <script src="js/const.js"></script>
+  <script src="js/font.js"></script>
+  <script src="js/sprites.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/maps.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/main.js"></script>
+</body>
+
+</html>

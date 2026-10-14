@@ -1,0 +1,289 @@
+/* FOGO CRUZADO - interface tática (fora do canvas) */
+:root {
+  --bg: #07090b;
+  --panel: #0e1417;
+  --panel2: #0a0f12;
+  --line: #1d2a2f;
+  --line2: #2c3f46;
+  --txt: #c8d6de;
+  --dim: #6c828c;
+  --green: #8fd96b;
+  --olive: #6f8f4a;
+  --cyan: #63d2ff;
+  --amber: #ffcf4d;
+  --red: #ff6b4d;
+  --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background:
+    radial-gradient(1200px 500px at 50% -10%, #101a1e 0%, transparent 65%),
+    linear-gradient(180deg, #07090b 0%, #040607 100%);
+  color: var(--txt);
+  font-family: var(--mono);
+}
+
+.wrap { max-width: 1180px; margin: 0 auto; padding: 20px 14px 44px; }
+
+/* ------------------------------------------------------------------ header */
+.top { text-align: center; margin-bottom: 16px; }
+.top h1 {
+  margin: 0;
+  font-size: clamp(24px, 5vw, 44px);
+  letter-spacing: .22em;
+  color: #dfeaf0;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, .8);
+}
+.top h1 span { color: var(--green); }
+.tag {
+  margin: 8px 0 0;
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+/* ----------------------------------------------------------------- moldura */
+.stage { display: flex; justify-content: center; }
+.frame {
+  width: 100%;
+  background: linear-gradient(180deg, #121a1e, #0a0f12);
+  border: 1px solid var(--line2);
+  border-radius: 10px;
+  padding: 8px;
+  box-shadow: 0 22px 50px rgba(0, 0, 0, .6);
+}
+
+.frame-top,
+.frame-bottom {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 6px;
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.frame-top { padding-bottom: 8px; }
+.frame-bottom { padding-top: 8px; }
+
+.rec {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--red);
+  box-shadow: 0 0 8px var(--red);
+  animation: blink 1.6s infinite;
+}
+@keyframes blink { 0%, 60% { opacity: 1; } 70%, 100% { opacity: .25; } }
+.cam { color: var(--green); }
+.res { margin-left: auto; }
+
+.screen {
+  position: relative;
+  border: 2px solid #1b262b;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #050708;
+  line-height: 0;
+}
+
+canvas#screen {
+  display: block;
+  width: 100%;
+  height: auto;
+  cursor: crosshair;
+  background: #050708;
+}
+
+.scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(180deg, rgba(255, 255, 255, .022) 0 1px, transparent 1px 3px);
+}
+
+.frame-bottom button {
+  font: inherit;
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--txt);
+  background: #16211f;
+  border: 1px solid var(--line2);
+  border-radius: 5px;
+  padding: 7px 12px;
+  cursor: pointer;
+}
+.frame-bottom button:hover { background: #1d2c2a; color: #fff; }
+.frame-bottom .hint { margin-left: auto; color: #55676f; }
+
+/* ------------------------------------------------------------------- cards */
+.panels {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.card {
+  background: linear-gradient(180deg, var(--panel), var(--panel2));
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px 14px 14px;
+}
+
+.card h2 {
+  margin: 0 0 10px;
+  font-size: 11px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--dim);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card h2::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.card h3 {
+  margin: 14px 0 6px;
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.note { margin: 10px 0 0; font-size: 10.5px; color: var(--dim); line-height: 1.6; }
+
+/* --------------------------------------------------------------- esquadrão */
+.sq-row {
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--olive);
+  border-radius: 5px;
+  padding: 7px 9px;
+  margin-bottom: 7px;
+  background: #0c1215;
+  transition: border-color .15s, background .15s;
+}
+.sq-row.active { border-left-color: var(--green); background: #111a15; }
+.sq-row.down { border-left-color: var(--amber); background: #1a1610; }
+.sq-row.dead { border-left-color: #5a2a22; opacity: .5; }
+.sq-row.empty { opacity: .3; }
+
+.sq-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 700;
+  color: #dce8ee;
+}
+.sq-head span:last-child { color: var(--dim); font-weight: 400; }
+
+.sq-bar {
+  height: 5px;
+  margin: 5px 0 4px;
+  background: #1a2226;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.sq-bar i {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--olive), var(--green));
+  transition: width .2s linear;
+}
+.sq-row.down .sq-bar i { background: var(--amber); }
+.sq-row.dead .sq-bar i { background: #6a2a22; width: 0 !important; }
+
+.sq-foot {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--dim);
+  letter-spacing: .06em;
+}
+
+/* ------------------------------------------------------------------ missão */
+.kv { width: 100%; border-collapse: collapse; }
+.kv th, .kv td {
+  text-align: left;
+  font-size: 11px;
+  padding: 5px 6px;
+  border-bottom: 1px solid #16211f;
+}
+.kv th { color: var(--dim); font-weight: 400; width: 26%; letter-spacing: .08em; font-size: 10px; }
+.kv td { color: #dbe7ec; font-weight: 700; }
+
+.feed {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-height: 128px;
+  overflow: hidden;
+  font-size: 10.5px;
+  line-height: 1.75;
+  color: var(--dim);
+}
+.feed li { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.feed li:nth-child(n+6) { opacity: .5; }
+
+/* ---------------------------------------------------------------- controles */
+.keys { width: 100%; border-collapse: collapse; }
+.keys th, .keys td {
+  text-align: left;
+  font-size: 11px;
+  padding: 6px;
+  border-bottom: 1px solid #16211f;
+  vertical-align: middle;
+}
+.keys th { color: var(--dim); font-weight: 400; width: 96px; white-space: nowrap; font-size: 10px; letter-spacing: .08em; }
+
+kbd {
+  display: inline-block;
+  background: #1a2634;
+  border: 1px solid var(--line2);
+  border-bottom-width: 3px;
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 10.5px;
+  color: #e8f2f7;
+  margin: 0 1px;
+}
+
+/* --------------------------------------------------------------- briefing */
+.bullets { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.bullets li {
+  font-size: 11px;
+  line-height: 1.62;
+  color: #a8bcc6;
+  padding-left: 14px;
+  position: relative;
+}
+.bullets li::before {
+  content: "#";
+  position: absolute;
+  left: 0;
+  color: var(--olive);
+}
+.bullets b { color: #dbe7ec; }
+
+/* ------------------------------------------------------------------ alerta */
+body.alert .screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 90px rgba(255, 70, 40, .45);
+}
+
+.foot { margin-top: 20px; text-align: center; font-size: 10.5px; color: #4e5f66; }
+.foot p { margin: 0; }
+
+@media (max-width: 900px) {
+  .panels { grid-template-columns: 1fr; }
+  .wrap { padding: 14px 10px 30px; }
+}

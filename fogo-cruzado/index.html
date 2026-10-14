@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fogo Cruzado — Simulação Tática de Esquadrão</title>
+  <meta name="description"
+    content="Simulador tático de esquadrão com visão limitada, cobertura, supressão, balística e fumaça. Jogue no navegador.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%230a0d0f'/><circle cx='8' cy='8' r='3' fill='%238fd96b'/><path d='M8 1v4M8 11v4M1 8h4M11 8h4' stroke='%238fd96b' stroke-width='1.2'/></svg>">
+</head>
+
+<body>
+  <div class="wrap">
+    <header class="top">
+      <h1>FOGO <span>CRUZADO</span></h1>
+      <p class="tag">Simulação tática de esquadrão &middot; visão limitada &middot; cobertura &middot; supressão &middot; balística</p>
+    </header>
+
+    <main class="stage">
+      <div class="frame">
+        <div class="frame-top">
+          <span class="rec"></span>
+          <span class="cam">CAM 01 &middot; PELOTÃO ALFA</span>
+          <span class="res">ESCALA 1:1 &middot; 960×600</span>
+        </div>
+        <div class="screen">
+          <canvas id="screen" width="960" height="600" aria-label="Jogo Fogo Cruzado"></canvas>
+          <div class="scanlines"></div>
+        </div>
+        <div class="frame-bottom">
+          <button id="btn-sound" type="button">SOM: ON</button>
+          <button id="btn-full" type="button">TELA CHEIA (F)</button>
+          <span class="hint">Clique na tela para liberar o áudio &middot; botão direito ordena o esquadrão</span>
+        </div>
+      </div>
+    </main>
+
+    <section class="panels">
+      <article class="card squad">
+        <h2>Esquadrão</h2>
+        <div class="sq-row" id="sq-0">
+          <div class="sq-head"><span id="sq-0-name">1. VOCÊ</span><span id="sq-0-w">FUZIL 30/30</span></div>
+          <div class="sq-bar"><i id="sq-0-bar"></i></div>
+          <div class="sq-foot"><span id="sq-0-hp">100/100</span><span id="sq-0-st">CONTROLE</span></div>
+        </div>
+        <div class="sq-row" id="sq-1">
+          <div class="sq-head"><span id="sq-1-name">2. —</span><span id="sq-1-w">—</span></div>
+          <div class="sq-bar"><i id="sq-1-bar"></i></div>
+          <div class="sq-foot"><span id="sq-1-hp">—</span><span id="sq-1-st">—</span></div>
+        </div>
+        <div class="sq-row" id="sq-2">
+          <div class="sq-head"><span id="sq-2-name">3. —</span><span id="sq-2-w">—</span></div>
+          <div class="sq-bar"><i id="sq-2-bar"></i></div>
+          <div class="sq-foot"><span id="sq-2-hp">—</span><span id="sq-2-st">—</span></div>
+        </div>
+        <div class="sq-row" id="sq-3">
+          <div class="sq-head"><span id="sq-3-name">4. —</span><span id="sq-3-w">—</span></div>
+          <div class="sq-bar"><i id="sq-3-bar"></i></div>
+          <div class="sq-foot"><span id="sq-3-hp">—</span><span id="sq-3-st">—</span></div>
+        </div>
+        <p class="note">Teclas <kbd>1</kbd>-<kbd>4</kbd> trocam o soldado que você controla. Quem fica livre volta a agir sozinho.</p>
+      </article>
+
+      <article class="card mission">
+        <h2>Missão</h2>
+        <table class="kv">
+          <tbody>
+            <tr>
+              <th>Operação</th>
+              <td id="t-map">—</td>
+              <th>Modo</th>
+              <td id="t-mode">—</td>
+            </tr>
+            <tr>
+              <th>Objetivo</th>
+              <td id="t-objective">—</td>
+              <th>Tempo</th>
+              <td id="t-time">—</td>
+            </tr>
+            <tr>
+              <th>Inimigos</th>
+              <td id="t-enemies">—</td>
+              <th>Situação</th>
+              <td id="t-status">MENU</td>
+            </tr>
+            <tr>
+              <th>Abates</th>
+              <td id="t-kills">0</td>
+              <th>Precisão</th>
+              <td id="t-acc">0%</td>
+            </tr>
+            <tr>
+              <th>Pontos</th>
+              <td id="t-score">0</td>
+              <th>Granada / Fumaça</th>
+              <td><span id="t-gren">0</span> / <span id="t-smoke">0</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <h3>Rádio</h3>
+        <ul id="feed" class="feed">
+          <li>aguardando ordens...</li>
+        </ul>
+      </article>
+
+      <article class="card controls">
+        <h2>Controles</h2>
+        <table class="keys">
+          <tbody>
+            <tr>
+              <th>P1 (mouse)</th>
+              <td><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> mover</td>
+              <td><kbd>Mouse</kbd> mirar &middot; <kbd>Clique</kbd> atirar</td>
+            </tr>
+            <tr>
+              <th>P1 (extras)</th>
+              <td><kbd>Shift</kbd> correr &middot; <kbd>Z</kbd> deitar</td>
+              <td><kbd>R</kbd> recarregar &middot; <kbd>Espaço</kbd> granada &middot; <kbd>X</kbd> fumaça</td>
+            </tr>
+            <tr>
+              <th>P2</th>
+              <td><kbd>&larr;</kbd><kbd>&uarr;</kbd><kbd>&darr;</kbd><kbd>&rarr;</kbd> mover (mira automática)</td>
+              <td><kbd>Enter</kbd> atirar &middot; <kbd>Ctrl direito</kbd> granada</td>
+            </tr>
+            <tr>
+              <th>Esquadrão</th>
+              <td><kbd>Botão direito</kbd> avançar para o ponto</td>
+              <td><kbd>E</kbd> seguir &middot; <kbd>Q</kbd> segurar posição</td>
+            </tr>
+            <tr>
+              <th>Sistema</th>
+              <td><kbd>P</kbd> / <kbd>Esc</kbd> pausar</td>
+              <td><kbd>M</kbd> som &middot; <kbd>F</kbd> tela cheia</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="card briefing">
+        <h2>Como funciona a simulação</h2>
+        <ul class="bullets">
+          <li><b>Visão limitada:</b> você só vê o que seus soldados enxergam. O que já foi visto fica na memória,
+            mais escuro; o resto é preto.</li>
+          <li><b>Cobertura:</b> encostar em concreto, metal ou sacos de areia desvia o trajeto do tiro —
+            quanto mais rente, menos dano você leva.</li>
+          <li><b>Supressão:</b> tiros passando perto quebram a mira e a coragem. Inimigos suprimidos param
+            de avançar e procuram abrigo.</li>
+          <li><b>Balística:</b> cada arma tem cadência, alcance, dispersão, penetração e recuo. Balas ricocheteiam
+            em metal e destroem madeira e caixotes.</li>
+          <li><b>Fumaça:</b> corta a linha de visão dos dois lados (mas não detém as balas). Use para cruzar
+            terreno aberto.</li>
+          <li><b>Socorro:</b> um soldado caído sangra por 24 s. Encoste nele para reanimar antes que seja tarde.</li>
+        </ul>
+      </article>
+    </section>
+
+    <footer class="foot">
+      <p>HTML + Canvas puro, sem dependências. Terreno, texturas e som gerados por código.</p>
+    </footer>
+  </div>
+
+  <script src="js/core.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/maps.js"></script>
+  <script src="js/tex.js"></script>
+  <script src="js/vision.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/main.js"></script>
+</body>
+
+</html>

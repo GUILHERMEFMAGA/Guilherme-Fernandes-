@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>MOTO EXPRESS — Simulador de Moto</title>
+  <title>MOTO EXPRESS v2 — Simulador de Moto Realista</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏍️</text></svg>" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
@@ -17,6 +17,7 @@
         <div class="money" id="h-money">R$ 0</div>
         <div class="combo" id="h-combo">x0</div>
         <div class="lives" id="h-lives"></div>
+        <div class="dmg"><span>avaria</span><i><b id="h-dmg"></b></i></div>
       </div>
 
       <div class="hud-card tr order" id="h-order">
@@ -24,22 +25,19 @@
           <span class="tag">ENTREGA</span>
           <span class="reward" id="h-reward">R$ 0</span>
         </div>
-        <div class="client" id="h-client">—</div>
+        <div class="client"><span id="h-client">—</span> <span class="fragile" id="h-fragile" title="Pacote frágil: bateu, quebrou">⚠️ FRÁGIL</span></div>
+        <div class="addr" id="h-addr">—</div>
         <div class="remain">faltam <b id="h-remain">0 m</b></div>
         <div class="bar"><i id="h-prog"></i></div>
         <div class="bar timer"><i id="h-timer"></i><em id="h-timernum"></em></div>
       </div>
 
       <div id="h-clock" class="clock">08:00</div>
+      <div id="h-posto" class="posto-note">⛽</div>
 
       <div class="hud-bottom">
-        <div class="dial">
-          <div class="speed"><b id="h-speed">0</b><span>km/h</span></div>
-          <div class="tach"><i id="h-tach"></i></div>
-          <div class="gearrow"><span class="gear" id="h-gear">N</span><span class="dist" id="h-dist">TOTAL 0 m</span></div>
-        </div>
         <button id="btn-sound" class="iconbtn" title="Som (M)">🔊</button>
-        <div class="hint">↑ acelerar • ↓ frear • ←→ curva • espaço buzina • P pausa</div>
+        <div class="hint">W acelera • S freio dianteiro • B freio traseiro • A/D direção • Q/E câmbio • E liga • Z/X seta • espaço buzina • P pausa</div>
       </div>
 
       <div id="banner"></div>
@@ -49,38 +47,57 @@
     <div id="touch">
       <button id="t-left">◀</button>
       <button id="t-right">▶</button>
+      <div class="gears">
+        <button id="t-down">−</button>
+        <button id="t-up">+</button>
+        <button id="t-start">IGN</button>
+      </div>
       <div class="trig">
-        <button id="t-brake">FREIO</button>
+        <button id="t-brake">DIANT</button>
+        <button id="t-rear">TRASEIRA</button>
         <button id="t-accel">ACELERAR</button>
       </div>
     </div>
 
     <!-- MENU -->
     <div id="menu" class="screen">
-      <div class="panel">
-        <h1>MOTO <span>EXPRESS</span></h1>
-        <p class="sub">🏍️ simulador de moto • entregas na cidade</p>
-        <div class="menu-btns">
-          <button id="btn-delivery" class="big">📦 DIA DE ENTREGAS</button>
-          <button id="btn-free" class="big alt">🌄 MODO LIVRE</button>
-          <button id="btn-help" class="small">❓ Como jogar</button>
+      <div class="panel wide">
+        <h1>MOTO <span>EXPRESS</span> <em>v2</em></h1>
+        <p class="sub">🏍️ simulador realista de moto • garage de entregas</p>
+
+        <div class="cols">
+          <div class="col">
+            <h3>🔧 Garagem</h3>
+            <div id="bike-list" class="bike-list"></div>
+          </div>
+          <div class="col">
+            <h3>🧪 Simulação (realismo)</h3>
+            <div id="sim-box" class="sim-box"></div>
+            <div class="menu-btns">
+              <button id="btn-delivery" class="big">📦 DIA DE ENTREGAS</button>
+              <button id="btn-free" class="big alt">🌄 MODO LIVRE</button>
+              <button id="btn-help" class="small">❓ Como jogar (agora é de verdade)</button>
+            </div>
+            <div class="best" id="best-score">🏆 Recorde: R$ 0</div>
+          </div>
         </div>
-        <div class="best" id="best-score">🏆 Recorde: R$ 0</div>
       </div>
     </div>
 
     <!-- AJUDA -->
     <div id="help" class="screen" style="display:none">
       <div class="panel">
-        <h2>Como jogar</h2>
+        <h2>Manual do motoboy</h2>
         <ul class="help-list">
-          <li><kbd>↑</kbd>/<kbd>W</kbd> acelerar &nbsp; <kbd>↓</kbd>/<kbd>S</kbd> freiar</li>
-          <li><kbd>←</kbd><kbd>→</kbd> ou <kbd>A</kbd><kbd>D</kbd> steering — em alta velocidade a força centrífuga te empurra na curva!</li>
-          <li>Entregue o pedido antes do <b>tempo acabar</b>: quanto mais rápido, maior a gorjeta (e o combo).</li>
-          <li>Bater custa caro: <b>-5 s</b> no relógio da entrega e combo zerado.</li>
-          <li>Saiu da pista? A moto perde velocidade na terra — cuidado com poste e muro.</li>
-          <li>A cada <b>3 entregas</b> você desbloqueia uma moto nova.</li>
-          <li><kbd>espaço</kbd> buzina • <kbd>P</kbd> pausa • <kbd>M</kbd> som. O dia anoitece de verdade — use o farol da imaginação.</li>
+          <li><b>Ligar:</b> marcha N, aperte <kbd>E</kbd> (partida no motor de partida). Com o motor desligado e rolando, segure <kbd>W</kbd>+<kbd>E</kbd> = partida de empurrão 🛠</li>
+          <li><b>Câmbio:</b> <kbd>E</kbd> sobe, <kbd>Q</kbd> desce. Redline bate no <b>limitador</b>; descer marcha em alta = <b>traseira calça</b>; subir em giro baixo = <b>engasga e morre</b>.</li>
+          <li><b>Freios:</b> <kbd>S</kbd> = dianteiro (75% da força — dosar! travou na curva = lowside 💀) e <kbd>B</kbd> = traseiro (trava, desliza, levanta fumaça).</li>
+          <li><b>Curvas:</b> a moto inclina antes de curvar (contra-esterço). Chuva = metade da aderência, cuidado com aquaplanagem.</li>
+          <li><b>Combustível:</b> gasta conforme giro; acende a reserva → pare <b>desacelerando na direita</b> perto do posto (pista amarela) pra abastecer e consertar. Preço de hoje: gasolina R$ 6,19.</li>
+          <li><b>Radar:</b> limite 60 km/h. Flagrado = multa real do CTB saindo do seu bolso (R$ 130,16 / 293,47 / 880,41).</li>
+          <li><b>Entregas:</b> prazo realista pelo endereço. ⚠️ FRÁGIL bateu-quebrou. Gorjeta proporcional ao tempo que sobrar; combo premia sequência limpa.</li>
+          <li><b>Mão dupla:</b> sentido contrário vem na tua esquerda a 60+. Ultrapassar pela direita = escolha de gente grande.</li>
+          <li><kbd>Z</kbd>/<kbd>X</kbd> seta (o carro do lado te dá espaço), <kbd>espaço</kbd> buzina (afasta o Zé do volante), <kbd>P</kbd> pausa, <kbd>M</kbd> som.</li>
         </ul>
         <button id="btn-help-close" class="small">voltar</button>
       </div>
@@ -89,10 +106,10 @@
     <!-- PAUSE -->
     <div id="pause" class="screen" style="display:none">
       <div class="panel">
-        <h2>⏸ pausa técnica</h2>
+        <h2>⏸ parada no posto</h2>
         <div class="menu-btns">
-          <button id="btn-resume" class="big">▶ voltar à pista</button>
-          <button id="btn-restart" class="big alt">↻ recomeçar</button>
+          <button id="btn-resume" class="big">▶ voltar pro asfalto</button>
+          <button id="btn-restart" class="big alt">↻ recomeçar o dia</button>
           <button id="btn-quit" class="small">menu principal</button>
         </div>
       </div>
@@ -102,11 +119,11 @@
     <div id="over" class="screen" style="display:none">
       <div class="panel">
         <h2>📦 FIM DO EXPEDIENTE</h2>
-        <p class="sub">3 pedidos cancelados — o patrão chamou pra conversar…</p>
+        <p class="sub" id="over-reason">3 pedidos cancelados — o patrão chamou pra conversar…</p>
         <div id="over-stats" class="stats"></div>
         <div class="menu-btns">
           <button id="btn-again" class="big">🛵 NOVO DIA DE ENTREGAS</button>
-          <button id="btn-menu" class="small">menu principal</button>
+          <button id="btn-menu" class="small">garagem</button>
         </div>
       </div>
     </div>

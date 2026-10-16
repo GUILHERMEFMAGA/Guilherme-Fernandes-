@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>MOTO EXPRESS — Simulador de Moto</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏍️</text></svg>" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body data-screen="menu">
+  <div id="wrap">
+    <canvas id="game"></canvas>
+
+    <!-- HUD -->
+    <div id="hud">
+      <div class="hud-card tl">
+        <div class="money" id="h-money">R$ 0</div>
+        <div class="combo" id="h-combo">x0</div>
+        <div class="lives" id="h-lives"></div>
+      </div>
+
+      <div class="hud-card tr order" id="h-order">
+        <div class="order-head">
+          <span class="tag">ENTREGA</span>
+          <span class="reward" id="h-reward">R$ 0</span>
+        </div>
+        <div class="client" id="h-client">—</div>
+        <div class="remain">faltam <b id="h-remain">0 m</b></div>
+        <div class="bar"><i id="h-prog"></i></div>
+        <div class="bar timer"><i id="h-timer"></i><em id="h-timernum"></em></div>
+      </div>
+
+      <div id="h-clock" class="clock">08:00</div>
+
+      <div class="hud-bottom">
+        <div class="dial">
+          <div class="speed"><b id="h-speed">0</b><span>km/h</span></div>
+          <div class="tach"><i id="h-tach"></i></div>
+          <div class="gearrow"><span class="gear" id="h-gear">N</span><span class="dist" id="h-dist">TOTAL 0 m</span></div>
+        </div>
+        <button id="btn-sound" class="iconbtn" title="Som (M)">🔊</button>
+        <div class="hint">↑ acelerar • ↓ frear • ←→ curva • espaço buzina • P pausa</div>
+      </div>
+
+      <div id="banner"></div>
+    </div>
+
+    <!-- Controles de toque -->
+    <div id="touch">
+      <button id="t-left">◀</button>
+      <button id="t-right">▶</button>
+      <div class="trig">
+        <button id="t-brake">FREIO</button>
+        <button id="t-accel">ACELERAR</button>
+      </div>
+    </div>
+
+    <!-- MENU -->
+    <div id="menu" class="screen">
+      <div class="panel">
+        <h1>MOTO <span>EXPRESS</span></h1>
+        <p class="sub">🏍️ simulador de moto • entregas na cidade</p>
+        <div class="menu-btns">
+          <button id="btn-delivery" class="big">📦 DIA DE ENTREGAS</button>
+          <button id="btn-free" class="big alt">🌄 MODO LIVRE</button>
+          <button id="btn-help" class="small">❓ Como jogar</button>
+        </div>
+        <div class="best" id="best-score">🏆 Recorde: R$ 0</div>
+      </div>
+    </div>
+
+    <!-- AJUDA -->
+    <div id="help" class="screen" style="display:none">
+      <div class="panel">
+        <h2>Como jogar</h2>
+        <ul class="help-list">
+          <li><kbd>↑</kbd>/<kbd>W</kbd> acelerar &nbsp; <kbd>↓</kbd>/<kbd>S</kbd> freiar</li>
+          <li><kbd>←</kbd><kbd>→</kbd> ou <kbd>A</kbd><kbd>D</kbd> steering — em alta velocidade a força centrífuga te empurra na curva!</li>
+          <li>Entregue o pedido antes do <b>tempo acabar</b>: quanto mais rápido, maior a gorjeta (e o combo).</li>
+          <li>Bater custa caro: <b>-5 s</b> no relógio da entrega e combo zerado.</li>
+          <li>Saiu da pista? A moto perde velocidade na terra — cuidado com poste e muro.</li>
+          <li>A cada <b>3 entregas</b> você desbloqueia uma moto nova.</li>
+          <li><kbd>espaço</kbd> buzina • <kbd>P</kbd> pausa • <kbd>M</kbd> som. O dia anoitece de verdade — use o farol da imaginação.</li>
+        </ul>
+        <button id="btn-help-close" class="small">voltar</button>
+      </div>
+    </div>
+
+    <!-- PAUSE -->
+    <div id="pause" class="screen" style="display:none">
+      <div class="panel">
+        <h2>⏸ pausa técnica</h2>
+        <div class="menu-btns">
+          <button id="btn-resume" class="big">▶ voltar à pista</button>
+          <button id="btn-restart" class="big alt">↻ recomeçar</button>
+          <button id="btn-quit" class="small">menu principal</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GAME OVER -->
+    <div id="over" class="screen" style="display:none">
+      <div class="panel">
+        <h2>📦 FIM DO EXPEDIENTE</h2>
+        <p class="sub">3 pedidos cancelados — o patrão chamou pra conversar…</p>
+        <div id="over-stats" class="stats"></div>
+        <div class="menu-btns">
+          <button id="btn-again" class="big">🛵 NOVO DIA DE ENTREGAS</button>
+          <button id="btn-menu" class="small">menu principal</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/game.js"></script>
+</body>
+</html>

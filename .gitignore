@@ -1,0 +1,8 @@
+node_modules/
+.env
+.env.local
+.vercel/
+.deploy-payload.json
+coverage/
+*.log
+.DS_Store

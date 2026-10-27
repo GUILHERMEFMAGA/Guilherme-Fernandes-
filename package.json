@@ -1,0 +1,16 @@
+{
+  "name": "agente-ia-atlas",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Atlas: agente de IA com ferramentas externas, 100% gratuito, serverless na Vercel",
+  "scripts": {
+    "start": "node scripts/dev-server.js",
+    "dev": "node scripts/dev-server.js",
+    "test": "node --test scripts/smoke-test.js",
+    "deploy:payload": "node scripts/deploy-payload.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}

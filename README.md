@@ -260,7 +260,7 @@ O schema é convertido automaticamente para Gemini e para OpenAI-compatible. Se 
 
 ## Deploy
 
-Projeto Vercel: **`agente-ia-atlas`** (`prj_r5P07mDAYZkghnBGUBZEXVb6ViKc`). Para publicar uma nova versão, basta dar push na branch — ou usar `npm run deploy:payload` e enviar o `.deploy-payload.json` para a API de deployments da Vercel. Conectar a conta Vercel ao GitHub (Login Connection) habilita deploy automático a cada push.
+Projetos Vercel: **`agente-ia-atlas`** (`prj_r5P07mDAYZkghnBGUBZEXVb6ViKc`) e **`agente-ia-atlas-git`** (`prj_mMYu1oFIAkGJclKYtmuzSlfyeVtt`, conectado ao GitHub). Para publicar uma nova versão, basta dar push na branch — ou usar `npm run deploy:payload` e enviar o `.deploy-payload.json` para a API de deployments da Vercel. Com o Login Connection ativo, cada push gera um deploy automaticamente.
 
 ---
 

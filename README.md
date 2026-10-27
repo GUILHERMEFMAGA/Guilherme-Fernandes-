@@ -2,9 +2,9 @@
 
 Um agente de IA **serverless e 100% gratuito** que raciocina, escolhe ferramentas e executa tarefas reais em APIs externas. Roda na Vercel (plano Hobby), usa modelos gratuitos e já vem com interface de chat, streaming de eventos e modo demo que funciona **sem nenhuma chave de API**.
 
-> 🌐 **Deploy:** `https://agente-ia-atlas.vercel.app` (veja a URL real no painel da Vercel)
+> 🌐 **Em produção:** [https://agente-ia-atlas-git.vercel.app](https://agente-ia-atlas-git.vercel.app) · [`/api/health`](https://agente-ia-atlas-git.vercel.app/api/health)
 > 🖥️ **Preview local:** `npm start` → `http://localhost:3000`
-> 🧪 **Testes:** `npm test`
+> 🧪 **Testes:** `npm test` (13 testes, todos passando)
 
 ---
 
@@ -177,7 +177,7 @@ Header opcional: `x-access-code: <AGENT_ACCESS_CODE>`.
 
 Exemplo:
 ```bash
-curl -N -X POST https://agente-ia-atlas.vercel.app/api/chat \
+curl -N -X POST https://agente-ia-atlas-git.vercel.app/api/chat \
   -H 'Content-Type: application/json' \
   -d '{"message":"Quanto é 2 + 2 * 10?"}'
 ```
@@ -260,7 +260,9 @@ O schema é convertido automaticamente para Gemini e para OpenAI-compatible. Se 
 
 ## Deploy
 
-Projetos Vercel: **`agente-ia-atlas`** (`prj_r5P07mDAYZkghnBGUBZEXVb6ViKc`) e **`agente-ia-atlas-git`** (`prj_mMYu1oFIAkGJclKYtmuzSlfyeVtt`, conectado ao GitHub). Para publicar uma nova versão, basta dar push na branch — ou usar `npm run deploy:payload` e enviar o `.deploy-payload.json` para a API de deployments da Vercel. Com o Login Connection ativo, cada push gera um deploy automaticamente.
+Projeto Vercel: **`agente-ia-atlas-git`** (`prj_mMYu1oFIAkGJclKYtmuzSlfyeVtt`), conectado ao repositório GitHub. O primeiro deploy saiu da branch `arena/9832e943-guilherme-fernandes` e foi promovido a produção. Com o Login Connection ativo, cada push gera um deploy automaticamente.
+
+Variáveis já configuradas no projeto: `ALLOWED_API_HOSTS` (habilita a ferramenta `http_get_json` para os hosts das APIs gratuitas). Faltam apenas as variáveis opcionais de IA, Notion, webhook e código de acesso — veja a seção de variáveis acima. Deploy atual em modo **demo** (sem chave de IA).
 
 ---
 

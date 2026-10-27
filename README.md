@@ -4,7 +4,7 @@ Um agente de IA **serverless e 100% gratuito** que raciocina, escolhe ferramenta
 
 > 🌐 **Em produção:** [https://agente-ia-atlas-git.vercel.app](https://agente-ia-atlas-git.vercel.app) · [`/api/health`](https://agente-ia-atlas-git.vercel.app/api/health)
 > 🖥️ **Preview local:** `npm start` → `http://localhost:3000`
-> 🧪 **Testes:** `npm test` (15 testes, todos passando)
+> 🧪 **Testes:** `npm test` (16 testes, todos passando)
 
 ---
 

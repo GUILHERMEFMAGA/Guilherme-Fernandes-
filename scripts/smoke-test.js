@@ -239,3 +239,14 @@ test('api/ask: mensagem vazia retorna 400 com exemplos', async () => {
   assert.equal(res.statusCode, 400);
   assert.ok(JSON.parse(res.body).examples.length > 0);
 });
+
+test('agent: demo separa intenções em frases compostas', () => {
+  const both = buildDemoPlan('Qual o clima em Ribeirão Preto e quanto está o dólar?');
+  assert.equal(both[0].name, 'get_weather');
+  assert.equal(both[0].args.city, 'Ribeirão Preto');
+  assert.equal(both[1].name, 'get_exchange_rate');
+
+  const wiki = buildDemoPlan('Pesquise na Wikipédia sobre inteligência artificial');
+  assert.equal(wiki[0].name, 'search_wikipedia');
+  assert.equal(wiki[0].args.query, 'inteligência artificial');
+});

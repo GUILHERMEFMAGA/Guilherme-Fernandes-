@@ -53,6 +53,7 @@ const MIME = {
 
 const chatHandler = require('../api/chat');
 const healthHandler = require('../api/health');
+const askHandler = require('../api/ask');
 
 function serveStatic(req, res, pathname) {
   const relative = pathname === '/' ? 'index.html' : pathname.replace(/^\/+/, '');
@@ -82,6 +83,7 @@ const server = http.createServer((req, res) => {
   res.setHeader('Referrer-Policy', 'same-origin');
 
   if (pathname === '/api/chat') return chatHandler(req, res);
+  if (pathname === '/api/ask') return askHandler(req, res);
   if (pathname === '/api/health') return healthHandler(req, res);
   return serveStatic(req, res, pathname);
 });

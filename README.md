@@ -4,7 +4,7 @@ Um agente de IA **serverless e 100% gratuito** que raciocina, escolhe ferramenta
 
 > 🌐 **Em produção:** [https://agente-ia-atlas-git.vercel.app](https://agente-ia-atlas-git.vercel.app) · [`/api/health`](https://agente-ia-atlas-git.vercel.app/api/health)
 > 🖥️ **Preview local:** `npm start` → `http://localhost:3000`
-> 🧪 **Testes:** `npm test` (13 testes, todos passando)
+> 🧪 **Testes:** `npm test` (15 testes, todos passando)
 
 ---
 
@@ -156,6 +156,25 @@ Defina `ALLOWED_API_HOSTS=api.github.com,api.open-meteo.com` e peça: *"consulte
 ### `GET /api/health`
 Retorna modo (`ai`/`demo`), provedor, lista de ferramentas e configuração ativa — **sem expor segredos**.
 
+### `GET /api/ask?message=...` (ou `POST /api/ask`)
+API JSON de uma resposta só — ideal para n8n, Make, Zapier, scripts e testes rápidos:
+
+```bash
+curl "https://agente-ia-atlas-git.vercel.app/api/ask?message=Qual%20%C3%A9%20o%20clima%20em%20Ribeir%C3%A3o%20Preto%3F"
+```
+
+```json
+{
+  "ok": true,
+  "mode": "demo",
+  "provider": { "name": "Modo demo (sem chave)", "model": null },
+  "answer": "**Modo demo** — executei 1 ferramenta(s) real(is)…",
+  "tools": [{ "name": "get_weather", "ok": true, "durationMs": 380, "result": { "temperature_c": 28.4 } }],
+  "errors": [],
+  "usage": { "steps": 1, "toolCalls": 1, "durationMs": 390, "mode": "demo" }
+}
+```
+
 ### `POST /api/chat`
 ```json
 { "message": "Qual é o clima em Ribeirão Preto?", "history": [{ "role": "user", "content": "..." }] }
@@ -203,13 +222,15 @@ curl -N -X POST https://agente-ia-atlas-git.vercel.app/api/chat \
 ├── styles.css            # tema escuro responsivo
 ├── app.js                # cliente SSE + renderização Markdown
 ├── api/
-│   ├── chat.js           # POST /api/chat (SSE, rate limit, access code)
+│   ├── chat.js           # POST /api/chat (streaming SSE)
+│   ├── ask.js            # GET/POST /api/ask (API JSON para integrações)
 │   └── health.js         # GET /api/health
 ├── lib/
 │   ├── agent.js          # loop do agente + modo demo
 │   ├── providers.js      # adaptadores Gemini / OpenAI-compatible
 │   ├── tools.js          # 11 ferramentas + schemas + resumos
 │   ├── http.js           # fetch seguro e contexto compartilhado
+│   ├── request.js        # rate limit, access code, parse de corpo
 │   └── calculator.js     # parser matemático sem eval
 ├── scripts/
 │   ├── dev-server.js     # servidor local compatível com Vercel

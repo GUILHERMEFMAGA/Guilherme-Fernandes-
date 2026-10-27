@@ -8,6 +8,7 @@ const { assertSafeUrl, createContext, truncate } = require('../lib/http');
 const { getAvailableTools, runTool, findTool } = require('../lib/tools');
 const { sanitizeSchema, toGeminiContents, toOpenAIMessages, buildGeminiTools, resolveConfig } = require('../lib/providers');
 const { buildDemoPlan, extractExpression, runAgent } = require('../lib/agent');
+const askHandler = require('../api/ask');
 
 function mockFetch(handler) {
   return async (url, options = {}) => {
@@ -202,4 +203,39 @@ test('agent: loop com provedor Gemini (mock) executa ferramenta e responde', asy
   const answer = events.find((event) => event.type === 'answer');
   assert.equal(answer.text, 'O resultado é 42.');
   assert.equal(generateCalls, 2);
+});
+
+test('api/ask: GET devolve JSON com a resposta do agente', async () => {
+  const req = {
+    method: 'GET',
+    url: '/api/ask?message=Calcule%202%2B2',
+    headers: {},
+    socket: { remoteAddress: '127.0.0.10' },
+  };
+  const res = {
+    statusCode: 0,
+    headers: {},
+    writableEnded: false,
+    setHeader(key, value) { this.headers[key] = value; },
+    end(body) { this.body = body; this.writableEnded = true; },
+  };
+  await askHandler(req, res);
+  assert.equal(res.statusCode, 200);
+  const data = JSON.parse(res.body);
+  assert.equal(data.ok, true);
+  assert.equal(data.mode, 'demo');
+  assert.match(data.answer, /4/);
+  assert.equal(data.tools[0].name, 'calculate');
+});
+
+test('api/ask: mensagem vazia retorna 400 com exemplos', async () => {
+  const req = { method: 'GET', url: '/api/ask', headers: {}, socket: { remoteAddress: '127.0.0.11' } };
+  const res = {
+    statusCode: 0, headers: {}, writableEnded: false,
+    setHeader(key, value) { this.headers[key] = value; },
+    end(body) { this.body = body; this.writableEnded = true; },
+  };
+  await askHandler(req, res);
+  assert.equal(res.statusCode, 400);
+  assert.ok(JSON.parse(res.body).examples.length > 0);
 });

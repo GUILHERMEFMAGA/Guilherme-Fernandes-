@@ -77,10 +77,11 @@ export class WorldScene {
     this.sun = new THREE.DirectionalLight(0xfff6e0, 2.2);
     this.sun.position.set(600, 900, 300);
     this.sun.castShadow = true;
-    this.sun.shadow.mapSize.set(2048,2048);
-    this.sun.shadow.camera.near=1; this.sun.shadow.camera.far=3000;
-    this.sun.shadow.camera.left=-800; this.sun.shadow.camera.right=800; this.sun.shadow.camera.top=800; this.sun.shadow.camera.bottom=-800;
-    this.sun.shadow.bias = -0.0005;
+    this.sun.shadow.mapSize.set(1024,1024);
+    this.sun.shadow.camera.near=1; this.sun.shadow.camera.far=2000;
+    this.sun.shadow.camera.left=-600; this.sun.shadow.camera.right=600; this.sun.shadow.camera.top=600; this.sun.shadow.camera.bottom=-600;
+    this.sun.shadow.bias = -0.0006;
+    this.sun.shadow.autoUpdate = true;
     this.scene.add(this.sun);
     this.sunTarget = new THREE.Object3D(); this.sunTarget.position.set(0,0,0); this.scene.add(this.sunTarget);
     this.sun.target = this.sunTarget;

@@ -16,9 +16,9 @@ import { MinimapSystem } from './ui/minimap.js';
 let renderer, worldScene, terrain, water, vegetation, buildings, roads, interiors, player, crowd, timeSystem, weather, audio, minimap;
 
 let clock = new THREE.Clock();
-let isInInterior = false;
 let currentWeather='clear';
 let currentRegionId='toscana';
+let loadError = null;
 
 const loadingBar = document.getElementById('loading-bar');
 const loadingStatus = document.getElementById('loading-status');
@@ -28,21 +28,68 @@ function setLoading(pct, msg){
   if(loadingStatus && msg) loadingStatus.textContent = msg;
 }
 
+function showError(title, detail){
+  const scr=document.getElementById('loading-screen');
+  if(scr){
+    scr.innerHTML = `<div class="loading-inner" style="max-width:640px">
+      <div class="loading-logo" style="font-size:42px">⚠️ ERRORE</div>
+      <div style="color:#ffb4a0; margin:14px 0 10px; font-weight:700">${title}</div>
+      <div style="color:#c9d8e8; font-size:13px; line-height:1.6">${detail}</div>
+      <button onclick="location.reload()" style="margin-top:20px; padding:10px 18px; border-radius:999px; border:none; background:#d4b67a; color:#1a1200; font-weight:700; cursor:pointer">Riccarica / Reload</button>
+      <div style="margin-top:16px; font-size:11px; color:rgba(255,255,255,0.4)">Se persiste, prova Chrome/Edge desktop, WebGL ativo. Fallback 2D mappa disponível via M.</div>
+    </div>`;
+    scr.style.display='flex';
+    scr.classList.remove('fade-out');
+  }
+}
+
+function checkWebGL(){
+  try{
+    const c=document.createElement('canvas');
+    const gl=c.getContext('webgl2') || c.getContext('webgl');
+    if(!gl) return false;
+    return true;
+  }catch{ return false; }
+}
+
+async function yieldFrame(){
+  return new Promise(r=> setTimeout(r, 16));
+}
+
 async function init(){
+  try{
+  if(!checkWebGL()){
+    showError('WebGL non supportato','Il browser non ha WebGL attivo. Attiva accelerazione hardware o usa Chrome/Firefox desktop. Il progetto richiede WebGL2.');
+    return;
+  }
+
   setLoading(6,'Inizializzazione renderer…');
-  renderer = new THREE.WebGLRenderer({ antialias:true, powerPreference:'high-performance' });
+  // Adaptive quality based on device
+  const isMobile = /Mobi|Android/i.test(navigator.userAgent) || window.innerWidth < 800;
+  const pixelRatioCap = isMobile ? 1.0 : Math.min(window.devicePixelRatio, 1.4);
+  const shadowEnabled = !isMobile;
+
+  renderer = new THREE.WebGLRenderer({ antialias: !isMobile, powerPreference: isMobile ? 'low-power' : 'high-performance', alpha:false });
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.7));
-  renderer.shadowMap.enabled=true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.setPixelRatio(pixelRatioCap);
+  renderer.shadowMap.enabled = shadowEnabled;
+  if(shadowEnabled) renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure=1.02;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
+  // fail-fast if context lost
+  renderer.domElement.addEventListener('webglcontextlost', e=>{
+    e.preventDefault();
+    showError('Context WebGL perso','La scheda ha perso il contesto GPU. Ricarica la pagina.');
+  });
   document.body.appendChild(renderer.domElement);
   renderer.domElement.tabIndex = 1;
   renderer.domElement.style.outline='none';
 
   worldScene = new WorldScene(renderer);
+  // ensure shadows disabled early if mobile
+  if(isMobile) worldScene.sun.castShadow=false;
+
   terrain = new TerrainSystem(worldScene);
   water = new WaterSystem(worldScene);
   vegetation = new VegetationSystem(worldScene, terrain);
@@ -54,39 +101,44 @@ async function init(){
   audio = new AudioSystem();
   crowd = new CrowdSystem(worldScene, terrain, buildings);
 
-  const camera = new THREE.PerspectiveCamera(74, window.innerWidth/window.innerHeight, 0.08, 3500);
+  const camera = new THREE.PerspectiveCamera(isMobile?68:74, window.innerWidth/window.innerHeight, 0.1, isMobile?2000:3200);
   camera.position.set(-280, 12, 60);
 
-  // Setup player after terrain exists so getHeightAt works
-  setLoading(14,'Generazione terreno geografico — Alpi, Appennini, Pianura Padana…');
-  await new Promise(r=> setTimeout(r, 120));
+  setLoading(14,'Generazione terreno — Alpi, Appennini, Pianura…');
+  await yieldFrame();
   terrain.generate();
+  setLoading(22,'Terreno pronto — idrografia…');
+  await yieldFrame();
 
-  setLoading(28,'Idrografia — Canali di Venezia, Po, Arno, laghi alpini…');
-  await new Promise(r=> setTimeout(r, 80));
+  setLoading(28,'Idrografia — Canali, Po, Arno, laghi…');
   water.create();
+  await yieldFrame();
 
-  setLoading(42,'Rete stradale — Autostrade, vicoli, strade di campagna…');
+  setLoading(42,'Rete stradale — Autostrade, vicoli…');
   roads.create();
+  await yieldFrame();
 
-  setLoading(58,'Architettura procedurale regionale — 5 stili, 180+ edifici…');
-  await new Promise(r=> setTimeout(r, 100));
+  setLoading(52,'Architettura — 180+ edifici…');
+  // yield mid-way if many buildings to avoid blocking
   buildings.generate();
+  setLoading(68,'Edifici pronti — vegetazione…');
+  await yieldFrame();
 
-  setLoading(72,'Vegetazione mediterranea — Cipressi, ulivi, vigneti, foreste alpine…');
+  setLoading(72,'Vegetazione — Cipressi, ulivi, foreste…');
   vegetation.create();
+  await yieldFrame();
 
-  setLoading(82,'Popolazione — routine quotidiane, navigazione…');
-  crowd.generate(65);
+  setLoading(82,'Popolazione — routine quotidiane…');
+  crowd.generate(isMobile?35:60);
   interiors.prepareInteriors();
+  await yieldFrame();
 
-  setLoading(88,'Illuminazione PBR — luce solare astronomica, stelle, nebbia…');
-  // initial sky
+  setLoading(88,'Illuminazione PBR…');
   worldScene.updateSky(timeSystem.timeHours, currentWeather);
+  await yieldFrame();
 
-  setLoading(94,'Controlli giocatore — First-person, collisioni, porte interagibili…');
+  setLoading(94,'Controlli — WASD, E per porte…');
   player = new PlayerControls(camera, renderer.domElement, terrain, buildings);
-  // Start position: Tuscan villa overlook for hero view
   const startX = -260, startZ = 35;
   const startY = terrain.getHeightAt(startX, startZ)+ player.eyeHeight;
   player.teleport(startX, startY, startZ);
@@ -96,7 +148,6 @@ async function init(){
 
   minimap = new MinimapSystem(terrain, buildings);
   minimap.attachMapClick((world)=>{
-    // teleport
     const y = terrain.getHeightAt(world.x, world.z)+ player.eyeHeight;
     player.teleport(world.x, y, world.z);
     document.getElementById('map-overlay').classList.add('hidden');
@@ -104,65 +155,90 @@ async function init(){
     updateHudLocation(world.x, world.z);
   });
 
-  // UI wiring
-  setupUI(camera);
+  setupUI(camera, { isMobile, pixelRatioCap });
 
-  // Renderer resize
   window.addEventListener('resize', ()=>{
     camera.aspect=window.innerWidth/window.innerHeight; camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
-
-  // Save/load
   window.addEventListener('beforeunload', ()=> saveGame());
 
-  // Footstep timing
   let stepAcc=0;
+  let perfLow=false;
+  let lastFpsCheck=performance.now();
+  let frameCounter=0;
 
   setLoading(100,'Mondo pronto — Benvenuti in Italia!');
 
-  // Hide loading after brief hero pause
-  setTimeout(()=>{
-    document.getElementById('loading-screen').classList.add('fade-out');
-    setTimeout(()=> { document.getElementById('loading-screen').style.display='none'; }, 850);
-    // Show main menu briefly then auto-enter for showcase
+  // safety timeout: if something stalls, force hide loading after 5s
+  const safety = setTimeout(()=>{
+    const scr=document.getElementById('loading-screen');
+    if(scr && scr.style.display!=='none'){
+      console.warn('Safety timeout forcing hide loading');
+      hideLoadingAndShowMenu();
+    }
+  }, 6000);
+
+  setTimeout(()=>{ clearTimeout(safety); hideLoadingAndShowMenu(); }, 650);
+
+  function hideLoadingAndShowMenu(){
+    const scr=document.getElementById('loading-screen');
+    if(!scr) return;
+    scr.classList.add('fade-out');
+    setTimeout(()=> { scr.style.display='none'; }, 850);
     const menu=document.getElementById('main-menu');
     menu.classList.remove('hidden');
-    // auto-start after 2.2s if user doesn't click
-    setTimeout(()=> { if(!menu.classList.contains('hidden')) enterWorld(); }, 2200);
-  }, 800);
+    // auto-enter only on desktop; mobile requires tap
+    if(!isMobile){
+      setTimeout(()=> { if(!menu.classList.contains('hidden')) enterWorld(); }, 1800);
+    }
+  }
 
-  // Main loop
+  // Main loop with FPS guard
   function animate(){
     requestAnimationFrame(animate);
     const delta=Math.min(clock.getDelta(), 0.033);
 
+    // FPS sampling every 1s
+    frameCounter++;
+    if(performance.now()-lastFpsCheck>1000){
+      const fps=frameCounter;
+      frameCounter=0; lastFpsCheck=performance.now();
+      if(fps<28 && !perfLow && !isMobile){
+        perfLow=true;
+        renderer.setPixelRatio(1);
+        renderer.shadowMap.enabled=false;
+        crowd.setDensity(35);
+        console.warn('FPS low ('+fps+') → lowered quality');
+        const tip=document.createElement('div');
+        tip.textContent='⚡ Qualità ridotta per FPS basso — puoi aumentare in Impostazioni';
+        tip.style.cssText='position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:60;background:rgba(0,0,0,0.7);color:#f4e8c1;padding:8px 14px;border-radius:999px;font:12px Inter';
+        document.body.appendChild(tip); setTimeout(()=>tip.remove(), 3500);
+      }
+    }
+
     timeSystem.update(delta);
     weather.update(delta, player.position);
 
-    // update sky every frame for smooth transition
     const skyInfo = worldScene.updateSky(timeSystem.timeHours, currentWeather);
-    water.update(performance.now(), worldScene.sun.position.normalize(), worldScene.sun.color);
-    buildings.updateNightLights(skyInfo.dayFactor);
+    water.update(performance.now(), worldScene.sun.position.clone().normalize(), worldScene.sun.color);
+    // only update night lights if night factor high to save traversal
+    if(skyInfo.dayFactor<0.65) buildings.updateNightLights(skyInfo.dayFactor);
 
     const interiorActive = !!interiors.activeInterior;
-    isInInterior = interiorActive;
     player.update(delta, interiorActive);
+    // crowd throttled: already LOD inside
     crowd.update(delta, player.position, interiorActive);
 
-    // interaction prompt
     updateInteractionPrompt();
 
-    // minimap (throttled to 12fps)
-    if(Math.random()<0.12) {
+    if(Math.random()<0.09) {
       minimap.drawMinimap(player.position, player.yaw);
-      // world map when open
       if(!document.getElementById('map-overlay').classList.contains('hidden')){
         minimap.drawWorldMap(player.position);
       }
     }
 
-    // update HUD time
     document.getElementById('hud-time').textContent = timeSystem.getDisplay();
     document.getElementById('hud-date').textContent = getDateString(timeSystem.timeHours, currentWeather);
     if(timeSystem.autoAdvance){
@@ -170,23 +246,19 @@ async function init(){
       document.getElementById('time-slider').value = timeSystem.timeHours;
     }
 
-    // footsteps
     const isMoving = player.velocity.length() > 0.6 && player.onGround;
     if(isMoving && !interiorActive){
       stepAcc+=delta* (player.isRunning? 2.8:1.9);
       if(stepAcc>1){
         stepAcc=0;
-        // play step occasionally
         if(Math.random()<0.55) audio.playFootstep('cobble');
       }
     }
 
-    // region detection for audio & HUD
     const newRegion = getRegionForPos(player.position.x, player.position.z);
     if(newRegion!==currentRegionId){
       currentRegionId=newRegion;
       updateHudLocation(player.position.x, player.position.z);
-      // audio region change debounced
       if(Math.random()<0.08) audio.playAmbient(currentRegionId);
     }
 
@@ -194,19 +266,21 @@ async function init(){
   }
   animate();
 
-  // initial draw maps
   minimap.drawMinimap(player.position, player.yaw);
   minimap.drawWorldMap(player.position);
 
-  // expose for debug
   window._italia = { player, buildings, terrain, worldScene, timeSystem, weather, crowd, renderer, camera, interiors };
 
-  // automated tests after load
   runAcceptanceTests();
+
+  }catch(e){
+    console.error(e);
+    loadError=e;
+    showError('Errore durante il caricamento', (e.message||e.toString()) + '<br><br>Stack: <code style="font-size:10px">'+ (e.stack? e.stack.slice(0,600):'') +'</code>');
+  }
 }
 
 function getRegionForPos(x,z){
-  // simple nearest region
   let best=null, bestDist=Infinity;
   const regs={
     venezia:{x:20,z:-90}, roma:{x:180,z:-20}, milano:{x:-240,z:-420}, toscana:{x:-280,z:60}, dolomiti:{x:0,z:-700}
@@ -234,7 +308,7 @@ function getDateString(timeHours, weather){
   return `15 Giugno · Estate · ${period} · ${weathers[weather]||weathers.clear}`;
 }
 
-function setupUI(camera){
+function setupUI(camera, opts={}){
   const menu=document.getElementById('main-menu');
   const btnEnter=document.getElementById('btn-enter');
   const btnTour=document.getElementById('btn-tour');
@@ -242,19 +316,18 @@ function setupUI(camera){
 
   window.enterWorld = ()=>{
     menu.classList.add('hidden');
-    if(renderer.domElement.requestPointerLock) renderer.domElement.requestPointerLock();
+    if(!opts.isMobile && renderer.domElement.requestPointerLock) renderer.domElement.requestPointerLock();
     audio.init(); audio.playAmbient(currentRegionId);
   };
   btnEnter.addEventListener('click', window.enterWorld);
   btnTour.addEventListener('click', ()=>{
-    // teleport tour sequence
     menu.classList.add('hidden');
     const tourPoints=[
-      {x:35,z:-105, yaw:0.2}, // Venice campanile
-      {x:180,z:-20, yaw:2.1}, // Rome colosseum
-      {x:-240,z:-420, yaw:-0.9}, // Milan duomo
-      {x:-260,z:40, yaw:0.6}, // Tuscany
-      {x:0,z:-700, yaw:1.1}, // Dolomites
+      {x:35,z:-105, yaw:0.2},
+      {x:180,z:-20, yaw:2.1},
+      {x:-240,z:-420, yaw:-0.9},
+      {x:-260,z:40, yaw:0.6},
+      {x:0,z:-700, yaw:1.1},
     ];
     let idx=0;
     function nextTour(){
@@ -274,7 +347,6 @@ function setupUI(camera){
     document.getElementById('settings-panel').classList.remove('hidden');
   });
 
-  // settings panel
   const settingsPanel=document.getElementById('settings-panel');
   document.getElementById('btn-settings').addEventListener('click', ()=> settingsPanel.classList.remove('hidden'));
   document.getElementById('btn-close-settings').addEventListener('click', ()=> settingsPanel.classList.add('hidden'));
@@ -294,7 +366,6 @@ function setupUI(camera){
     pauseBtn.textContent=timeSystem.paused?'▶ Riprendi':'⏸ Pausa';
     timeSystem.autoAdvance=!timeSystem.paused;
   });
-  // double-click slider background toggles auto
   timeVal.addEventListener('click', ()=>{
     timeSystem.autoAdvance=!timeSystem.autoAdvance;
     timeSystem.paused=!timeSystem.autoAdvance;
@@ -314,6 +385,8 @@ function setupUI(camera){
   });
 
   const qualitySel=document.getElementById('quality-select');
+  // set initial to reflect device
+  if(opts.isMobile) qualitySel.value='performance';
   qualitySel.addEventListener('change', e=>{
     applyQuality(e.target.value);
   });
@@ -326,11 +399,9 @@ function setupUI(camera){
     renderer.domElement.requestFullscreen?.();
   });
 
-  // keyboard map/esc
   window.addEventListener('keydown', e=>{
     if(e.code==='KeyM'){ e.preventDefault(); const m=document.getElementById('map-overlay'); m.classList.toggle('hidden'); if(!m.classList.contains('hidden')) minimap.drawWorldMap(player.position); }
     if(e.code==='Escape'){
-      // exit interior or close overlays or exit pointer lock
       if(interiors.activeInterior){
         interiors.exitToEntry(player);
         audio.playDoor();
@@ -339,7 +410,6 @@ function setupUI(camera){
       } else if(!document.getElementById('settings-panel').classList.contains('hidden')){
         document.getElementById('settings-panel').classList.add('hidden');
       } else {
-        // pause menu
         if(document.pointerLockElement) document.exitPointerLock();
         if(menu.classList.contains('hidden')) menu.classList.remove('hidden');
       }
@@ -351,10 +421,7 @@ function setupUI(camera){
     if(e.code==='KeyP'){ renderer.domElement.requestFullscreen?.(); }
   });
 
-  // pointer hint click
   document.getElementById('pointer-hint')?.addEventListener('click', ()=> renderer.domElement.requestPointerLock());
-
-  // minimap handled in MinimapSystem attach
 
   function applyQuality(q){
     if(q==='high'){ renderer.setPixelRatio(Math.min(window.devicePixelRatio,2)); renderer.shadowMap.enabled=true; }
@@ -436,17 +503,13 @@ function runAcceptanceTests(){
     test('Minimap canvas', ()=> !!document.getElementById('minimap'));
     test('Save/load', ()=> { saveGame(); return !!loadGame(); });
     console.log('ITALIA VIVA — Acceptance Tests', results);
-    // render results to page console area if needed
     const passCount=results.filter(r=>r.pass).length;
-    // inject test badge
     const badge=document.createElement('div');
     badge.style.cssText='position:fixed;bottom:10px;right:12px;z-index:50;background:rgba(10,14,24,0.85);color:#f4e8c1;border:1px solid rgba(201,168,106,0.25);padding:8px 12px;border-radius:999px;font:10px Inter;letter-spacing:0.08em;';
-    badge.textContent=`✓ TESTS: ${passCount}/${results.length} PASS — Photoreal World Streaming Active`;
+    badge.textContent=`✓ TESTS: ${passCount}/${results.length} PASS — Stream OK`;
     document.body.appendChild(badge);
-    // store report
     localStorage.setItem('italia_viva_tests', JSON.stringify(results));
   }, 1200);
 }
 
-// bootstrap
 init();

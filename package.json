@@ -1,0 +1,18 @@
+{
+  "name": "italia-viva",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "ITALIA VIVA — Photorealistic, explorable 3D Italy built with Three.js. AAA open-world vertical slice: Rome, Venice, Tuscany, Milan, Dolomites.",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 5173",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0 --port 5173",
+    "test": "node tests/run-tests.mjs"
+  },
+  "dependencies": {
+    "three": "^0.160.0"
+  },
+  "devDependencies": {
+    "vite": "^5.2.0"
+  }
+}

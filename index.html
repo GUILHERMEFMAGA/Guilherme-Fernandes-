@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ITALIA VIVA — Explore Italy in Photoreal 3D</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/ui/style.css" />
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div class="loading-inner">
+      <div class="loading-logo">ITALIA VIVA</div>
+      <div class="loading-subtitle">Un Mondo Vivo · A Living Italy · 1:1 Photoreal Exploration</div>
+      <div class="loading-bar-wrap"><div class="loading-bar" id="loading-bar"></div></div>
+      <div class="loading-status" id="loading-status">Inizializzazione del mondo…</div>
+      <div class="loading-tip">Suggerimento: Premi <b>E</b> per entrare negli edifici · <b>M</b> per la mappa · <b>T</b> per l'orologio</div>
+    </div>
+    <div class="loading-footer">AAA Procedural Engine · Three.js · GIS · PBR · World Streaming</div>
+  </div>
+
+  <!-- Main Menu Overlay -->
+  <div id="main-menu" class="overlay hidden">
+    <div class="menu-panel">
+      <h1 class="menu-title">ITALIA VIVA</h1>
+      <p class="menu-tagline">La Bella Italia, Ricreata per l'Eternità</p>
+      <div class="menu-divider"></div>
+      <p class="menu-desc">Esplora Roma, Venezia, Firenze, Milano, Toscana, Dolomiti e oltre — ogni pietra, ogni canale, ogni tramonto geograficamente autentico.</p>
+      <div class="menu-buttons">
+        <button id="btn-enter" class="btn-primary">ENTRA NEL MONDO ↵</button>
+        <button id="btn-tour" class="btn-secondary">Tour Guidato</button>
+        <button id="btn-settings-menu" class="btn-secondary">Impostazioni</button>
+      </div>
+      <div class="menu-regions">
+        <span>ROMA</span><span>·</span><span>VENEZIA</span><span>·</span><span>FIRENZE</span><span>·</span><span>MILANO</span><span>·</span><span>TOSCANA</span><span>·</span><span>DOLOMITI</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- HUD -->
+  <div id="hud">
+    <div id="hud-top">
+      <div class="hud-left">
+        <div class="hud-logo">ITALIA VIVA</div>
+        <div class="hud-location" id="hud-location">Piazza San Marco — Venezia</div>
+      </div>
+      <div class="hud-center">
+        <div class="hud-time" id="hud-time">12:00</div>
+        <div class="hud-date" id="hud-date">15 Giugno · Estate · Sereno</div>
+      </div>
+      <div class="hud-right">
+        <button class="hud-icon-btn" id="btn-map-hud" title="Mappa (M)">◈ Mappa</button>
+        <button class="hud-icon-btn" id="btn-photo" title="Modalità Foto (P)">◎ Foto</button>
+        <button class="hud-icon-btn" id="btn-settings" title="Impostazioni (Esc)">⚙</button>
+      </div>
+    </div>
+
+    <div id="hud-bottom">
+      <div class="hud-controls">
+        <span><b>WASD</b> Muovi</span>
+        <span><b>Mouse</b> Guarda</span>
+        <span><b>Shift</b> Corri</span>
+        <span><b>Spazio</b> Salta</span>
+        <span><b>E</b> Interagisci</span>
+      </div>
+      <div class="hud-minimap-wrap" id="minimap-wrap">
+        <canvas id="minimap" width="220" height="220"></canvas>
+        <div class="minimap-label">Mappa del Mondo · 1:5000</div>
+      </div>
+    </div>
+
+    <div id="interaction-prompt" class="hidden">
+      <div class="prompt-icon">E</div>
+      <div class="prompt-text" id="prompt-text">Entra nel Palazzo</div>
+    </div>
+
+    <div id="crosshair">+</div>
+  </div>
+
+  <!-- Settings Panel -->
+  <div id="settings-panel" class="overlay hidden">
+    <div class="panel">
+      <h2>Impostazioni</h2>
+      <div class="setting-row">
+        <label>Qualità Grafica</label>
+        <select id="quality-select">
+          <option value="high">Alta — Photoreal</option>
+          <option value="balanced" selected>Equilibrata</option>
+          <option value="performance">Prestazioni</option>
+        </select>
+      </div>
+      <div class="setting-row">
+        <label>Ora del Giorno</label>
+        <input type="range" id="time-slider" min="0" max="24" step="0.1" value="12" />
+        <span id="time-value">12:00</span>
+        <button id="btn-pause-time" class="btn-small">⏸ Pausa</button>
+      </div>
+      <div class="setting-row">
+        <label>Meteo</label>
+        <select id="weather-select">
+          <option value="clear">Sereno</option>
+          <option value="partly">Parzialmente Nuvoloso</option>
+          <option value="overcast">Coperto</option>
+          <option value="rain">Pioggia</option>
+          <option value="fog">Nebbia</option>
+        </select>
+      </div>
+      <div class="setting-row">
+        <label>Densità Popolazione</label>
+        <input type="range" id="crowd-slider" min="0" max="100" value="65" />
+        <span id="crowd-value">65%</span>
+      </div>
+      <div class="setting-row">
+        <label>Audio Ambientale</label>
+        <input type="range" id="audio-slider" min="0" max="100" value="70" />
+      </div>
+      <div class="panel-actions">
+        <button id="btn-close-settings" class="btn-primary">Chiudi</button>
+        <button id="btn-save-game" class="btn-secondary">Salva Partita</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Map Fullscreen -->
+  <div id="map-overlay" class="overlay hidden">
+    <div class="map-panel">
+      <div class="map-header">
+        <h2>Carta d'Italia — ITALIA VIVA</h2>
+        <button id="btn-close-map" class="btn-small">✕ Chiudi</button>
+      </div>
+      <canvas id="world-map" width="1200" height="800"></canvas>
+      <div class="map-legend">
+        <span><i class="dot" style="background:#c0392b"></i> Tu sei qui</span>
+        <span><i class="dot" style="background:#2980b9"></i> Acqua</span>
+        <span><i class="dot" style="background:#27ae60"></i> Toscana</span>
+        <span><i class="dot" style="background:#8e44ad"></i> Roma</span>
+        <span><i class="dot" style="background:#d35400"></i> Venezia</span>
+        <span><i class="dot" style="background:#16a085"></i> Dolomiti</span>
+      </div>
+      <div class="map-instructions">Clicca sulla mappa per teletrasportarti · Rotellina per zoom</div>
+    </div>
+  </div>
+
+  <!-- Blocked Pointer Hint -->
+  <div id="pointer-hint" class="hidden">Clicca per bloccare il mouse e esplorare liberamente</div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

@@ -41,6 +41,10 @@ const server = http.createServer((req,res)=>{
       return;
     }
     const ext=path.extname(filePath);
+    // força atualização: desativa cache do navegador (senão parece que não atualizou)
+    res.setHeader('Cache-Control','no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma','no-cache');
+    res.setHeader('Expires','0');
     res.writeHead(200, {'Content-Type': mime[ext] || 'application/octet-stream'});
     res.end(data);
   });

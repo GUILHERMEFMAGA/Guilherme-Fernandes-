@@ -68,14 +68,10 @@ export class BuildingSystem {
   }
 
   generate(){
-    // 1) núcleos principais (trabalho pesado: cidades inteiras)
-    Object.values(REGIONS).forEach(region=>{
-      this.generateRegion(region);
-    });
-    // 2) tecido conector: preenche vazios entre cidades para sensação de Itália inteira
+    Object.values(REGIONS).forEach(region=>{ this.generateRegion(region); });
     this.generateConnectingFabric();
-    // 3) periferias e vilas rurais
     this.generateSuburbs();
+    this.createRealSquares(); // 100% cidade: praças reais
     this.addStreetFurniture();
   }
 
@@ -112,6 +108,81 @@ export class BuildingSystem {
     }
 
     this.createHeroLandmarks(region);
+    this.createDistrictDetails(region);
+  }
+
+  createDistrictDetails(region){
+    // Detalhes district-specific sem flutuação — tudo ancorado em minH
+    if(region.id==='roma'){
+      // Via dei Fori Imperiali - faixa de calçamento
+      const cz = -18;
+      for(let ix=0; ix<8; ix++){
+        const fx = 165+ix*6, fz=cz;
+        const fp=this.terrain.getFootprintHeight(fx,fz,5,5);
+        const plaza=new THREE.Mesh(new THREE.PlaneGeometry(5.4,5.4), new THREE.MeshStandardMaterial({color:0xb8a890, roughness:0.95}));
+        plaza.rotation.x=-Math.PI/2; plaza.position.set(fx, fp.minH+0.06, fz); this.worldScene.streetGroup.add(plaza);
+      }
+      // colunas romanas
+      for(let i=0;i<6;i++){
+        const x=155+i*9, z=-30;
+        const fp=this.terrain.getFootprintHeight(x,z,1,1);
+        const col=new THREE.Mesh(new THREE.CylinderGeometry(0.42,0.52,7,8), new THREE.MeshStandardMaterial({color:0xe0d0b8}));
+        col.position.set(x, fp.minH+3.5, z); this.worldScene.streetGroup.add(col);
+        const cap=new THREE.Mesh(new THREE.CylinderGeometry(0.68,0.42,0.45,8), new THREE.MeshStandardMaterial({color:0xf4ece0}));
+        cap.position.set(x, fp.minH+7.0, z); this.worldScene.streetGroup.add(cap);
+      }
+    }
+    if(region.id==='firenze'){
+      // Piazza della Signoria copy
+      const px=-88,pz=-132;
+      const fp=this.terrain.getFootprintHeight(px,pz,34,28);
+      const sq=new THREE.Mesh(new THREE.PlaneGeometry(34,28), new THREE.MeshStandardMaterial({color:0xc9b896, roughness:0.97}));
+      sq.rotation.x=-Math.PI/2; sq.position.set(px, fp.minH+0.09, pz); this.worldScene.streetGroup.add(sq);
+      // Palazzo Vecchio tower simplified
+      const tv=new THREE.Mesh(new THREE.BoxGeometry(6,22,6), new THREE.MeshStandardMaterial({color:0xd0b090}));
+      tv.position.set(px+12, fp.minH+11, pz-10); this.worldScene.buildingGroup.add(tv);
+      const batt=new THREE.Mesh(new THREE.BoxGeometry(6.6,1.2,6.6), new THREE.MeshStandardMaterial({color:0xc9a880}));
+      batt.position.set(px+12, fp.minH+22.6, pz-10); this.worldScene.buildingGroup.add(batt);
+      // Loggia
+      for(let i=0;i<4;i++){
+        const lx=px-8+i*6, lz=pz+8;
+        const fpl=this.terrain.getFootprintHeight(lx,lz,2,2);
+        const lc=new THREE.Mesh(new THREE.CylinderGeometry(0.32,0.36,4.5,8), new THREE.MeshStandardMaterial({color:0xf4ece0}));
+        lc.position.set(lx, fpl.minH+2.25, lz); this.worldScene.streetGroup.add(lc);
+      }
+    }
+    if(region.id==='venezia'){
+      // Piazza San Marco expandida: pavimento + colunas
+      const mx=38,mz=-98;
+      const fp=this.terrain.getFootprintHeight(mx,mz,44,38);
+      const marc=new THREE.Mesh(new THREE.PlaneGeometry(44,38), new THREE.MeshStandardMaterial({color:0xd8c9a8, roughness:0.95}));
+      marc.rotation.x=-Math.PI/2; marc.position.set(mx, fp.minH+0.07, mz); this.worldScene.streetGroup.add(marc);
+      // borda canal com balaustrada
+      for(let i=0;i<8;i++){
+        const bx=-80+i*14, bz=-162;
+        const fpb=this.terrain.getFootprintHeight(bx,bz,0.5,0.5);
+        const bal=new THREE.Mesh(new THREE.BoxGeometry(1.8,0.92,0.18), new THREE.MeshStandardMaterial({color:0xe8ddd0}));
+        bal.position.set(bx, fpb.minH+0.62, bz); this.worldScene.streetGroup.add(bal);
+      }
+    }
+    if(region.id==='napoli'){
+      // Lungomare + Spaccanapoli calçada
+      for(let i=0;i<10;i++){
+        const x=285+i*8, z=148;
+        const fp=this.terrain.getFootprintHeight(x,z,8,8);
+        const walk=new THREE.Mesh(new THREE.PlaneGeometry(8,8), new THREE.MeshStandardMaterial({color:0xd8c0a0}));
+        walk.rotation.x=-Math.PI/2; walk.position.set(x, fp.minH+0.06, z); this.worldScene.streetGroup.add(walk);
+      }
+    }
+    if(region.id==='milano'){
+      // Galleria Vittorio II - abóbada
+      const gx=-215,gz=-395;
+      const fp=this.terrain.getFootprintHeight(gx,gz,28,10);
+      const gal=new THREE.Mesh(new THREE.PlaneGeometry(28,10), new THREE.MeshStandardMaterial({color:0xbfb4a0, roughness:0.92}));
+      gal.rotation.x=-Math.PI/2; gal.position.set(gx, fp.minH+0.08, gz); this.worldScene.streetGroup.add(gal);
+      const archG=new THREE.Mesh(new THREE.CylinderGeometry(5,5,28,16,1,true,0,Math.PI), new THREE.MeshStandardMaterial({color:0x8ab0c8, transparent:true, opacity:0.22, side:THREE.DoubleSide}));
+      archG.rotation.z=Math.PI/2; archG.position.set(gx, fp.minH+5, gz); this.worldScene.buildingGroup.add(archG);
+    }
   }
 
   generateConnectingFabric(){
@@ -183,18 +254,44 @@ export class BuildingSystem {
   }
 
   createBuilding(x,z,w,d,h, region, floors){
-    const y = this.terrain.getHeightAt(x,z);
+    // CORREÇÃO FLUTUAÇÃO: amostra 4 cantos e cria fundação que penetra no terreno
+    const foot = this.terrain.getFootprintHeight(x,z,w,d);
+    const y = foot.minH; // ancora no ponto MAIS BAIXO para nunca flutuar
+    const slopeDepth = foot.slope;
     const group = new THREE.Group();
     group.position.set(x, y, z);
     group.userData.region = region.id;
     group.userData.enterable = Math.random() < 0.38;
     group.userData.buildingId = `b_${region.id}_${this.buildings.length}`;
 
+    // Fundação profunda (esconde vão em ladeiras) - cor da rocha local
+    const foundationDepth = Math.max(4.5, slopeDepth + 4.0);
+    const foundationGeo = new THREE.BoxGeometry(w+0.9, foundationDepth, d+0.9);
+    const foundationMat = new THREE.MeshStandardMaterial({ color:0x5a4a3a, roughness:0.95 });
+    const foundation = new THREE.Mesh(foundationGeo, foundationMat);
+    foundation.position.y = -foundationDepth/2 + 0.18; // vai de -foundationDepth até 0.18 (plinth)
+    foundation.receiveShadow=true;
+    group.add(foundation);
+
+    // Sombra de contato (AO fake) no chão ao redor
+    const aoGeo = new THREE.PlaneGeometry(w+2.2, d+2.2);
+    aoGeo.rotateX(-Math.PI/2);
+    const aoCan = document.createElement('canvas'); aoCan.width=64; aoCan.height=64;
+    const aoc=aoCan.getContext('2d');
+    const grad=aoc.createRadialGradient(32,32,0,32,32,32);
+    grad.addColorStop(0,'rgba(0,0,0,0.45)'); grad.addColorStop(0.5,'rgba(0,0,0,0.18)'); grad.addColorStop(1,'rgba(0,0,0,0)');
+    aoc.fillStyle=grad; aoc.fillRect(0,0,64,64);
+    const aoTex=new THREE.CanvasTexture(aoCan);
+    const aoMat=new THREE.MeshBasicMaterial({ map:aoTex, transparent:true, opacity:0.55, depthWrite:false });
+    const aoPlane=new THREE.Mesh(aoGeo, aoMat);
+    aoPlane.position.y=0.03;
+    aoPlane.renderOrder=2;
+    group.add(aoPlane);
+
     const baseMat = this.getFacadeMaterial(region, x,z);
     const baseGeo = new THREE.BoxGeometry(w, h, d);
     const base = new THREE.Mesh(baseGeo, baseMat);
     base.position.y = h/2;
-    // PERFORMANCE: só hero projeta sombra
     base.castShadow=false; base.receiveShadow=true;
     if(region.id==='roma' && h>12) base.castShadow=true;
     group.add(base);
@@ -202,21 +299,20 @@ export class BuildingSystem {
     const roof = this.createRoof(w,d,h, region);
     group.add(roof);
 
-    // RECURSO AVANÇADO: detalhes marcados para LOD — somem quando longe (>170m) pra não travar
     const detailsGroup = new THREE.Group();
     detailsGroup.userData.isLODGroup = true;
     this.addFacadeDetails(detailsGroup, w,d,h, floors, region);
     detailsGroup.children.forEach(c=> c.userData.isDetail = true);
     group.add(detailsGroup);
-    // portas sempre visíveis (LOD não afeta)
     const door = this.createDoor(w,d,h, region);
     door.userData.isDetail = false;
     group.add(door);
 
-    const plinthGeo = new THREE.BoxGeometry(w+0.28, 0.45, d+0.28);
+    // Plinto realista com leve penetração (-0.04) para z-fighting = 0
+    const plinthGeo = new THREE.BoxGeometry(w+0.42, 0.48, d+0.42);
     const plinthMat = new THREE.MeshStandardMaterial({ color:0x8a8a88, roughness:0.85 });
     const plinth = new THREE.Mesh(plinthGeo, plinthMat);
-    plinth.position.y = 0.22;
+    plinth.position.y = 0.24;
     group.add(plinth);
 
     if((region.id==='roma' || region.id==='milano' || region.id==='firenze' || region.id==='napoli') && Math.random()<0.32){
@@ -409,8 +505,7 @@ export class BuildingSystem {
   createHeroLandmarks(region){
     if(region.id==='roma'){
       const colosseum = new THREE.Group();
-      const baseY = this.terrain.getHeightAt(region.center.x, region.center.z);
-      colosseum.position.set(210, baseY, -55);
+      this.anchorHero(colosseum, 210,-55, 62,62);
       const outerGeo = new THREE.CylinderGeometry(28,30,12, 48,1,true);
       const outerMat=new THREE.MeshStandardMaterial({ color:0xd8c9b6, roughness:0.85, side:THREE.DoubleSide });
       const outer=new THREE.Mesh(outerGeo, outerMat);
@@ -432,7 +527,7 @@ export class BuildingSystem {
       this.buildings.push({id:'hero_colosseum', region:'roma', position:colosseum.position.clone(), size:{w:60,d:60,h:12}, floors:2, enterable:false, hero:true, mesh:colosseum});
 
       const pantheon=new THREE.Group();
-      pantheon.position.set(160, this.terrain.getHeightAt(160,-15), -15);
+      this.anchorHero(pantheon, 160,-15, 30,30);
       const drum=new THREE.Mesh(new THREE.CylinderGeometry(14,14,10,32), new THREE.MeshStandardMaterial({color:0xe8ddd0, roughness:0.8}));
       drum.position.y=5; pantheon.add(drum);
       const dome=new THREE.Mesh(new THREE.SphereGeometry(14,32,16,0,Math.PI*2,0,Math.PI/2), new THREE.MeshStandardMaterial({color:0xd8d0c0, roughness:0.85}));
@@ -448,7 +543,7 @@ export class BuildingSystem {
     }
     if(region.id==='firenze'){
       const duomoF=new THREE.Group();
-      duomoF.position.set(-62, this.terrain.getHeightAt(-62,-162), -162);
+      this.anchorHero(duomoF, -62,-162, 38,42);
       const baseF=new THREE.Mesh(new THREE.BoxGeometry(22,12,34), new THREE.MeshStandardMaterial({color:0xf4f0e6}));
       baseF.position.y=6; duomoF.add(baseF);
       const cupola=new THREE.Mesh(new THREE.SphereGeometry(9,24,12,0,Math.PI*2,0,Math.PI/2), new THREE.MeshStandardMaterial({color:0xc0392b}));
@@ -461,7 +556,8 @@ export class BuildingSystem {
       this.group.add(duomoF);
       // Ponte Vecchio
       const ponte=new THREE.Group();
-      ponte.position.set(-45, this.terrain.getHeightAt(-45,-155)+0.8, -155);
+      this.anchorHero(ponte, -45,-155, 32,8);
+      ponte.position.y+=0.8;
       const struct=new THREE.Mesh(new THREE.BoxGeometry(30,1.2,6), new THREE.MeshStandardMaterial({color:0xd8c9a0}));
       struct.position.y=3.2; ponte.add(struct);
       for(let i=0;i<4;i++){
@@ -472,8 +568,7 @@ export class BuildingSystem {
     }
     if(region.id==='venezia'){
       const camp=new THREE.Group();
-      const y0=this.terrain.getHeightAt(35,-105);
-      camp.position.set(35,y0,-105);
+      this.anchorHero(camp, 35,-105, 9,9);
       const shaft=new THREE.Mesh(new THREE.BoxGeometry(7,38,7), new THREE.MeshStandardMaterial({color:0xd8b48a, roughness:0.85}));
       shaft.position.y=19; camp.add(shaft);
       const belfry=new THREE.Mesh(new THREE.BoxGeometry(6,7,6), new THREE.MeshStandardMaterial({color:0xe8ddd0}));
@@ -491,7 +586,7 @@ export class BuildingSystem {
       this.group.add(camp);
 
       const palace=new THREE.Group();
-      palace.position.set(55, this.terrain.getHeightAt(55,-85), -85);
+      this.anchorHero(palace, 55,-85, 38,14);
       const base=new THREE.Mesh(new THREE.BoxGeometry(34,12,12), createPBRMaterial('plaster_cream',{color:'#f4e8d1'}));
       base.position.y=6; palace.add(base);
       for(let i=0;i<9;i++){
@@ -513,7 +608,8 @@ export class BuildingSystem {
       for(let i=0;i<4;i++){
         const bx = -60 + i*50; const bz = -140 + i*30;
         const bridge=new THREE.Group();
-        bridge.position.set(bx, this.terrain.getHeightAt(bx,bz)+0.9, bz);
+        // ponte veneziana - ancora em minH
+        { const fb=this.terrain.getFootprintHeight(bx,bz,14,5); bridge.position.set(bx, fb.minH+0.9, bz); }
         const archGeo=new THREE.CylinderGeometry(6,6, 0.9, 12,1,false,0,Math.PI);
         const archMat=new THREE.MeshStandardMaterial({color:0xd8d0c0, side:THREE.DoubleSide});
         const arch=new THREE.Mesh(archGeo, archMat);
@@ -544,7 +640,7 @@ export class BuildingSystem {
     if(region.id==='bologna'){
       // Due Torri
       const torri=new THREE.Group();
-      torri.position.set(-28, this.terrain.getHeightAt(-28,-288), -288);
+      this.anchorHero(torri, -28,-288, 12,6);
       const t1=new THREE.Mesh(new THREE.BoxGeometry(5,38,5), new THREE.MeshStandardMaterial({color:0xc95a2a}));
       t1.position.set(-3,19,0); torri.add(t1);
       const t2=new THREE.Mesh(new THREE.BoxGeometry(4,26,4), new THREE.MeshStandardMaterial({color:0xc95a2a}));
@@ -560,7 +656,7 @@ export class BuildingSystem {
     }
     if(region.id==='milano'){
       const duomo=new THREE.Group();
-      duomo.position.set(-240, this.terrain.getHeightAt(-240,-420), -420);
+      this.anchorHero(duomo, -240,-420, 32,56);
       const base=new THREE.Mesh(new THREE.BoxGeometry(28,14,52), new THREE.MeshStandardMaterial({color:0xf4f0e6}));
       base.position.y=7; duomo.add(base);
       for(let x=-12;x<=12;x+=3){
@@ -580,7 +676,7 @@ export class BuildingSystem {
       for(let i=0;i<3;i++){
         const tower=new THREE.Group();
         const tx = -260 + i*18; const tz=-460+i*12;
-        tower.position.set(tx, this.terrain.getHeightAt(tx,tz), tz);
+        { const ft=this.terrain.getFootprintHeight(tx,tz,13,13); tower.position.set(tx, ft.minH, tz); }
         const h= 28+ i*9;
         const tGeo=new THREE.BoxGeometry(12, h, 12);
         const tMat=new THREE.MeshStandardMaterial({ color:0x8ab0c8, metalness:0.45, roughness:0.18, transparent:true, opacity:0.88 });
@@ -604,7 +700,7 @@ export class BuildingSystem {
     }
     if(region.id==='genova'){
       const porto=new THREE.Group();
-      porto.position.set(-350, this.terrain.getHeightAt(-350,-240), -240);
+      this.anchorHero(porto, -350,-240, 64,16);
       const molo=new THREE.Mesh(new THREE.BoxGeometry(60,2,12), new THREE.MeshStandardMaterial({color:0x8a8a88}));
       molo.position.y=0.5; porto.add(molo);
       const faro=new THREE.Mesh(new THREE.CylinderGeometry(1.4,1.8,18,8), new THREE.MeshStandardMaterial({color:0xf4f0e6}));
@@ -615,7 +711,7 @@ export class BuildingSystem {
     }
     if(region.id==='napoli'){
       const vesuvio=new THREE.Group();
-      vesuvio.position.set(360, this.terrain.getHeightAt(360,220), 220);
+      this.anchorHero(vesuvio, 360,220, 72,72);
       const cone=new THREE.Mesh(new THREE.ConeGeometry(34,22,16), new THREE.MeshStandardMaterial({color:0x4a3a2a}));
       cone.position.y=11; vesuvio.add(cone);
       const crater=new THREE.Mesh(new THREE.CylinderGeometry(6,8,2,16), new THREE.MeshStandardMaterial({color:0x2a1a1a}));
@@ -632,7 +728,7 @@ export class BuildingSystem {
     if(region.id==='toscana'){
       const villa=new THREE.Group();
       const vx=-260, vz=40;
-      villa.position.set(vx, this.terrain.getHeightAt(vx,vz), vz);
+      this.anchorHero(villa, vx,vz, 22,16);
       const main=new THREE.Mesh(new THREE.BoxGeometry(18,7,12), createPBRMaterial('plaster_ochre',{color:'#e8dcc0'}));
       main.position.y=3.5; villa.add(main);
       const roof=new THREE.Mesh(new THREE.ConeGeometry(11,2.2,4), createPBRMaterial('terracotta'));
@@ -651,7 +747,7 @@ export class BuildingSystem {
       }
       this.group.add(villa);
       const farm=new THREE.Group();
-      farm.position.set(-310, this.terrain.getHeightAt(-310,90), 90);
+      this.anchorHero(farm, -310,90, 14,11);
       const fbase=new THREE.Mesh(new THREE.BoxGeometry(12,5.5,9), new THREE.MeshStandardMaterial({color:0xb8a08a}));
       fbase.position.y=2.75; farm.add(fbase);
       const froof=new THREE.Mesh(new THREE.ConeGeometry(7.5,2,4), createPBRMaterial('terracotta'));
@@ -661,7 +757,7 @@ export class BuildingSystem {
     if(region.id==='dolomiti'){
       const church=new THREE.Group();
       const cx= 30, cz=-720;
-      church.position.set(cx, this.terrain.getHeightAt(cx,cz), cz);
+      this.anchorHero(church, cx,cz, 14,22);
       const nave=new THREE.Mesh(new THREE.BoxGeometry(10,7,16), new THREE.MeshStandardMaterial({color:0xe8e0d0}));
       nave.position.y=3.5; church.add(nave);
       const prismShape=new THREE.Shape(); prismShape.moveTo(-5,0); prismShape.lineTo(0,4); prismShape.lineTo(5,0); prismShape.lineTo(-5,0);
@@ -676,7 +772,7 @@ export class BuildingSystem {
       for(let i=0;i<6;i++){
         const hx = (Math.random()-0.5)*300; const hz = -700 + (Math.random()-0.5)*180;
         const hut=new THREE.Group();
-        hut.position.set(hx, this.terrain.getHeightAt(hx,hz), hz);
+        { const fh=this.terrain.getFootprintHeight(hx,hz,6,6); hut.position.set(hx, fh.minH, hz); }
         const b=new THREE.Mesh(new THREE.BoxGeometry(6,3.5,6), new THREE.MeshStandardMaterial({color:0x8a6a42}));
         b.position.y=1.75; hut.add(b);
         const r=new THREE.Mesh(new THREE.ConeGeometry(4.5,2.2,4), new THREE.MeshStandardMaterial({color:0x5a3a2a}));
@@ -696,9 +792,13 @@ export class BuildingSystem {
       const nearBuilding = this.buildings.some(b=> Math.hypot(b.position.x-x, b.position.z-z) < 19);
       if(!nearBuilding) continue;
       placed++;
-      const y=this.terrain.getHeightAt(x,z);
+      const footLP=this.terrain.getFootprintHeight(x,z,0.4,0.4);
+      const y=footLP.minH;
       const post=new THREE.Group();
       post.position.set(x,y,z);
+      // base quadrada que sela vão
+      const sock=new THREE.Mesh(new THREE.BoxGeometry(0.32,0.14,0.32), new THREE.MeshStandardMaterial({color:0x4a4a4a}));
+      sock.position.y=0.07; post.add(sock);
       const pole=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.08,4.2,8), lampMat);
       pole.position.y=2.1; post.add(pole);
       const head=new THREE.Mesh(new THREE.SphereGeometry(0.22,8,6), lampHeadMat);
@@ -712,7 +812,8 @@ export class BuildingSystem {
       const x=(Math.random()-0.5)*800; const z=(Math.random()-0.5)*600;
       const nearRoma = Math.hypot(x-180,z+20) < 220 || Math.hypot(x-60,z+160)<180 || Math.hypot(x-20,z+90)<180;
       if(!nearRoma) continue;
-      const y=this.terrain.getHeightAt(x,z);
+      const footB=this.terrain.getFootprintHeight(x,z,1.8,0.55);
+      const y=footB.minH;
       const bench=new THREE.Group(); bench.position.set(x,y+0.25,z);
       bench.rotation.y=Math.random()*Math.PI;
       const seat=new THREE.Mesh(new THREE.BoxGeometry(1.8,0.08,0.55), new THREE.MeshStandardMaterial({color:0x6a4a2a}));
@@ -728,10 +829,41 @@ export class BuildingSystem {
     // cipressos extras ao redor de vilas
     for(let i=0;i<16;i++){
       const x=-280 + (Math.random()-0.5)*60, z=20+Math.random()*80;
-      const y=this.terrain.getHeightAt(x,z);
+      const foot=this.terrain.getFootprintHeight(x,z,1.8,1.8);
       const cy=new THREE.Mesh(new THREE.ConeGeometry(1.1,7,8), new THREE.MeshStandardMaterial({color:0x1a3a12}));
-      cy.position.set(x,y+3.5,z); this.worldScene.vegetationGroup.add(cy);
+      cy.position.set(x,foot.minH+3.5,z); this.worldScene.vegetationGroup.add(cy);
+      const br=new THREE.Mesh(new THREE.CylinderGeometry(0.32,0.42,0.28,5), new THREE.MeshStandardMaterial({color:0x3b2f1e}));
+      br.position.set(x,foot.minH+0.05,z); this.worldScene.vegetationGroup.add(br);
     }
+  }
+
+  createRealSquares(){
+    // Praças genéricas que dão vida urbana sem pesar — planadas em minH
+    const squares=[
+      {x:155,z:-28,w:22,d:18},{x:10,z:-100,w:18,d:14},{x:-25,z:-290,w:14,d:14},{x:-340,z:-250,w:16,d:12},
+    ];
+    squares.forEach(s=>{
+      const fp=this.terrain.getFootprintHeight(s.x,s.z,s.w,s.d);
+      const p=new THREE.Mesh(new THREE.PlaneGeometry(s.w,s.d), new THREE.MeshStandardMaterial({color:0xc9b8a0, roughness:0.96}));
+      p.rotation.x=-Math.PI/2; p.position.set(s.x, fp.minH+0.05, s.z); this.worldScene.streetGroup.add(p);
+      // fonte central
+      const f=new THREE.Mesh(new THREE.CylinderGeometry(1.6,1.8,0.42,12), new THREE.MeshStandardMaterial({color:0xa8c0d0, roughness:0.3}));
+      f.position.set(s.x, fp.minH+0.31, s.z); this.worldScene.streetGroup.add(f);
+      const wat=new THREE.Mesh(new THREE.CircleGeometry(1.35,14), new THREE.MeshStandardMaterial({color:0x5aa0c8, transparent:true, opacity:0.55}));
+      wat.rotation.x=-Math.PI/2; wat.position.set(s.x, fp.minH+0.53, s.z); this.worldScene.streetGroup.add(wat);
+    });
+  }
+
+  // Helper: ancora herói no ponto mais baixo + fundação + AO (anti-flutuação)
+  anchorHero(group, x,z, w,d){
+    const foot=this.terrain.getFootprintHeight(x,z,w,d);
+    group.position.set(x, foot.minH, z);
+    const depth=Math.max(3.5, foot.slope+2.5);
+    const f=new THREE.Mesh(new THREE.BoxGeometry(w+2, depth, d+2), new THREE.MeshStandardMaterial({color:0x5a4a3a, roughness:0.98}));
+    f.position.y=-depth/2+0.08; group.add(f);
+    const ao=new THREE.Mesh(new THREE.PlaneGeometry(w+6,d+6), new THREE.MeshBasicMaterial({color:0x000000, transparent:true, opacity:0.22, depthWrite:false}));
+    ao.rotation.x=-Math.PI/2; ao.position.y=0.04; group.add(ao);
+    return foot;
   }
 
   getClosestBuilding(pos, maxDist=18){

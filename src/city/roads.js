@@ -17,12 +17,16 @@ export class RoadSystem {
     const verts=[], uvs=[], indices=[];
     for(let i=0;i<pts.length;i++){
       const p=pts[i];
-      const y=this.terrain.getHeightAt(p.x, p.z)+0.08;
-      p.y=y;
+      const yCenter=this.terrain.getHeightAt(p.x, p.z)+0.08;
+      p.y=yCenter;
       const tangent=i<pts.length-1? new THREE.Vector3().subVectors(pts[i+1], p).normalize() : new THREE.Vector3().subVectors(p, pts[i-1]).normalize();
       const left=new THREE.Vector3(-tangent.z,0,tangent.x).normalize().multiplyScalar(width/2);
-      verts.push(p.x+left.x, y, p.z+left.z);
-      verts.push(p.x-left.x, y, p.z-left.z);
+      // CORREÇÃO FLUTUAÇÃO: altura PER-VÉRTICE (cada borda no seu terreno real)
+      const lx=p.x+left.x, lz=p.z+left.z, rx=p.x-left.x, rz=p.z-left.z;
+      const yLeft=this.terrain.getHeightAt(lx, lz)+0.08;
+      const yRight=this.terrain.getHeightAt(rx, rz)+0.08;
+      verts.push(lx, yLeft, lz);
+      verts.push(rx, yRight, rz);
       uvs.push(0, i/pts.length*10);
       uvs.push(1, i/pts.length*10);
       if(i<pts.length-1){

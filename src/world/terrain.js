@@ -53,11 +53,9 @@ export class TerrainSystem {
   }
 
   getHeightAt(x,z){
-    // quantized cache to avoid recomputing same spot many times (player stays near)
     const key = (Math.round(x*2)/2).toFixed(1)+':'+(Math.round(z*2)/2).toFixed(1);
     if(this.heightCache.has(key)) { this.cacheHits++; return this.heightCache.get(key); }
     const h = this.computeHeight(x,z);
-    // LRU: keep max 4000 entries
     if(this.heightCache.size>4000) {
       const firstKey=this.heightCache.keys().next().value;
       this.heightCache.delete(firstKey);
@@ -65,6 +63,30 @@ export class TerrainSystem {
     this.heightCache.set(key,h);
     this.cacheMiss++;
     return h;
+  }
+
+  // FIX FLUTUAÇÃO: amostra 4 cantos + centro e retorna altura mínima + inclinação
+  getFootprintHeight(x,z,w,d){
+    const hC = this.computeHeight(x,z);
+    const h00 = this.computeHeight(x - w/2, z - d/2);
+    const h10 = this.computeHeight(x + w/2, z - d/2);
+    const h01 = this.computeHeight(x - w/2, z + d/2);
+    const h11 = this.computeHeight(x + w/2, z + d/2);
+    const minH = Math.min(hC, h00, h10, h01, h11);
+    const maxH = Math.max(hC, h00, h10, h01, h11);
+    const slope = maxH - minH;
+    // normal aproximada via diferenças
+    const nx = (h10 + h11 - h00 - h01) / (2*w);
+    const nz = (h01 + h11 - h00 - h10) / (2*d);
+    return { minH, maxH, centerH: hC, slope, nx, nz };
+  }
+
+  getNormalAt(x,z){
+    const eps=0.8;
+    const hL=this.computeHeight(x-eps,z), hR=this.computeHeight(x+eps,z);
+    const hD=this.computeHeight(x,z-eps), hU=this.computeHeight(x,z+eps);
+    const n=new THREE.Vector3(hL-hR, 2*eps, hD-hU).normalize();
+    return n;
   }
 
   generate(){

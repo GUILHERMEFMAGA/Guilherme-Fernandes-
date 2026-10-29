@@ -68,11 +68,73 @@ export class BuildingSystem {
   }
 
   generate(){
+    this.createUrbanBlocks(); // GEMINI 4 CARBON: quarteirões alinhados à rua
     Object.values(REGIONS).forEach(region=>{ this.generateRegion(region); });
     this.generateConnectingFabric();
     this.generateSuburbs();
-    this.createRealSquares(); // 100% cidade: praças reais
+    this.createRealSquares();
     this.addStreetFurniture();
+  }
+
+  // GEMINI 4 CARBON: quarteirões reais - fileiras de prédios ao longo das ruas
+  createUrbanBlocks(){
+    // ROMA: grade 3x2 = 6 quadras densas (evita explosão)
+    const romaOrigin={x:140,z:-50}; const blockW=24, blockD=20, street=8;
+    for(let ix=0; ix<3; ix++){
+      for(let iz=0; iz<2; iz++){
+        const cx=romaOrigin.x + ix*(blockW+street);
+        const cz=romaOrigin.z + iz*(blockD+street);
+        if(Math.hypot(cx-210, cz+55)<46) continue;
+        if(Math.hypot(cx-160, cz+15)<38) continue;
+        this.createBlockRow(cx, cz- blockD/2+2, 3, 'roma', true);
+        this.createBlockRow(cx, cz+ blockD/2-2, 3, 'roma', true);
+      }
+    }
+    // FIRENZE: 2x2 quadras
+    const fi={x:-62,z:-155};
+    for(let ix=0; ix<2; ix++){ for(let iz=0; iz<2; iz++){
+      const cx=fi.x-6 + ix*28, cz=fi.z-6 + iz*26;
+      if(Math.hypot(cx+62, cz+162)<28) continue;
+      this.createBlockRow(cx, cz-8, 3, 'firenze', true);
+      this.createBlockRow(cx, cz+8, 3, 'firenze', true);
+    }}
+    // VENEZIA: 2x2 vielas densas
+    const ve={x:15,z:-95};
+    for(let ix=0; ix<2; ix++){ for(let iz=0; iz<2; iz++){
+      const cx=ve.x-18+ix*28, cz=ve.z-18+iz*22;
+      this.createBlockRow(cx, cz, 3, 'venezia', true);
+    }}
+    // MILANO: 3 blocos modernos
+    const mi={x:-240,z:-410};
+    for(let ix=0; ix<3; ix++){
+      const cx=mi.x + ix*26 -12, cz=mi.z+6;
+      this.createBlockRow(cx, cz-10, 3, 'milano', true);
+      this.createBlockRow(cx, cz+12, 3, 'milano', true);
+    }
+    // BOLOGNA + GENOVA + NAPOLI menores
+    [{x:-30,z:-285, n:2},{x:-335,z:-242, n:2},{x:322,z:148, n:2}].forEach(o=>{
+      for(let i=0;i<o.n;i++){
+        const cx=o.x+i*20-10, cz=o.z;
+        this.createBlockRow(cx, cz-8, 2, this.getNearestRegion(cx,cz).id, true);
+      }
+    });
+  }
+  createBlockRow(cx,cz,count, regionId, alongX){
+    const region=REGIONS[regionId];
+    for(let i=0;i<count;i++){
+      const x= alongX? cx + (i - (count-1)/2)* (7 + Math.random()*1.5) : cx;
+      const z= !alongX? cz + (i-(count-1)/2)* (7+Math.random()*1.5) : cz;
+      if(this.buildings.some(b=> Math.hypot(b.position.x-x,b.position.z-z)<6.5)) continue;
+      const floors=THREE.MathUtils.randInt(region.floors[0], region.floors[1]);
+      const w= alongX? 7+Math.random()*1.2 : 7+Math.random()*2;
+      const d= alongX? 9+Math.random()*2 : 7+Math.random()*1.2;
+      const h=floors*3.32+0.6;
+      this.createBuilding(x,z,w,d,h,region,floors);
+    }
+  }
+  createBlockCol(cx,cz,count, regionId, alongX){ this.createBlockRow(cx,cz,count,regionId,alongX); }
+  getNearestRegion(x,z){
+    let best=REGIONS.roma, bd=Infinity; Object.values(REGIONS).forEach(r=>{const dd=Math.hypot(r.center.x-x, r.center.z-z); if(dd<bd){bd=dd; best=r;}}); return best;
   }
 
   generateRegion(region){
@@ -254,9 +316,8 @@ export class BuildingSystem {
   }
 
   createBuilding(x,z,w,d,h, region, floors){
-    // CORREÇÃO FLUTUAÇÃO: amostra 4 cantos e cria fundação que penetra no terreno
     const foot = this.terrain.getFootprintHeight(x,z,w,d);
-    const y = foot.minH; // ancora no ponto MAIS BAIXO para nunca flutuar
+    const y = foot.minH;
     const slopeDepth = foot.slope;
     const group = new THREE.Group();
     group.position.set(x, y, z);
@@ -264,27 +325,48 @@ export class BuildingSystem {
     group.userData.enterable = Math.random() < 0.38;
     group.userData.buildingId = `b_${region.id}_${this.buildings.length}`;
 
-    // Fundação profunda (esconde vão em ladeiras) - cor da rocha local
-    const foundationDepth = Math.max(4.5, slopeDepth + 4.0);
-    const foundationGeo = new THREE.BoxGeometry(w+0.9, foundationDepth, d+0.9);
-    const foundationMat = new THREE.MeshStandardMaterial({ color:0x5a4a3a, roughness:0.95 });
-    const foundation = new THREE.Mesh(foundationGeo, foundationMat);
-    foundation.position.y = -foundationDepth/2 + 0.18; // vai de -foundationDepth até 0.18 (plinth)
-    foundation.receiveShadow=true;
-    group.add(foundation);
+    // GEMINI 4 CARBON: ilha de calçada + saia anti-flutuação discreta
+    // 1) ilha de calçada que cobre desnível (plataforma)
+    const islandW = w+3.2, islandD = d+3.2;
+    const islandGeo = new THREE.PlaneGeometry(islandW, islandD);
+    islandGeo.rotateX(-Math.PI/2);
+    // textura calçada
+    const sideCan=document.createElement('canvas'); sideCan.width=64; sideCan.height=64; const sc=sideCan.getContext('2d'); sc.fillStyle='#c9c7bc'; sc.fillRect(0,0,64,64); sc.strokeStyle='rgba(0,0,0,0.07)'; for(let i=0;i<64;i+=8){ sc.beginPath(); sc.moveTo(i,0); sc.lineTo(i,64); sc.stroke(); sc.beginPath(); sc.moveTo(0,i); sc.lineTo(64,i); sc.stroke(); }
+    const sideTex=new THREE.CanvasTexture(sideCan); sideTex.wrapS=sideTex.wrapT=THREE.RepeatWrapping; sideTex.repeat.set(islandW/2, islandD/2);
+    const islandMat=new THREE.MeshStandardMaterial({ map:sideTex, roughness:0.94 });
+    const island=new THREE.Mesh(islandGeo, islandMat);
+    island.position.y=0.09; island.receiveShadow=true; group.add(island);
+    // meio-fio da ilha (perímetro)
+    const curbH=0.14; const curbTh=0.12;
+    const curbMat=new THREE.MeshStandardMaterial({color:0x9a9a92});
+    const curb1=new THREE.Mesh(new THREE.BoxGeometry(islandW, curbH, curbTh), curbMat); curb1.position.set(0,curbH/2+0.09, islandD/2); group.add(curb1);
+    const curb2=curb1.clone(); curb2.position.set(0,curbH/2+0.09, -islandD/2); group.add(curb2);
+    const curb3=new THREE.Mesh(new THREE.BoxGeometry(curbTh, curbH, islandD), curbMat); curb3.position.set(islandW/2,curbH/2+0.09,0); group.add(curb3);
+    const curb4=curb3.clone(); curb4.position.set(-islandW/2,curbH/2+0.09,0); group.add(curb4);
 
-    // Sombra de contato (AO fake) no chão ao redor
-    const aoGeo = new THREE.PlaneGeometry(w+2.2, d+2.2);
+    // 2) saia vertical fina que enterra no terreno (invisível mas tapa vão)
+    const skirtDepth = Math.max(1.2, slopeDepth + 0.9);
+    const skirtMat = new THREE.MeshStandardMaterial({ color:0x7a7a78, roughness:0.98 });
+    const sides=[
+      {s:new THREE.BoxGeometry(w+0.18, skirtDepth, 0.14), p:[0,-skirtDepth/2+0.08, d/2]},
+      {s:new THREE.BoxGeometry(w+0.18, skirtDepth, 0.14), p:[0,-skirtDepth/2+0.08, -d/2]},
+      {s:new THREE.BoxGeometry(0.14, skirtDepth, d), p:[w/2,-skirtDepth/2+0.08,0]},
+      {s:new THREE.BoxGeometry(0.14, skirtDepth, d), p:[-w/2,-skirtDepth/2+0.08,0]},
+    ];
+    sides.forEach(o=>{ const m=new THREE.Mesh(o.s, skirtMat); m.position.set(o.p[0],o.p[1],o.p[2]); group.add(m); });
+
+    // Sombra de contato (AO fake) mais forte e maior — vende contato
+    const aoGeo = new THREE.PlaneGeometry(islandW+1.5, islandD+1.5);
     aoGeo.rotateX(-Math.PI/2);
     const aoCan = document.createElement('canvas'); aoCan.width=64; aoCan.height=64;
     const aoc=aoCan.getContext('2d');
     const grad=aoc.createRadialGradient(32,32,0,32,32,32);
-    grad.addColorStop(0,'rgba(0,0,0,0.45)'); grad.addColorStop(0.5,'rgba(0,0,0,0.18)'); grad.addColorStop(1,'rgba(0,0,0,0)');
+    grad.addColorStop(0,'rgba(0,0,0,0.55)'); grad.addColorStop(0.45,'rgba(0,0,0,0.20)'); grad.addColorStop(1,'rgba(0,0,0,0)');
     aoc.fillStyle=grad; aoc.fillRect(0,0,64,64);
     const aoTex=new THREE.CanvasTexture(aoCan);
-    const aoMat=new THREE.MeshBasicMaterial({ map:aoTex, transparent:true, opacity:0.55, depthWrite:false });
+    const aoMat=new THREE.MeshBasicMaterial({ map:aoTex, transparent:true, opacity:0.50, depthWrite:false });
     const aoPlane=new THREE.Mesh(aoGeo, aoMat);
-    aoPlane.position.y=0.03;
+    aoPlane.position.y=0.04;
     aoPlane.renderOrder=2;
     group.add(aoPlane);
 
@@ -308,11 +390,11 @@ export class BuildingSystem {
     door.userData.isDetail = false;
     group.add(door);
 
-    // Plinto realista com leve penetração (-0.04) para z-fighting = 0
-    const plinthGeo = new THREE.BoxGeometry(w+0.42, 0.48, d+0.42);
+    // Rodapé em pedra sob a fachada — fica exatamente sobre a ilha
+    const plinthGeo = new THREE.BoxGeometry(w+0.22, 0.38, d+0.22);
     const plinthMat = new THREE.MeshStandardMaterial({ color:0x8a8a88, roughness:0.85 });
     const plinth = new THREE.Mesh(plinthGeo, plinthMat);
-    plinth.position.y = 0.24;
+    plinth.position.y = 0.28;
     group.add(plinth);
 
     if((region.id==='roma' || region.id==='milano' || region.id==='firenze' || region.id==='napoli') && Math.random()<0.32){
@@ -854,15 +936,23 @@ export class BuildingSystem {
     });
   }
 
-  // Helper: ancora herói no ponto mais baixo + fundação + AO (anti-flutuação)
+  // Helper: ancora herói com podium completo calçado + saia perimetral
   anchorHero(group, x,z, w,d){
     const foot=this.terrain.getFootprintHeight(x,z,w,d);
     group.position.set(x, foot.minH, z);
-    const depth=Math.max(3.5, foot.slope+2.5);
-    const f=new THREE.Mesh(new THREE.BoxGeometry(w+2, depth, d+2), new THREE.MeshStandardMaterial({color:0x5a4a3a, roughness:0.98}));
-    f.position.y=-depth/2+0.08; group.add(f);
-    const ao=new THREE.Mesh(new THREE.PlaneGeometry(w+6,d+6), new THREE.MeshBasicMaterial({color:0x000000, transparent:true, opacity:0.22, depthWrite:false}));
-    ao.rotation.x=-Math.PI/2; ao.position.y=0.04; group.add(ao);
+    const pw=w+8, pd=d+8;
+    const podium=new THREE.Mesh(new THREE.PlaneGeometry(pw,pd), new THREE.MeshStandardMaterial({color:0xc9c7bc, roughness:0.93}));
+    podium.rotation.x=-Math.PI/2; podium.position.y=0.10; podium.receiveShadow=true; group.add(podium);
+    const curbH=0.16; const curbMat=new THREE.MeshStandardMaterial({color:0x9a9a92});
+    const c1=new THREE.Mesh(new THREE.BoxGeometry(pw,curbH,0.14),curbMat); c1.position.set(0,curbH/2+0.10,pd/2); group.add(c1);
+    const c2=c1.clone(); c2.position.set(0,curbH/2+0.10,-pd/2); group.add(c2);
+    const c3=new THREE.Mesh(new THREE.BoxGeometry(0.14,curbH,pd),curbMat); c3.position.set(pw/2,curbH/2+0.10,0); group.add(c3);
+    const c4=c3.clone(); c4.position.set(-pw/2,curbH/2+0.10,0); group.add(c4);
+    const skirtD=Math.max(1.4, foot.slope+1.1);
+    const skMat=new THREE.MeshStandardMaterial({color:0x7a7a78}); 
+    const skirt=new THREE.Mesh(new THREE.BoxGeometry(pw,skirtD, pd), skMat); skirt.position.y=-skirtD/2+0.10; group.add(skirt);
+    const ao=new THREE.Mesh(new THREE.PlaneGeometry(pw+4,pd+4), new THREE.MeshBasicMaterial({color:0x000000, transparent:true, opacity:0.28, depthWrite:false}));
+    ao.rotation.x=-Math.PI/2; ao.position.y=0.05; group.add(ao);
     return foot;
   }
 

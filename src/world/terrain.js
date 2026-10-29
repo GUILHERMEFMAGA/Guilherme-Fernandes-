@@ -13,43 +13,9 @@ export class TerrainSystem {
 
   // Pure function replicating generation math - ultra-fast, no raycast
   computeHeight(x,z){
-    const size = 2000;
-    const nx = x/size + 0.5;
-    const nz = z/size + 0.5;
-
-    const northFactor = Math.pow(Math.max(0, (nz < 0.35 ? (0.35 - nz)/0.35 : 0)), 1.2);
-    const hillFactor = Math.exp(-Math.pow((nz-0.55)/0.22,2)) * 0.6;
-    const coastFactor = nz > 0.85 ? (nz-0.85)/0.15 : 0;
-
-    const n1 = this.noise.fbm(x*0.0012, z*0.0012, 4, 2.1, 0.5) * 35;
-    const n2 = this.noise.fbm(x*0.003, z*0.003, 3, 2, 0.5) * 8;
-    const ridge = this.noise.ridge(x*0.0008, z*0.0008) * 12;
-
-    let h = 0;
-    h += n1 * (0.5 + hillFactor*0.8 + northFactor*1.2);
-    h += n2 * 0.5;
-    h += ridge * hillFactor;
-
-    if(nz < 0.28){
-      const peakNoise = this.noise.fbm(x*0.002 + 100, z*0.002, 5,2,0.5);
-      h += northFactor * (120 + peakNoise*60);
-      h += northFactor * Math.pow(Math.abs(this.noise.perlin2(x*0.001, z*0.001)), 0.6)*80;
-    }
-    if(nz >0.35 && nz <0.75){
-      const tuscan = this.noise.fbm(x*0.0009+50, z*0.0009, 4,2,0.5);
-      h += hillFactor * tuscan * 45;
-      const valley = Math.sin(x*0.004 + Math.cos(z*0.002)*2) * 6 * hillFactor;
-      h+= valley;
-    }
-    if(nz >0.82){
-      h = THREE.MathUtils.lerp(h, -2 + Math.sin(x*0.01)*0.5, coastFactor*0.85);
-    }
-    const riverDist = Math.abs((x*0.3 + z) - 200)/900;
-    if(riverDist <0.12 && nz>0.3 && nz<0.62){
-      h -= (0.12 - riverDist)/0.12 * 8;
-    }
-    h += (nz-0.5)*4;
-    return h;
+    const raw=this.computeHeightRaw(x,z);
+    const flatBoost=this.getCityFlattenBoost? this.getCityFlattenBoost(x,z):0;
+    return raw + flatBoost;
   }
 
   getHeightAt(x,z){
@@ -89,9 +55,47 @@ export class TerrainSystem {
     return n;
   }
 
+  // GEMINI 4 CARBON (HIGH): flattening avançado nas cidades para anti-flutuação 100%
+  getCityFlattenBoost(x,z){
+    // cada centro urbano ganha platô suave: interpolar altura para alvo plano
+    const centers=[
+      {x:180,z:-20,r:220,flat: 4}, {x:20,z:-90,r:180,flat:2},{x:-60,z:-160,r:160,flat:3},{x:-30,z:-290,r:140,flat:3},{x:-240,z:-420,r:170,flat:2},{x:-340,z:-240,r:140,flat:1.5},{x:320,z:180,r:190,flat:3},{x:-280,z:60,r:170,flat:2},
+    ];
+    let boost=0, weightSum=0;
+    for(const c of centers){
+      const d=Math.hypot(x-c.x, z-c.z);
+      if(d<c.r){
+        const w=Math.pow(1-d/c.r, 2);
+        // alvo: altura no centro
+        const centerH=this.computeHeightRaw(c.x,c.z);
+        const curRaw=this.computeHeightRaw(x,z);
+        // puxa levemente para planeza (4-8% de flatten)
+        const delta=centerH - curRaw;
+        boost += delta * w * 0.42;
+        weightSum+=w;
+      }
+    }
+    return weightSum>0 ? boost : 0;
+  }
+  computeHeightRaw(x,z){
+    const size = 2000; const nx = x/size + 0.5; const nz = z/size + 0.5;
+    const northFactor = Math.pow(Math.max(0, (nz < 0.35 ? (0.35 - nz)/0.35 : 0)), 1.2);
+    const hillFactor = Math.exp(-Math.pow((nz-0.55)/0.22,2)) * 0.6;
+    const coastFactor = nz > 0.85 ? (nz-0.85)/0.15 : 0;
+    const n1 = this.noise.fbm(x*0.0012, z*0.0012, 4, 2.1, 0.5) * 35;
+    const n2 = this.noise.fbm(x*0.003, z*0.003, 3, 2, 0.5) * 8;
+    const ridge = this.noise.ridge(x*0.0008, z*0.0008) * 12;
+    let h = 0; h += n1 * (0.5 + hillFactor*0.8 + northFactor*1.2); h += n2 * 0.5; h += ridge * hillFactor;
+    if(nz < 0.28){ const peakNoise = this.noise.fbm(x*0.002 + 100, z*0.002, 5,2,0.5); h += northFactor * (120 + peakNoise*60); h += northFactor * Math.pow(Math.abs(this.noise.perlin2(x*0.001, z*0.001)), 0.6)*80; }
+    if(nz >0.35 && nz <0.75){ const tuscan = this.noise.fbm(x*0.0009+50, z*0.0009, 4,2,0.5); h += hillFactor * tuscan * 45; const valley = Math.sin(x*0.004 + Math.cos(z*0.002)*2) * 6 * hillFactor; h+= valley; }
+    if(nz >0.82){ h = THREE.MathUtils.lerp(h, -2 + Math.sin(x*0.01)*0.5, coastFactor*0.85); }
+    const riverDist = Math.abs((x*0.3 + z) - 200)/900; if(riverDist <0.12 && nz>0.3 && nz<0.62){ h -= (0.12 - riverDist)/0.12 * 8; }
+    h += (nz-0.5)*4; return h;
+  }
+
   generate(){
     const size = 2000;
-    const segments = 100; // PERFORMANCE HOTFIX: 100 = 10201 verts, -60% lag (era 150)
+    const segments = 130; // GEMINI 4 CARBON: 130 (170k tris) + flatten urbano + per-vertex road
     const geo = new THREE.PlaneGeometry(size, size, segments, segments);
     geo.rotateX(-Math.PI/2);
 
@@ -100,8 +104,9 @@ export class TerrainSystem {
     for(let i=0;i<pos.count;i++){
       const x = pos.getX(i);
       const z = pos.getZ(i);
-      const h = this.computeHeight(x,z);
-      pos.setY(i, h);
+      const raw = this.computeHeight(x,z);
+      const flatBoost = this.getCityFlattenBoost(x,z);
+      pos.setY(i, raw + flatBoost);
     }
     pos.needsUpdate = true;
     geo.computeVertexNormals();

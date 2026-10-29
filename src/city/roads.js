@@ -120,7 +120,7 @@ export class RoadSystem {
   }
 
   createCityStreets(){
-    const roadMat=new THREE.MeshStandardMaterial({ color:0x2d3036, roughness:0.9 });
+    const roadMat=new THREE.MeshStandardMaterial({ color:0x24272e, roughness:0.92 }); // OPUS 5.5: asfalto escuro contrastado (visto de cima)
     // Roma cardo/decumanus ampliado: 6 vias com calçadas
     const romaRoads=[];
     for(let i=0;i<5;i++){
@@ -139,6 +139,14 @@ export class RoadSystem {
         this.createZebra(cx,cz,5.8);
       }
     }
+    // OPUS 5.5: alamedas de plátanos ao longo das vias principais
+    for(let i=0;i<5;i++){ const x=120+i*18;
+      for(let z=-70; z<35; z+=14){
+        const fp=this.terrain.getFootprintHeight? this.terrain.getFootprintHeight(x+2.8, z, 1,1): {minH:this.terrain.getHeightAt(x+2.8,z)};
+        this.addStreetTree(x+3.2, z, fp.minH);
+        const fp2=this.terrain.getFootprintHeight(x-2.8, z, 1,1); this.addStreetTree(x-3.2, z, fp2.minH);
+      }
+    }
 
     // Firenze grid
     for(let i=0;i<4;i++){
@@ -150,6 +158,8 @@ export class RoadSystem {
       this.group.add(this.createRoadMesh(c,5.2,roadMat)); this.createSidewalkPair(c,5.2,1.8);
     }
     for(let ix=0; ix<4; ix++){ for(let zz=-180; zz<=-100; zz+=22){ this.createZebra(-90+ix*20, zz, 5.2); } }
+    // Firenze alamedas
+    for(let z=-180; z<-100; z+=16){ const fp=this.terrain.getFootprintHeight(-75,z,1,1); this.addStreetTree(-75,z,fp.minH); }
 
     // Bologna portici line (decor)
     // Venezia stone paths with expanded sidewalks stone
@@ -173,6 +183,17 @@ export class RoadSystem {
     // Genova serpentine + Napoli lungomare
     const lungC=new THREE.CatmullRomCurve3([new THREE.Vector3(285,0,135), new THREE.Vector3(340,0,160), new THREE.Vector3(375,0,185)]);
     this.group.add(this.createRoadMesh(lungC,6, new THREE.MeshStandardMaterial({color:0x3a3d42}))); this.createSidewalkPair(lungC,6,2.4);
+  }
+
+  addStreetTree(x,z, y){
+    const g=new THREE.Group(); g.position.set(x,y,z);
+    const trunk=new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.18,3.2,6), new THREE.MeshStandardMaterial({color:0x4a3820}));
+    trunk.position.y=1.6; g.add(trunk);
+    const crown=new THREE.Mesh(new THREE.SphereGeometry(1.6,8,6), new THREE.MeshStandardMaterial({color:0x2d5a1e, roughness:0.9}));
+    crown.position.y=3.8; crown.scale.set(1.1,0.9,1.1); g.add(crown);
+    const base=new THREE.Mesh(new THREE.CylinderGeometry(0.32,0.36,0.14,6), new THREE.MeshStandardMaterial({color:0x5a5a5a}));
+    base.position.y=0.07; g.add(base);
+    this.group.add(g);
   }
 
   createZebra(cx,cz,roadW){

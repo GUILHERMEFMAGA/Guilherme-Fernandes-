@@ -11,22 +11,17 @@ export class AdvancedStreaming {
     
     this.frame = 0;
     this.lastStreamingUpdate = 0;
-    this.streamingInterval = 400; // ms - não checa todo frame, evita travado quando mexe
-    this.nearDistance = 380; // prédios até 380m visíveis
-    this.farDistance = 550;  // fade até 550m
-    this.detailDistance = 170; // detalhes (janelas/balcões) só até 170m
-    
+    this.streamingInterval = 400;
+    this.nearDistance = 520; // OPUS 5.5 MAX: cidade inteira visível de cima
+    this.farDistance = 900;
+    this.detailDistance = 240;
+    this.overviewFar = 1400; // quando em órbita alta, vê tudo
     this.isMoving = false;
     this.moveSpeed = 0;
     this.lastPos = new THREE.Vector3();
-    
-    // Cache de visibilidade pra não recalcular todo frame
     this.visibilityCache = new Map();
-    
-    // Pool de frustum para culling avançado
     this.frustum = new THREE.Frustum();
     this.frustumMatrix = new THREE.Matrix4();
-    
     this.stats = { visibleBuildings: 0, culled: 0, detailOn: 0 };
   }
 
@@ -54,37 +49,30 @@ export class AdvancedStreaming {
     let detailOn = 0;
     
     const obsPos = observer.position;
+    // OPUS 5.5: adapta alcance à altitude (overview aéreo vê cidade inteira)
+    const altitude = obsPos.y;
+    const farNow = altitude > 90 ? this.overviewFar : (this.isMoving ? 520 : this.farDistance);
+    const detailNow = altitude > 90 ? 420 : this.detailDistance;
     
-    // 1. PRÉDIOS: culling por distância + frustum
     for(const b of this.buildings.buildings){
       if(!b.mesh) continue;
-      
       const dist = Math.hypot(b.position.x - obsPos.x, b.position.z - obsPos.z);
-      
-      // Regra de streaming: hero sempre visível, outros só até farDistance
       const isHero = b.hero;
-      const shouldBeVisible = isHero ? (dist < 650) : (dist < this.farDistance);
-      
-      // Frustum culling avançado: testa bounding box do prédio
+      const shouldBeVisible = isHero ? (dist < 1200) : (dist < farNow);
+      // Desativa frustum culling em overview para não esconder quarteirão atrás
       let inFrustum = true;
-      if(shouldBeVisible){
+      if(shouldBeVisible && altitude < 120){
         const box = new THREE.Box3(
           new THREE.Vector3(b.position.x - b.size.w/2, b.position.y, b.position.z - b.size.d/2),
           new THREE.Vector3(b.position.x + b.size.w/2, b.position.y + b.size.h, b.position.z + b.size.d/2)
         );
         inFrustum = this.frustum.intersectsBox(box);
       }
-      
       const reallyVisible = shouldBeVisible && inFrustum;
-      if(b.mesh.visible !== reallyVisible){
-        b.mesh.visible = reallyVisible;
-      }
-      
+      if(b.mesh.visible !== reallyVisible) b.mesh.visible = reallyVisible;
       if(reallyVisible){
         visibleBuildings++;
-        
-        // LOD: detalhes só quando perto
-        const hasDetail = dist < this.detailDistance;
+        const hasDetail = dist < detailNow;
         // Tag: se já não tem cache, aplica
         const cacheKey = b.id + '_detail';
         if(this.visibilityCache.get(cacheKey) !== hasDetail){
@@ -102,24 +90,24 @@ export class AdvancedStreaming {
       }
     }
     
-    // 2. VEGETAÇÃO: culling agressivo - só 300m
+    // 2. VEGETAÇÃO: culling leve — árvores visíveis até 800m em overview
     const vegGroup = this.vegetation ? this.vegetation.group : this.worldScene.vegetationGroup;
     if(vegGroup){
       for(const veg of vegGroup.children){
         const dist = Math.hypot(veg.position.x - obsPos.x, veg.position.z - obsPos.z);
-        const shouldBeVisible = dist < 420;
+        const lim = altitude > 90 ? 900 : 500;
+        const shouldBeVisible = dist < lim;
         if(veg.visible !== shouldBeVisible) veg.visible = shouldBeVisible;
       }
     }
     
-    // 3. RUAS/PROPS: culling 350m
+    // 3. RUAS/PROPS: sempre visíveis em overview (senão parece que não tem ruas!)
     const streetGroup = this.worldScene.streetGroup;
     if(streetGroup){
       for(const prop of streetGroup.children){
         const dist = Math.hypot(prop.position.x - obsPos.x, prop.position.z - obsPos.z);
-        if(prop.visible !== (dist < 360)){
-          prop.visible = dist < 360;
-        }
+        const lim = altitude > 90 ? 1100 : 600;
+        if(prop.visible !== (dist < lim)) prop.visible = dist < lim;
       }
     }
     

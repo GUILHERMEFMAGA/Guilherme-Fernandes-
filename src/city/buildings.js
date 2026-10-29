@@ -138,16 +138,16 @@ export class BuildingSystem {
   }
 
   generateRegion(region){
-    // PERFORMANCE HOTFIX: corte 45% de prédios pra parar travada
+    // OPUS 5.5 MAX: cidade completa densa — dobra contagem, mas mantém streaming inteligente
     const count = Math.round(region.density * (
-      region.id==='toscana'? 22 :
-      region.id==='dolomiti'? 16 :
-      region.id==='firenze'? 28 :
-      region.id==='bologna'? 24 :
-      region.id==='genova'? 20 :
-      region.id==='napoli'? 26 : 28));
-    const spreadX = region.id==='dolomiti'? 560 : region.id==='toscana'? 420 : region.id==='genova'? 300 : 300;
-    const spreadZ = region.id==='dolomiti'? 240 : region.id==='toscana'? 360 : region.id==='genova'? 280 : 260;
+      region.id==='toscana'? 44 :
+      region.id==='dolomiti'? 30 :
+      region.id==='firenze'? 58 :
+      region.id==='bologna'? 50 :
+      region.id==='genova'? 42 :
+      region.id==='napoli'? 54 : 58));
+    const spreadX = region.id==='dolomiti'? 520 : region.id==='toscana'? 400 : region.id==='genova'? 280 : 280;
+    const spreadZ = region.id==='dolomiti'? 220 : region.id==='toscana'? 340 : region.id==='genova'? 260 : 240;
 
     for(let i=0;i<count;i++){
       const x = region.center.x + (Math.random()-0.5)*spreadX + (Math.random()-0.5)*20;
@@ -380,6 +380,37 @@ export class BuildingSystem {
 
     const roof = this.createRoof(w,d,h, region);
     group.add(roof);
+    // OPUS 5.5: corniche + rooftop extras sempre visíveis em overview
+    const cornice=new THREE.Mesh(new THREE.BoxGeometry(w+0.5, 0.28, d+0.5), new THREE.MeshStandardMaterial({color:0xd8d0c0, roughness:0.9}));
+    cornice.position.y=h-0.14; group.add(cornice);
+    // string course a meia altura
+    if(floors>3){
+      const belt=new THREE.Mesh(new THREE.BoxGeometry(w+0.18, 0.12, d+0.18), new THREE.MeshStandardMaterial({color:0xe0d8c8}));
+      belt.position.y=h*0.48; group.add(belt);
+    }
+    // loja térrea com toldo (cidade)
+    if(region.id!=='toscana' && region.id!=='dolomiti' && Math.random()<0.55){
+      const shopMat=new THREE.MeshStandardMaterial({color:0x1a1a1a, roughness:0.95});
+      const shop=new THREE.Mesh(new THREE.PlaneGeometry(w-0.8, 2.2), shopMat);
+      shop.position.set(0,1.35, d/2+0.03); group.add(shop);
+      const awningMat=new THREE.MeshStandardMaterial({color: region.id==='roma'?0xc0392b : region.id==='venezia'?0x2d5a3a : 0x2c3e50, roughness:0.9});
+      const awning=new THREE.Mesh(new THREE.BoxGeometry(w-0.6, 0.1, 0.9), awningMat);
+      awning.position.set(0,2.45, d/2+0.48); group.add(awning);
+      awning.rotation.x=0.22;
+    }
+    // rooftop: chaminé + antena + caixa d'água pequeno
+    {
+      const chim=new THREE.Mesh(new THREE.BoxGeometry(0.55,0.9,0.55), new THREE.MeshStandardMaterial({color:0x3a3a3a}));
+      chim.position.set(w*0.28, h+0.45, d*0.1); group.add(chim);
+      if(Math.random()<0.4){
+        const ant=new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.02,1.6,6), new THREE.MeshStandardMaterial({color:0x2a2a2a}));
+        ant.position.set(-w*0.2, h+0.8, -d*0.2); group.add(ant);
+      }
+      if(Math.random()<0.35 && floors>3){
+        const tank=new THREE.Mesh(new THREE.CylinderGeometry(0.55,0.55,0.7,10), new THREE.MeshStandardMaterial({color:0x5a5a5a}));
+        tank.position.set(-w*0.24, h+0.35, d*0.22); group.add(tank);
+      }
+    }
 
     const detailsGroup = new THREE.Group();
     detailsGroup.userData.isLODGroup = true;

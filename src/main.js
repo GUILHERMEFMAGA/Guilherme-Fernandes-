@@ -83,7 +83,7 @@ async function init(){
   audio = new AudioSystem();
   crowd = new CrowdSystem(worldScene, terrain, buildings);
 
-  camera = new THREE.PerspectiveCamera(isMobile?68:74, window.innerWidth/window.innerHeight, 0.2, 3500);
+  camera = new THREE.PerspectiveCamera(isMobile?68:74, window.innerWidth/window.innerHeight, 0.2, 2200);
   camera.position.set(-320, 95, 140);
 
   setLoading(10,'Terreno — Alpi, Appennini, Pianura Padana…');
@@ -109,7 +109,7 @@ async function init(){
   await yieldFrame();
 
   setLoading(84,'Popolazione — vita nelle piazze…');
-  crowd.generate(isMobile?32:48);
+  crowd.generate(isMobile?12:20); // PERFORMANCE: era 32:48, travava
   interiors.prepareInteriors();
   await yieldFrame();
 

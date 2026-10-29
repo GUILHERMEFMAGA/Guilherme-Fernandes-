@@ -69,7 +69,7 @@ export class TerrainSystem {
 
   generate(){
     const size = 2000;
-    const segments = 150; // reduced from 220 for 60% faster init + better FPS (22500 verts vs 48400)
+    const segments = 100; // PERFORMANCE HOTFIX: 100 = 10201 verts, -60% lag (era 150)
     const geo = new THREE.PlaneGeometry(size, size, segments, segments);
     geo.rotateX(-Math.PI/2);
 

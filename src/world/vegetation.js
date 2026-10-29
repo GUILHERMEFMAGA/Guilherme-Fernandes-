@@ -78,10 +78,10 @@ export class VegetationSystem {
         this.group.add(this.makeOlive(x,z));
       }
     }
-    // vineyard rows (low vines)
-    for(let row=0; row<8; row++){
+    // vineyard rows (PERF: 4x12)
+    for(let row=0; row<4; row++){
       const z0 = 160 + row*6;
-      for(let c=0;c<18;c++){
+      for(let c=0;c<12;c++){
         const x = -360 + c*12;
         const vineGeo=new THREE.BoxGeometry(0.18,0.9,0.18);
         const vineMat=new THREE.MeshStandardMaterial({color:0x3a4d1a, roughness:0.9});
@@ -100,16 +100,15 @@ export class VegetationSystem {
   }
 
   createForest(){
-    // Alpine forest north
-    for(let i=0;i<120;i++){
+    // PERFORMANCE: floresta leve
+    for(let i=0;i<40;i++){
       const x = (Math.random()-0.5)*1100;
       const z = -900 + Math.random()*280;
       const h = 10+Math.random()*8;
       const pine = this.makePine(x,z,h);
       this.group.add(pine);
     }
-    // mixed oaks center
-    for(let i=0;i<60;i++){
+    for(let i=0;i<20;i++){
       const x = (Math.random()-0.5)*900;
       const z = -250 + Math.random()*300;
       const oak = this.makeOak(x,z);

@@ -80,13 +80,14 @@ export class BuildingSystem {
   }
 
   generateRegion(region){
+    // PERFORMANCE HOTFIX: corte 45% de prédios pra parar travada
     const count = Math.round(region.density * (
-      region.id==='toscana'? 52 :
-      region.id==='dolomiti'? 32 :
-      region.id==='firenze'? 62 :
-      region.id==='bologna'? 56 :
-      region.id==='genova'? 48 :
-      region.id==='napoli'? 58 : 64));
+      region.id==='toscana'? 22 :
+      region.id==='dolomiti'? 16 :
+      region.id==='firenze'? 28 :
+      region.id==='bologna'? 24 :
+      region.id==='genova'? 20 :
+      region.id==='napoli'? 26 : 28));
     const spreadX = region.id==='dolomiti'? 560 : region.id==='toscana'? 420 : region.id==='genova'? 300 : 300;
     const spreadZ = region.id==='dolomiti'? 240 : region.id==='toscana'? 360 : region.id==='genova'? 280 : 260;
 
@@ -116,13 +117,13 @@ export class BuildingSystem {
   generateConnectingFabric(){
     // Preenche corredores entre cidades com densidade média (trabalho pesado realista)
     const corridors=[
-      {a: REGIONS.firenze.center, b: REGIONS.roma.center, count: 28, width: 80},
-      {a: REGIONS.bologna.center, b: REGIONS.firenze.center, count: 22, width: 70},
-      {a: REGIONS.milano.center, b: REGIONS.bologna.center, count: 24, width: 90},
-      {a: REGIONS.genova.center, b: REGIONS.milano.center, count: 18, width: 70},
-      {a: REGIONS.toscana.center, b: REGIONS.firenze.center, count: 20, width: 60},
-      {a: REGIONS.roma.center, b: REGIONS.napoli.center, count: 26, width: 85},
-      {a: REGIONS.venezia.center, b: REGIONS.bologna.center, count: 16, width: 55},
+      {a: REGIONS.firenze.center, b: REGIONS.roma.center, count: 10, width: 80},
+      {a: REGIONS.bologna.center, b: REGIONS.firenze.center, count: 8, width: 70},
+      {a: REGIONS.milano.center, b: REGIONS.bologna.center, count: 9, width: 90},
+      {a: REGIONS.genova.center, b: REGIONS.milano.center, count: 7, width: 70},
+      {a: REGIONS.toscana.center, b: REGIONS.firenze.center, count: 7, width: 60},
+      {a: REGIONS.roma.center, b: REGIONS.napoli.center, count: 9, width: 85},
+      {a: REGIONS.venezia.center, b: REGIONS.bologna.center, count: 6, width: 55},
     ];
     corridors.forEach(cor=>{
       for(let i=0;i<cor.count;i++){
@@ -151,10 +152,10 @@ export class BuildingSystem {
   }
 
   generateSuburbs(){
-    // periferias densas ao redor de cada cidade grande (anéis)
+    // PERFORMANCE: anéis leves
     Object.values(REGIONS).forEach(region=>{
       if(region.id==='dolomiti' || region.id==='toscana') return;
-      const ringCount = 14;
+      const ringCount = 5;
       for(let i=0;i<ringCount;i++){
         const ang=Math.random()*Math.PI*2;
         const r= 140 + Math.random()*90;
@@ -193,7 +194,9 @@ export class BuildingSystem {
     const baseGeo = new THREE.BoxGeometry(w, h, d);
     const base = new THREE.Mesh(baseGeo, baseMat);
     base.position.y = h/2;
-    base.castShadow=true; base.receiveShadow=true;
+    // PERFORMANCE: só hero projeta sombra
+    base.castShadow=false; base.receiveShadow=true;
+    if(region.id==='roma' && h>12) base.castShadow=true;
     group.add(base);
 
     const roof = this.createRoof(w,d,h, region);

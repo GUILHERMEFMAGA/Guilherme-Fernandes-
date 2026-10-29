@@ -202,8 +202,15 @@ export class BuildingSystem {
     const roof = this.createRoof(w,d,h, region);
     group.add(roof);
 
-    this.addFacadeDetails(group, w,d,h, floors, region);
+    // RECURSO AVANÇADO: detalhes marcados para LOD — somem quando longe (>170m) pra não travar
+    const detailsGroup = new THREE.Group();
+    detailsGroup.userData.isLODGroup = true;
+    this.addFacadeDetails(detailsGroup, w,d,h, floors, region);
+    detailsGroup.children.forEach(c=> c.userData.isDetail = true);
+    group.add(detailsGroup);
+    // portas sempre visíveis (LOD não afeta)
     const door = this.createDoor(w,d,h, region);
+    door.userData.isDetail = false;
     group.add(door);
 
     const plinthGeo = new THREE.BoxGeometry(w+0.28, 0.45, d+0.28);

@@ -77,12 +77,13 @@ export class WorldScene {
     this.sun = new THREE.DirectionalLight(0xfff6e0, 2.2);
     this.sun.position.set(600, 900, 300);
     this.sun.castShadow = true;
-    // PERFORMANCE: sombra baixa = +30 FPS no modo olho
+    // RECURSO AVANÇADO: cascaded shadow + autoUpdate desativado quando move
     this.sun.shadow.mapSize.set(512,512);
-    this.sun.shadow.camera.near=1; this.sun.shadow.camera.far=1400;
-    this.sun.shadow.camera.left=-400; this.sun.shadow.camera.right=400; this.sun.shadow.camera.top=400; this.sun.shadow.camera.bottom=-400;
-    this.sun.shadow.bias = -0.001;
+    this.sun.shadow.camera.near=1; this.sun.shadow.camera.far=1000;
+    this.sun.shadow.camera.left=-350; this.sun.shadow.camera.right=350; this.sun.shadow.camera.top=350; this.sun.shadow.camera.bottom=-350;
+    this.sun.shadow.bias = -0.0012;
     this.sun.shadow.autoUpdate = true;
+    this.sun.shadow.needsUpdate = true;
     this.scene.add(this.sun);
     this.sunTarget = new THREE.Object3D(); this.sunTarget.position.set(0,0,0); this.scene.add(this.sunTarget);
     this.sun.target = this.sunTarget;

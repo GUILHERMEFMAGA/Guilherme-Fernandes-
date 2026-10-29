@@ -11,9 +11,10 @@ import { CrowdSystem } from './npc/crowd.js';
 import { TimeSystem } from './systems/time.js';
 import { WeatherSystem } from './systems/weather.js';
 import { AudioSystem } from './systems/audio.js';
+import { AdvancedStreaming } from './systems/streaming.js';
 import { MinimapSystem } from './ui/minimap.js';
 
-let renderer, worldScene, terrain, water, vegetation, buildings, roads, interiors, observer, crowd, timeSystem, weather, audio, minimap, camera;
+let renderer, worldScene, terrain, water, vegetation, buildings, roads, interiors, observer, crowd, timeSystem, weather, audio, minimap, camera, streaming;
 
 let clock = new THREE.Clock();
 let currentWeather='clear';
@@ -82,6 +83,7 @@ async function init(){
   weather = new WeatherSystem(worldScene, renderer);
   audio = new AudioSystem();
   crowd = new CrowdSystem(worldScene, terrain, buildings);
+  streaming = new AdvancedStreaming(worldScene, terrain, buildings, vegetation, crowd);
 
   camera = new THREE.PerspectiveCamera(isMobile?68:74, window.innerWidth/window.innerHeight, 0.2, 2200);
   camera.position.set(-320, 95, 140);
@@ -189,14 +191,35 @@ async function init(){
       }
     }
 
+    // RECURSO AVANÇADO: detecta movimento pra reduzir carga quando mexe muito
+    const isMoving = streaming.detectMovement(observer, delta);
+    // Streaming avançado só a cada 400ms - não trava quando move
+    streaming.updateStreaming(observer, camera);
+    // Qualidade adaptativa: quando move rápido, baixa pixelRatio + sombras
+    const adaptive = streaming.getAdaptiveQuality(observer, pixelRatioCap);
+    if(adaptive.pixelRatio !== renderer.getPixelRatio()){
+      renderer.setPixelRatio(adaptive.pixelRatio);
+      renderer.shadowMap.enabled = adaptive.shadows && !isMobile;
+    }
+
     timeSystem.update(delta);
-    weather.update(delta, observer.position);
-    const skyInfo=worldScene.updateSky(timeSystem.timeHours, currentWeather);
-    water.update(performance.now(), worldScene.sun.position.clone().normalize(), worldScene.sun.color);
-    if(skyInfo.dayFactor<0.68) buildings.updateNightLights(skyInfo.dayFactor);
+    // Throttle: clima/sky só a cada 3 frames quando move
+    if(!isMoving || (frameCounter % 3 === 0)){
+      weather.update(delta, observer.position);
+    }
+    const skyInfo = (!isMoving || frameCounter % 4 === 0) ? worldScene.updateSky(timeSystem.timeHours, currentWeather) : { dayFactor: 0.5, sunY: 500, fogCol: null };
+    // Água só quando perto (<250m) e não em movimento extremo
+    const nearWater = Math.abs(observer.position.z + 90) < 250 || Math.abs(observer.position.z - 180) < 200;
+    if(nearWater && streaming.moveSpeed < 30){
+      water.update(performance.now(), worldScene.sun.position.clone().normalize(), worldScene.sun.color);
+    }
+    if(skyInfo.dayFactor<0.68 && frameCounter % 2 === 0) buildings.updateNightLights(skyInfo.dayFactor);
 
     observer.update(delta, false);
-    crowd.update(delta, observer.position, false);
+    // Crowd pausado quando move muito rápido (evita travado)
+    if(!isMoving || streaming.moveSpeed < 20){
+      crowd.update(delta, observer.position, false);
+    }
 
     if(Math.random()<0.08){
       minimap.drawMinimap(observer.position, observer.spherical.theta);
@@ -223,7 +246,14 @@ async function init(){
 
   minimap.drawMinimap(observer.position, observer.spherical.theta);
   minimap.drawWorldMap(observer.position);
-  window._italia={ observer, buildings, terrain, worldScene, timeSystem, weather, crowd, renderer, camera, interiors };
+  window._italia={ observer, buildings, terrain, worldScene, timeSystem, weather, crowd, renderer, camera, interiors, streaming };
+  // Debug: mostra stats de streaming (útil pra ver travamento)
+  setInterval(()=>{
+    if(streaming && streaming.stats){
+      const h=document.getElementById('hud-location');
+      if(h && observer) h.title = `Streaming: ${streaming.stats.visibleBuildings} visíveis, ${streaming.stats.culled} culled, detalhes ${streaming.stats.detailOn} | Move: ${streaming.moveSpeed.toFixed(1)} m/s`;
+    }
+  }, 1000);
   runAcceptanceTests();
 
   }catch(e){

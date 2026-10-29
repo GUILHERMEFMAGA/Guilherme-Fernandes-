@@ -104,9 +104,8 @@ export class TerrainSystem {
     for(let i=0;i<pos.count;i++){
       const x = pos.getX(i);
       const z = pos.getZ(i);
-      const raw = this.computeHeight(x,z);
-      const flatBoost = this.getCityFlattenBoost(x,z);
-      pos.setY(i, raw + flatBoost);
+      const h = this.computeHeight(x,z);
+      pos.setY(i, h);
     }
     pos.needsUpdate = true;
     geo.computeVertexNormals();

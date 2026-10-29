@@ -3,86 +3,80 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ITALIA VIVA — Explore Italy in Photoreal 3D</title>
+  <title>ITALIA VIVA — L'Occhio sulla Bella Italia</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/src/ui/style.css" />
 </head>
 <body>
-  <!-- Loading Screen -->
   <div id="loading-screen">
     <div class="loading-inner">
       <div class="loading-logo">ITALIA VIVA</div>
-      <div class="loading-subtitle">Un Mondo Vivo · A Living Italy · 1:1 Photoreal Exploration</div>
+      <div class="loading-subtitle">L'OCCHIO · L'OSSERVATORE · IL MONDO COMPLETO</div>
       <div class="loading-bar-wrap"><div class="loading-bar" id="loading-bar"></div></div>
-      <div class="loading-status" id="loading-status">Inizializzazione del mondo…</div>
-      <div class="loading-tip">Suggerimento: Premi <b>E</b> per entrare negli edifici · <b>M</b> per la mappa · <b>T</b> per l'orologio</div>
+      <div class="loading-status" id="loading-status">Costruzione dell'Italia completa…</div>
+      <div class="loading-tip">Modo Observador: <b>WASD</b> voa · <b>Botão direito</b> orbita · <b>Scroll</b> zoom · <b>C</b> cinemático · <b>Espaço</b> próximo landmark</div>
     </div>
-    <div class="loading-footer">AAA Procedural Engine · Three.js · GIS · PBR · World Streaming</div>
+    <div class="loading-footer">Città Complete · 8 Regioni · Tecido Urbano Contínuo · Trabalho Pesado Realista</div>
   </div>
 
-  <!-- Main Menu Overlay -->
   <div id="main-menu" class="overlay hidden">
     <div class="menu-panel">
       <h1 class="menu-title">ITALIA VIVA</h1>
-      <p class="menu-tagline">La Bella Italia, Ricreata per l'Eternità</p>
+      <p class="menu-tagline">L'Occhio che Contempla — Non un Gioco, un Mondo</p>
       <div class="menu-divider"></div>
-      <p class="menu-desc">Esplora Roma, Venezia, Firenze, Milano, Toscana, Dolomiti e oltre — ogni pietra, ogni canale, ogni tramonto geograficamente autentico.</p>
+      <p class="menu-desc">Você não é um jogador — é <b>o olho</b>. Sobrevoe a Itália completa: Veneza, Roma, Firenze, Bologna, Milano, Genova, Napoli, Toscana, Dolomiti — cidade inteira, tecido urbano contínuo, trabalho pesado realista.</p>
       <div class="menu-buttons">
-        <button id="btn-enter" class="btn-primary">ENTRA NEL MONDO ↵</button>
-        <button id="btn-tour" class="btn-secondary">Tour Guidato</button>
+        <button id="btn-enter" class="btn-primary">APRIRE GLI OCCHI ↵</button>
+        <button id="btn-tour" class="btn-secondary">Tour Cinemático</button>
         <button id="btn-settings-menu" class="btn-secondary">Impostazioni</button>
       </div>
       <div class="menu-regions">
-        <span>ROMA</span><span>·</span><span>VENEZIA</span><span>·</span><span>FIRENZE</span><span>·</span><span>MILANO</span><span>·</span><span>TOSCANA</span><span>·</span><span>DOLOMITI</span>
+        <span>VENEZIA</span><span>·</span><span>ROMA</span><span>·</span><span>FIRENZE</span><span>·</span><span>BOLOGNA</span><span>·</span><span>MILANO</span><span>·</span><span>GENOVA</span><span>·</span><span>NAPOLI</span>
       </div>
     </div>
   </div>
 
-  <!-- HUD -->
   <div id="hud">
     <div id="hud-top">
       <div class="hud-left">
-        <div class="hud-logo">ITALIA VIVA</div>
-        <div class="hud-location" id="hud-location">Piazza San Marco — Venezia</div>
+        <div class="hud-logo">ITALIA VIVA · L'OCCHIO</div>
+        <div class="hud-location" id="hud-location">Colline del Chianti — Toscana</div>
       </div>
       <div class="hud-center">
         <div class="hud-time" id="hud-time">12:00</div>
         <div class="hud-date" id="hud-date">15 Giugno · Estate · Sereno</div>
       </div>
       <div class="hud-right">
-        <button class="hud-icon-btn" id="btn-map-hud" title="Mappa (M)">◈ Mappa</button>
-        <button class="hud-icon-btn" id="btn-photo" title="Modalità Foto (P)">◎ Foto</button>
-        <button class="hud-icon-btn" id="btn-settings" title="Impostazioni (Esc)">⚙</button>
+        <button class="hud-icon-btn" id="btn-map-hud">◈ Mappa</button>
+        <button class="hud-icon-btn" id="btn-cinematic">◉ Cinematic (C)</button>
+        <button class="hud-icon-btn" id="btn-settings">⚙</button>
       </div>
     </div>
 
     <div id="hud-bottom">
       <div class="hud-controls">
-        <span><b>WASD</b> Muovi</span>
-        <span><b>Mouse</b> Guarda</span>
-        <span><b>Shift</b> Corri</span>
-        <span><b>Spazio</b> Salta</span>
-        <span><b>E</b> Interagisci</span>
+        <span><b>WASD</b> Voa</span>
+        <span><b>Q/E</b> Sobe/Desce</span>
+        <span><b>Botão Dir.</b> Orbita</span>
+        <span><b>Scroll</b> Zoom</span>
+        <span><b>Shift</b> Rápido</span>
+        <span><b>C</b> Cinemático</span>
+        <span><b>Espaço</b> Landmark</span>
       </div>
       <div class="hud-minimap-wrap" id="minimap-wrap">
         <canvas id="minimap" width="220" height="220"></canvas>
-        <div class="minimap-label">Mappa del Mondo · 1:5000</div>
+        <div class="minimap-label">Occhio — Alt. <span id="altitude-label">—</span> m</div>
       </div>
     </div>
 
-    <div id="interaction-prompt" class="hidden">
-      <div class="prompt-icon">E</div>
-      <div class="prompt-text" id="prompt-text">Entra nel Palazzo</div>
-    </div>
-
-    <div id="crosshair">+</div>
+    <div id="mode-indicator">MODO: <b id="mode-text">ÓRBITA</b> · <span id="mode-desc">Botão direito arrasta</span></div>
+    <div id="crosshair" style="display:none">+</div>
   </div>
 
-  <!-- Settings Panel -->
   <div id="settings-panel" class="overlay hidden">
     <div class="panel">
-      <h2>Impostazioni</h2>
+      <h2>Impostazioni — L'Occhio</h2>
       <div class="setting-row">
         <label>Qualità Grafica</label>
         <select id="quality-select">
@@ -93,8 +87,8 @@
       </div>
       <div class="setting-row">
         <label>Ora del Giorno</label>
-        <input type="range" id="time-slider" min="0" max="24" step="0.1" value="12" />
-        <span id="time-value">12:00</span>
+        <input type="range" id="time-slider" min="0" max="24" step="0.1" value="11.3" />
+        <span id="time-value">11:18</span>
         <button id="btn-pause-time" class="btn-small">⏸ Pausa</button>
       </div>
       <div class="setting-row">
@@ -104,47 +98,44 @@
           <option value="partly">Parzialmente Nuvoloso</option>
           <option value="overcast">Coperto</option>
           <option value="rain">Pioggia</option>
-          <option value="fog">Nebbia</option>
+          <option value="fog">Nebbia Poetica</option>
         </select>
       </div>
       <div class="setting-row">
-        <label>Densità Popolazione</label>
-        <input type="range" id="crowd-slider" min="0" max="100" value="65" />
-        <span id="crowd-value">65%</span>
+        <label>Densità — Cidade Completa</label>
+        <input type="range" id="crowd-slider" min="0" max="100" value="55" />
+        <span id="crowd-value">55%</span>
       </div>
       <div class="setting-row">
-        <label>Audio Ambientale</label>
+        <label>Áudio Ambiente</label>
         <input type="range" id="audio-slider" min="0" max="100" value="70" />
       </div>
       <div class="panel-actions">
         <button id="btn-close-settings" class="btn-primary">Chiudi</button>
-        <button id="btn-save-game" class="btn-secondary">Salva Partita</button>
+        <button id="btn-save-game" class="btn-secondary">Salva Vista</button>
       </div>
     </div>
   </div>
 
-  <!-- Map Fullscreen -->
   <div id="map-overlay" class="overlay hidden">
     <div class="map-panel">
       <div class="map-header">
-        <h2>Carta d'Italia — ITALIA VIVA</h2>
-        <button id="btn-close-map" class="btn-small">✕ Chiudi</button>
+        <h2>Carta d'Italia — L'OCCHIO</h2>
+        <button id="btn-close-map" class="btn-small">✕</button>
       </div>
       <canvas id="world-map" width="1200" height="800"></canvas>
       <div class="map-legend">
         <span><i class="dot" style="background:#c0392b"></i> Tu sei qui</span>
-        <span><i class="dot" style="background:#2980b9"></i> Acqua</span>
-        <span><i class="dot" style="background:#27ae60"></i> Toscana</span>
-        <span><i class="dot" style="background:#8e44ad"></i> Roma</span>
         <span><i class="dot" style="background:#d35400"></i> Venezia</span>
-        <span><i class="dot" style="background:#16a085"></i> Dolomiti</span>
+        <span><i class="dot" style="background:#8e44ad"></i> Roma</span>
+        <span><i class="dot" style="background:#c0392b"></i> Firenze</span>
+        <span><i class="dot" style="background:#2c3e50"></i> Milano</span>
       </div>
-      <div class="map-instructions">Clicca sulla mappa per teletrasportarti · Rotellina per zoom</div>
+      <div class="map-instructions">Clicca per teletransportar o olho · Scroll zoom</div>
     </div>
   </div>
 
-  <!-- Blocked Pointer Hint -->
-  <div id="pointer-hint" class="hidden">Clicca per bloccare il mouse e esplorare liberamente</div>
+  <div id="pointer-hint" class="hidden">Botão direito: orbita · WASD: voa · Scroll: zoom</div>
 
   <script type="module" src="/src/main.js"></script>
 </body>

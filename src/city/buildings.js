@@ -138,14 +138,14 @@ export class BuildingSystem {
   }
 
   generateRegion(region){
-    // OPUS 5.5 MAX: cidade completa densa — dobra contagem, mas mantém streaming inteligente
+    // EQUILÍBRIO: denso o suficiente pra parecer cidade, leve o suficiente pra não travar
     const count = Math.round(region.density * (
-      region.id==='toscana'? 44 :
-      region.id==='dolomiti'? 30 :
-      region.id==='firenze'? 58 :
-      region.id==='bologna'? 50 :
-      region.id==='genova'? 42 :
-      region.id==='napoli'? 54 : 58));
+      region.id==='toscana'? 32 :
+      region.id==='dolomiti'? 20 :
+      region.id==='firenze'? 38 :
+      region.id==='bologna'? 32 :
+      region.id==='genova'? 28 :
+      region.id==='napoli'? 36 : 40));
     const spreadX = region.id==='dolomiti'? 520 : region.id==='toscana'? 400 : region.id==='genova'? 280 : 280;
     const spreadZ = region.id==='dolomiti'? 220 : region.id==='toscana'? 340 : region.id==='genova'? 260 : 240;
 

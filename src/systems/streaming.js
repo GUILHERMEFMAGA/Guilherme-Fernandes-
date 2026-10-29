@@ -12,10 +12,10 @@ export class AdvancedStreaming {
     this.frame = 0;
     this.lastStreamingUpdate = 0;
     this.streamingInterval = 400;
-    this.nearDistance = 520; // OPUS 5.5 MAX: cidade inteira visível de cima
-    this.farDistance = 900;
-    this.detailDistance = 240;
-    this.overviewFar = 1400; // quando em órbita alta, vê tudo
+    this.nearDistance = 380;
+    this.farDistance = 650;
+    this.detailDistance = 180;
+    this.overviewFar = 950;
     this.isMoving = false;
     this.moveSpeed = 0;
     this.lastPos = new THREE.Vector3();
@@ -51,8 +51,9 @@ export class AdvancedStreaming {
     const obsPos = observer.position;
     // OPUS 5.5: adapta alcance à altitude (overview aéreo vê cidade inteira)
     const altitude = obsPos.y;
-    const farNow = altitude > 90 ? this.overviewFar : (this.isMoving ? 520 : this.farDistance);
-    const detailNow = altitude > 90 ? 420 : this.detailDistance;
+    // LOD agressivo em overview: vê longe mas sem detalhes (evita travar)
+    const farNow = altitude > 90 ? this.overviewFar : (this.isMoving ? 480 : this.farDistance);
+    const detailNow = altitude > 90 ? 110 : this.detailDistance;
     
     for(const b of this.buildings.buildings){
       if(!b.mesh) continue;
@@ -95,18 +96,19 @@ export class AdvancedStreaming {
     if(vegGroup){
       for(const veg of vegGroup.children){
         const dist = Math.hypot(veg.position.x - obsPos.x, veg.position.z - obsPos.z);
-        const lim = altitude > 90 ? 900 : 500;
+        const lim = altitude > 90 ? 650 : 420;
         const shouldBeVisible = dist < lim;
         if(veg.visible !== shouldBeVisible) veg.visible = shouldBeVisible;
       }
     }
     
-    // 3. RUAS/PROPS: sempre visíveis em overview (senão parece que não tem ruas!)
+    // 3. RUAS/PROPS: ruas SEMPRE visíveis, props com culling moderado
     const streetGroup = this.worldScene.streetGroup;
     if(streetGroup){
       for(const prop of streetGroup.children){
         const dist = Math.hypot(prop.position.x - obsPos.x, prop.position.z - obsPos.z);
-        const lim = altitude > 90 ? 1100 : 600;
+        const isRoadMesh = prop.geometry && prop.geometry.attributes.position && prop.geometry.attributes.position.count > 200;
+        const lim = isRoadMesh ? 1200 : (altitude > 90 ? 700 : 450);
         if(prop.visible !== (dist < lim)) prop.visible = dist < lim;
       }
     }

@@ -95,7 +95,7 @@ export class TerrainSystem {
 
   generate(){
     const size = 2000;
-    const segments = 130; // GEMINI 4 CARBON: 130 (170k tris) + flatten urbano + per-vertex road
+    const segments = 110; // BALANCEADO: 110 = 12321 verts, rápido mas suficiente p/ ruas
     const geo = new THREE.PlaneGeometry(size, size, segments, segments);
     geo.rotateX(-Math.PI/2);
 

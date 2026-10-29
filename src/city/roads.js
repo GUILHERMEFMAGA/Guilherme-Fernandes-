@@ -18,13 +18,13 @@ export class RoadSystem {
     const verts=[], uvs=[], indices=[];
     for(let i=0;i<pts.length;i++){
       const p=pts[i];
-      const yCenter=this.terrain.getHeightAt(p.x, p.z)+0.08;
+      const yCenter=this.terrain.getHeightAt(p.x, p.z)+0.12;
       p.y=yCenter;
       const tangent=i<pts.length-1? new THREE.Vector3().subVectors(pts[i+1], p).normalize() : new THREE.Vector3().subVectors(p, pts[i-1]).normalize();
       const left=new THREE.Vector3(-tangent.z,0,tangent.x).normalize().multiplyScalar(width/2);
       const lx=p.x+left.x, lz=p.z+left.z, rx=p.x-left.x, rz=p.z-left.z;
-      const yLeft=this.terrain.getHeightAt(lx, lz)+0.08;
-      const yRight=this.terrain.getHeightAt(rx, rz)+0.08;
+      const yLeft=this.terrain.getHeightAt(lx, lz)+0.12;
+      const yRight=this.terrain.getHeightAt(rx, rz)+0.12;
       verts.push(lx, yLeft, lz);
       verts.push(rx, yRight, rz);
       uvs.push(0, i/pts.length*10);
@@ -120,7 +120,7 @@ export class RoadSystem {
   }
 
   createCityStreets(){
-    const roadMat=new THREE.MeshStandardMaterial({ color:0x24272e, roughness:0.92 }); // OPUS 5.5: asfalto escuro contrastado (visto de cima)
+    const roadMat=new THREE.MeshStandardMaterial({ color:0x1a1d24, roughness:0.95, metalness:0.02 }); // ULTRA CONTRASTE: quase preto, visto de qualquer altitude
     // Roma cardo/decumanus ampliado: 6 vias com calçadas
     const romaRoads=[];
     for(let i=0;i<5;i++){

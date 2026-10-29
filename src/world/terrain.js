@@ -145,54 +145,15 @@ export class TerrainSystem {
     for(let i=0;i<1500;i++){ cs.fillStyle=`rgba(40,30,20,0.07)`; cs.fillRect(Math.random()*256,Math.random()*256,2,1); }
     const texSoil = new THREE.CanvasTexture(canvasSoil); texSoil.wrapS=texSoil.wrapT=THREE.RepeatWrapping; texSoil.repeat.set(20,20);
 
+    // SIMPLES E VISÍVEL: sem shader complexo que pode quebrar e deixar céu azul
     const mat = new THREE.MeshStandardMaterial({
       map: texGrass,
-      roughness:0.95,
+      roughness:0.92,
       metalness:0,
     });
-
-    mat.onBeforeCompile = (shader)=>{
-      shader.uniforms.texRock = { value: texRock };
-      shader.uniforms.texSoil = { value: texSoil };
-      shader.vertexShader = shader.vertexShader.replace(
-        '#include <common>',
-        `#include <common>
-         varying float vHeight;
-         varying vec3 vNw;
-        `
-      ).replace(
-        '#include <begin_vertex>',
-        `#include <begin_vertex>
-         vHeight = position.y;
-         vNw = normal;
-        `
-      );
-      shader.fragmentShader = shader.fragmentShader.replace(
-        '#include <common>',
-        `#include <common>
-         uniform sampler2D texRock;
-         uniform sampler2D texSoil;
-         varying float vHeight;
-         varying vec3 vNw;
-        `
-      ).replace(
-        '#include <map_fragment>',
-        `
-          float slope = 1.0 - dot(vNw, vec3(0.0,1.0,0.0));
-          vec4 grass = texture2D(map, vUv * 1.0);
-          vec4 rock = texture2D(texRock, vUv * 1.0);
-          vec4 soil = texture2D(texSoil, vUv * 1.0);
-          float h = vHeight;
-          float rockBlend = smoothstep(55.0, 95.0, h) + slope*0.9;
-          rockBlend = clamp(rockBlend,0.0,1.0);
-          float soilBlend = smoothstep(18.0, 35.0, h) * (1.0-rockBlend) * 0.5;
-          vec4 base = mix(grass, soil, soilBlend);
-          base = mix(base, rock, rockBlend);
-          base.rgb += (rockBlend*0.04);
-          diffuseColor *= base;
-        `
-      );
-    };
+    // guarda tex extras pra futura versão sem quebrar visibilidade
+    mat.userData.texRock = texRock;
+    mat.userData.texSoil = texSoil;
     return mat;
   }
 

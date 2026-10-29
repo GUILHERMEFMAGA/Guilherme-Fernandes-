@@ -1,10 +1,12 @@
 import * as THREE from 'three';
 import { WorldScene } from './engine/scene.js';
 import { TerrainSystem } from './world/terrain.js';
+import { MountainSystem } from './world/mountains.js';
 import { WaterSystem } from './world/water.js';
 import { VegetationSystem } from './world/vegetation.js';
 import { BuildingSystem } from './city/buildings.js';
 import { RoadSystem } from './city/roads.js';
+import { DistrictSystem } from './city/districts.js';
 import { InteriorSystem } from './city/interiors.js';
 import { ObserverControls } from './player/observer.js';
 import { CrowdSystem } from './npc/crowd.js';
@@ -14,7 +16,7 @@ import { AudioSystem } from './systems/audio.js';
 import { AdvancedStreaming } from './systems/streaming.js';
 import { MinimapSystem } from './ui/minimap.js';
 
-let renderer, worldScene, terrain, water, vegetation, buildings, roads, interiors, observer, crowd, timeSystem, weather, audio, minimap, camera, streaming;
+let renderer, worldScene, terrain, mountains, water, vegetation, buildings, roads, districts, interiors, observer, crowd, timeSystem, weather, audio, minimap, camera, streaming;
 
 let clock = new THREE.Clock();
 let currentWeather='clear';
@@ -74,10 +76,12 @@ async function init(){
   if(isMobile) worldScene.sun.castShadow=false;
 
   terrain = new TerrainSystem(worldScene);
+  mountains = new MountainSystem(worldScene, terrain);
   water = new WaterSystem(worldScene);
   vegetation = new VegetationSystem(worldScene, terrain);
   buildings = new BuildingSystem(worldScene, terrain);
   roads = new RoadSystem(worldScene, terrain);
+  districts = new DistrictSystem(worldScene, terrain, roads, buildings);
   interiors = new InteriorSystem(worldScene, buildings);
   timeSystem = new TimeSystem(worldScene);
   weather = new WeatherSystem(worldScene, renderer);
@@ -91,6 +95,7 @@ async function init(){
   setLoading(10,'Terreno — Alpi, Appennini, Pianura Padana…');
   await yieldFrame();
   terrain.generate();
+  mountains.generate();
   setLoading(22,'Idrografia — Canali Veneza, Po, Arno, laghi…');
   await yieldFrame();
   water.create();
@@ -98,6 +103,7 @@ async function init(){
 
   setLoading(38,'Rete stradale — Autostrade, vicoli…');
   roads.create();
+  districts.generateAll();
   await yieldFrame();
 
   setLoading(48,'Città COMPLETA — 8 regioni, tecido urbano contínuo…');

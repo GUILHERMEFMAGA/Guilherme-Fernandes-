@@ -1,3 +1,9 @@
+/**
+ * ============================================================================
+ * BUILDINGS — Organized City Generation
+ * Sections: Regions | Core Factory | Urban Blocks | Districts | Heroes | Furniture
+ * ============================================================================
+ */
 import * as THREE from 'three';
 import { createPBRMaterial } from '../materials/pbr.js';
 

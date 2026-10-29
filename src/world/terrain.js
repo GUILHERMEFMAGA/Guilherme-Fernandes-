@@ -1,7 +1,16 @@
 import * as THREE from 'three';
 import { Noise } from '../utils/noise.js';
 
+/**
+ * ============================================================================
+ * TERRAIN SYSTEM — Organized Heightmap & Biomes
+ * Sections: Core Noise | Height Computation | City Flattening | Geometry | Material | Features
+ * ============================================================================
+ */
 export class TerrainSystem {
+  // ---------------------------------------------------------------------------
+  // CORE: constructor & cache
+  // ---------------------------------------------------------------------------
   constructor(worldScene){
     this.worldScene = worldScene;
     this.noise = new Noise(42);
@@ -11,7 +20,9 @@ export class TerrainSystem {
     this.cacheHits=0; this.cacheMiss=0;
   }
 
-  // Pure function replicating generation math - ultra-fast, no raycast
+  // ---------------------------------------------------------------------------
+  // HEIGHT COMPUTATION: raw height + city flatten blending
+  // ---------------------------------------------------------------------------
   computeHeight(x,z){
     const raw=this.computeHeightRaw(x,z);
     const flatBoost=this.getCityFlattenBoost? this.getCityFlattenBoost(x,z):0;
@@ -93,6 +104,9 @@ export class TerrainSystem {
     h += (nz-0.5)*4; return h;
   }
 
+  // ---------------------------------------------------------------------------
+  // GENERATION: geometry + vertex colors (organized, visible in all GPUs)
+  // ---------------------------------------------------------------------------
   generate(){
     const size = 2000;
     const segments = 110; // BALANCEADO: 110 = 12321 verts, rápido mas suficiente p/ ruas
@@ -109,6 +123,22 @@ export class TerrainSystem {
     }
     pos.needsUpdate = true;
     geo.computeVertexNormals();
+
+    // --- organized vertex coloring: green lowlands, ochre hills, grey rock, white snow ---
+    const colors = [];
+    const colorLow = new THREE.Color(0x6b8c42), colorHill = new THREE.Color(0xa08a6a),
+          colorRock = new THREE.Color(0x9a9a95), colorSnow = new THREE.Color(0xf0f2f5);
+    for(let i=0;i<pos.count;i++){
+      const y = pos.getY(i);
+      const c = new THREE.Color();
+      if(y < 12) c.copy(colorLow);
+      else if(y < 32) c.lerpColors(colorLow, colorHill, (y-12)/20);
+      else if(y < 70) c.lerpColors(colorHill, colorRock, (y-32)/38);
+      else if(y < 95) c.copy(colorRock);
+      else c.lerpColors(colorRock, colorSnow, Math.min((y-95)/40,1));
+      colors.push(c.r, c.g, c.b);
+    }
+    geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
 
     const rockyMat = this.createTerrainMaterial();
 
@@ -145,13 +175,13 @@ export class TerrainSystem {
     for(let i=0;i<1500;i++){ cs.fillStyle=`rgba(40,30,20,0.07)`; cs.fillRect(Math.random()*256,Math.random()*256,2,1); }
     const texSoil = new THREE.CanvasTexture(canvasSoil); texSoil.wrapS=texSoil.wrapT=THREE.RepeatWrapping; texSoil.repeat.set(20,20);
 
-    // SIMPLES E VISÍVEL: sem shader complexo que pode quebrar e deixar céu azul
+    // ORGANIZED: vertex colors enabled + texture + stable material
     const mat = new THREE.MeshStandardMaterial({
       map: texGrass,
-      roughness:0.92,
+      vertexColors: true,
+      roughness:0.88,
       metalness:0,
     });
-    // guarda tex extras pra futura versão sem quebrar visibilidade
     mat.userData.texRock = texRock;
     mat.userData.texSoil = texSoil;
     return mat;

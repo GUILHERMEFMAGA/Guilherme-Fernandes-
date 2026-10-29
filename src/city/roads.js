@@ -1,6 +1,15 @@
+/**
+ * ============================================================================
+ * ROADS — Organized Street Network
+ * Sections: Core Mesh | Sidewalks & Curbs | Highways | City Grids | Details
+ * ============================================================================
+ */
 import * as THREE from 'three';
 
 export class RoadSystem {
+  // ---------------------------------------------------------------------------
+  // CORE
+  // ---------------------------------------------------------------------------
   constructor(worldScene, terrain){
     this.worldScene=worldScene; this.terrain=terrain;
     this.group=worldScene.streetGroup;
